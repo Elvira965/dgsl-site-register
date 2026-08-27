@@ -107,9 +107,6 @@ function fromDatabase(x) {
     handoverDate:
       x.handover_date || '',
 
-    closedDate:
-      x.closed_date || '',
-
     notes: x.notes || '',
 
     contractorSigner:
@@ -161,9 +158,6 @@ function toDatabase(x) {
 
     handover_date:
       x.handoverDate || null,
-
-    closed_date:
-      x.closedDate || null,
 
     notes: x.notes || null,
 
@@ -321,6 +315,7 @@ function render() {
 
     );
 
+
   $('#total').textContent =
     records.length;
 
@@ -344,6 +339,7 @@ function render() {
         x.status ===
         'On Hold'
     ).length;
+
 
   rows.innerHTML =
     filtered.map(
@@ -404,10 +400,6 @@ function render() {
         </td>
 
         <td>
-          ${esc(x.closedDate || '')}
-        </td>
-
-        <td>
 
           <button
             type="button"
@@ -423,12 +415,14 @@ function render() {
     `
     ).join('');
 
+
   $('#empty')
     .classList
     .toggle(
       'hidden',
       filtered.length > 0
     );
+
 
   document
     .querySelectorAll(
@@ -479,6 +473,7 @@ function open(x) {
         ? 'Edit handover'
         : 'New handover';
 
+
   $('#delete')
     .classList
     .toggle(
@@ -486,7 +481,9 @@ function open(x) {
       !x
     );
 
+
   form.reset();
+
 
   clearSignature(
     $('#contractorSignature')
@@ -496,8 +493,10 @@ function open(x) {
     $('#dgslSignature')
   );
 
+
   $('#photoPreview')
     .innerHTML = '';
+
 
   const values =
     x || {
@@ -506,11 +505,9 @@ function open(x) {
     };
 
 
-  // ==========================================================
-  // FIX:
-  // Do NOT try to put saved values into the photo input.
-  // Browsers don't allow JavaScript to set a file input value.
-  // ==========================================================
+  // ----------------------------------------------------------
+  // Restore form values
+  // ----------------------------------------------------------
 
   for (
     const [key, value]
@@ -524,19 +521,22 @@ function open(x) {
       continue;
     }
 
-    // Never set a file input's value.
+
+    // Never set a file input value.
     if (
       element.type === 'file'
     ) {
       continue;
     }
 
-    // Photos are handled separately below.
+
+    // Photos are handled separately.
     if (
       key === 'photos'
     ) {
       continue;
     }
+
 
     element.value =
       value || '';
@@ -544,7 +544,9 @@ function open(x) {
   }
 
 
-  // Restore saved signatures.
+  // ----------------------------------------------------------
+  // Restore existing signatures and photos
+  // ----------------------------------------------------------
 
   if (x) {
 
@@ -603,21 +605,10 @@ form.onsubmit =
           new FormData(form)
         );
 
+
       x.id =
         editing?.id ||
         crypto.randomUUID();
-
-      if (
-        x.status ===
-          'Closed Out'
-        &&
-        !x.closedDate
-      ) {
-
-        x.closedDate =
-          today();
-
-      }
 
 
       // ------------------------------------------------------
@@ -629,6 +620,7 @@ form.onsubmit =
           .toDataURL(
             'image/png'
           );
+
 
       x.dgslSignature =
         $('#dgslSignature')
@@ -672,11 +664,13 @@ form.onsubmit =
 
         }
 
+
         const photoUrl =
           await uploadPhoto(
             file,
             x.id
           );
+
 
         if (photoUrl) {
 
@@ -712,6 +706,7 @@ form.onsubmit =
               x.id
             );
 
+
         if (error) {
           throw error;
         }
@@ -726,6 +721,7 @@ form.onsubmit =
             .insert(
               databaseRecord
             );
+
 
         if (error) {
           throw error;
@@ -745,6 +741,7 @@ form.onsubmit =
         'Save error:',
         error
       );
+
 
       alert(
         'There was a problem saving the handover.'
@@ -773,8 +770,10 @@ async function uploadPhoto(
     )
       .toLowerCase();
 
+
   const filename =
     `${handoverId}/${crypto.randomUUID()}.${extension}`;
+
 
   const {
     error
@@ -796,9 +795,11 @@ async function uploadPhoto(
         }
       );
 
+
   if (error) {
     throw error;
   }
+
 
   const {
     data
@@ -811,6 +812,7 @@ async function uploadPhoto(
       .getPublicUrl(
         filename
       );
+
 
   return data.publicUrl;
 
@@ -828,7 +830,9 @@ function showSavedPhotos(
   const preview =
     $('#photoPreview');
 
+
   preview.innerHTML = '';
+
 
   if (
     !Array.isArray(photos)
@@ -838,6 +842,7 @@ function showSavedPhotos(
 
   }
 
+
   photos.forEach(
     url => {
 
@@ -846,8 +851,10 @@ function showSavedPhotos(
           'img'
         );
 
+
       img.src =
         url;
+
 
       img.style.width =
         '110px';
@@ -870,6 +877,7 @@ function showSavedPhotos(
       img.style.marginBottom =
         '6px';
 
+
       preview.appendChild(
         img
       );
@@ -889,6 +897,7 @@ $('#photos').onchange =
 
     const preview =
       $('#photoPreview');
+
 
     const files =
       Array.from(
@@ -965,6 +974,7 @@ $('#delete').onclick =
       return;
     }
 
+
     if (
       !confirm(
         'Delete this handover record?'
@@ -974,6 +984,7 @@ $('#delete').onclick =
       return;
 
     }
+
 
     try {
 
@@ -1026,6 +1037,7 @@ $('#delete').onclick =
         error
       );
 
+
       alert(
         'There was a problem deleting the handover.'
       );
@@ -1048,10 +1060,12 @@ async function deletePhoto(
     const marker =
       `/object/public/${PHOTO_BUCKET}/`;
 
+
     const index =
       url.indexOf(
         marker
       );
+
 
     if (
       index === -1
@@ -1061,6 +1075,7 @@ async function deletePhoto(
 
     }
 
+
     const path =
       decodeURIComponent(
         url.substring(
@@ -1068,6 +1083,7 @@ async function deletePhoto(
           marker.length
         )
       );
+
 
     await supabaseClient
       .storage
@@ -1077,6 +1093,7 @@ async function deletePhoto(
       .remove(
         [path]
       );
+
 
   } catch (error) {
 
@@ -1153,6 +1170,7 @@ function setupSignature(
       '2d'
     );
 
+
   ctx.lineWidth =
     2;
 
@@ -1161,6 +1179,7 @@ function setupSignature(
 
   ctx.lineJoin =
     'round';
+
 
   let drawing =
     false;
@@ -1171,10 +1190,12 @@ function setupSignature(
     const rect =
       canvas.getBoundingClientRect();
 
+
     const source =
       e.touches
         ? e.touches[0]
         : e;
+
 
     return {
 
@@ -1210,10 +1231,13 @@ function setupSignature(
     drawing =
       true;
 
+
     const p =
       position(e);
 
+
     ctx.beginPath();
+
 
     ctx.moveTo(
       p.x,
@@ -1229,15 +1253,19 @@ function setupSignature(
       return;
     }
 
+
     e.preventDefault();
+
 
     const p =
       position(e);
+
 
     ctx.lineTo(
       p.x,
       p.y
     );
+
 
     ctx.stroke();
 
@@ -1250,10 +1278,13 @@ function setupSignature(
       return;
     }
 
+
     e.preventDefault();
+
 
     drawing =
       false;
+
 
     ctx.closePath();
 
@@ -1280,6 +1311,7 @@ function setupSignature(
     stop
   );
 
+
   canvas.addEventListener(
     'touchstart',
     start,
@@ -1288,6 +1320,7 @@ function setupSignature(
     }
   );
 
+
   canvas.addEventListener(
     'touchmove',
     move,
@@ -1295,6 +1328,7 @@ function setupSignature(
       passive: false
     }
   );
+
 
   canvas.addEventListener(
     'touchend',
@@ -1319,10 +1353,12 @@ function clearSignature(
     return;
   }
 
+
   const ctx =
     canvas.getContext(
       '2d'
     );
+
 
   ctx.clearRect(
     0,
@@ -1352,13 +1388,16 @@ function drawSavedSignature(
 
   }
 
+
   const ctx =
     canvas.getContext(
       '2d'
     );
 
+
   const img =
     new Image();
+
 
   img.onload =
     () => {
@@ -1370,6 +1409,7 @@ function drawSavedSignature(
         canvas.height
       );
 
+
       ctx.drawImage(
         img,
         0,
@@ -1379,6 +1419,7 @@ function drawSavedSignature(
       );
 
     };
+
 
   img.src =
     dataUrl;
@@ -1393,6 +1434,7 @@ function drawSavedSignature(
 setupSignature(
   $('#contractorSignature')
 );
+
 
 setupSignature(
   $('#dgslSignature')
@@ -1431,6 +1473,7 @@ $('#export').onclick =
         'a'
       );
 
+
     link.href =
       URL.createObjectURL(
 
@@ -1453,10 +1496,13 @@ $('#export').onclick =
 
       );
 
+
     link.download =
       `DGSL-site-register-${today()}.json`;
 
+
     link.click();
+
 
     URL.revokeObjectURL(
       link.href
@@ -1475,12 +1521,15 @@ $('#import').onchange =
     const file =
       e.target.files[0];
 
+
     if (!file) {
       return;
     }
 
+
     const reader =
       new FileReader();
+
 
     reader.onload =
       async () => {
@@ -1491,6 +1540,7 @@ $('#import').onchange =
             JSON.parse(
               reader.result
             );
+
 
           if (
             !Array.isArray(
@@ -1513,6 +1563,7 @@ $('#import').onchange =
             const databaseRecord =
               toDatabase(record);
 
+
             const {
               error
             } =
@@ -1521,6 +1572,7 @@ $('#import').onchange =
                 .upsert(
                   databaseRecord
                 );
+
 
             if (error) {
               throw error;
@@ -1542,6 +1594,7 @@ $('#import').onchange =
           console.error(
             error
           );
+
 
           alert(
             'That file is not a valid DGSL backup.'
@@ -1573,6 +1626,7 @@ $('#generatePdf').onclick =
       } =
         window.jspdf;
 
+
       const pdf =
         new jsPDF({
 
@@ -1591,8 +1645,10 @@ $('#generatePdf').onclick =
       const margin =
         15;
 
+
       const pageWidth =
         210;
+
 
       let y =
         20;
@@ -1606,10 +1662,12 @@ $('#generatePdf').onclick =
         20
       );
 
+
       pdf.setFont(
         undefined,
         'bold'
       );
+
 
       pdf.text(
         'DGSL SITE HANDOVER',
@@ -1617,16 +1675,20 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 8;
+
 
       pdf.setFontSize(
         10
       );
 
+
       pdf.setFont(
         undefined,
         'normal'
       );
+
 
       pdf.text(
         'Site Handover Record',
@@ -1634,7 +1696,9 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 10;
+
 
       pdf.line(
         margin,
@@ -1642,6 +1706,7 @@ $('#generatePdf').onclick =
         pageWidth - margin,
         y
       );
+
 
       y += 8;
 
@@ -1662,9 +1727,11 @@ $('#generatePdf').onclick =
           'bold'
         );
 
+
         pdf.setFontSize(
           10
         );
+
 
         pdf.text(
           `${label}:`,
@@ -1672,10 +1739,12 @@ $('#generatePdf').onclick =
           y
         );
 
+
         pdf.setFont(
           undefined,
           'normal'
         );
+
 
         const lines =
           pdf.splitTextToSize(
@@ -1685,11 +1754,13 @@ $('#generatePdf').onclick =
               35
           );
 
+
         pdf.text(
           lines,
           margin + 35,
           y
         );
+
 
         y +=
           Math.max(
@@ -1709,49 +1780,52 @@ $('#generatePdf').onclick =
         data.zone
       );
 
+
       addField(
         'Block / Level',
         data.level
       );
+
 
       addField(
         'Drawing / Reference',
         data.drawing
       );
 
+
       addField(
         'Trade',
         data.trade
       );
+
 
       addField(
         'Contractor',
         data.contractor
       );
 
+
       addField(
         'Site Foreman',
         data.foreman
       );
+
 
       addField(
         'Status',
         data.status
       );
 
+
       addField(
         'Handover State',
         data.handover
       );
 
+
       addField(
         'Handover Date',
         data.handoverDate
-      );
-
-      addField(
-        'Closed Out Date',
-        data.closedDate
       );
 
 
@@ -1761,10 +1835,12 @@ $('#generatePdf').onclick =
 
       y += 3;
 
+
       pdf.setFont(
         undefined,
         'bold'
       );
+
 
       pdf.text(
         'Work Description',
@@ -1772,12 +1848,15 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 6;
+
 
       pdf.setFont(
         undefined,
         'normal'
       );
+
 
       const descriptionLines =
         pdf.splitTextToSize(
@@ -1786,11 +1865,13 @@ $('#generatePdf').onclick =
             margin * 2
         );
 
+
       pdf.text(
         descriptionLines,
         margin,
         y
       );
+
 
       y +=
         Math.max(
@@ -1805,10 +1886,12 @@ $('#generatePdf').onclick =
 
       y += 3;
 
+
       pdf.setFont(
         undefined,
         'bold'
       );
+
 
       pdf.text(
         'Notes / Outstanding Items',
@@ -1816,12 +1899,15 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 6;
+
 
       pdf.setFont(
         undefined,
         'normal'
       );
+
 
       const noteLines =
         pdf.splitTextToSize(
@@ -1830,11 +1916,13 @@ $('#generatePdf').onclick =
             margin * 2
         );
 
+
       pdf.text(
         noteLines,
         margin,
         y
       );
+
 
       y +=
         Math.max(
@@ -1857,10 +1945,12 @@ $('#generatePdf').onclick =
 
       }
 
+
       pdf.setFont(
         undefined,
         'bold'
       );
+
 
       pdf.text(
         'Signatures',
@@ -1868,12 +1958,15 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 8;
+
 
       pdf.setFont(
         undefined,
         'normal'
       );
+
 
       pdf.text(
         `Contractor / Foreman: ${
@@ -1883,7 +1976,9 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 5;
+
 
       pdf.addImage(
         $('#contractorSignature')
@@ -1897,7 +1992,9 @@ $('#generatePdf').onclick =
         24
       );
 
+
       y += 32;
+
 
       pdf.text(
         `DGSL Representative: ${
@@ -1907,7 +2004,9 @@ $('#generatePdf').onclick =
         y
       );
 
+
       y += 5;
+
 
       pdf.addImage(
         $('#dgslSignature')
@@ -1936,22 +2035,27 @@ $('#generatePdf').onclick =
 
         pdf.addPage();
 
+
         y = 20;
+
 
         pdf.setFontSize(
           16
         );
+
 
         pdf.setFont(
           undefined,
           'bold'
         );
 
+
         pdf.text(
           'SITE PHOTOS',
           margin,
           y
         );
+
 
         y += 10;
 
@@ -1968,6 +2072,7 @@ $('#generatePdf').onclick =
                 url
               );
 
+
             y =
               await addImageToPdf(
                 pdf,
@@ -1975,6 +2080,7 @@ $('#generatePdf').onclick =
                 y,
                 margin
               );
+
 
           } catch (error) {
 
@@ -2023,6 +2129,7 @@ $('#generatePdf').onclick =
         error
       );
 
+
       alert(
         'There was a problem creating the PDF.'
       );
@@ -2049,8 +2156,10 @@ function loadImageForPdf(
       const img =
         new Image();
 
+
       img.crossOrigin =
         'anonymous';
+
 
       img.onload =
         () => {
@@ -2060,22 +2169,27 @@ function loadImageForPdf(
               'canvas'
             );
 
+
           canvas.width =
             img.naturalWidth;
 
+
           canvas.height =
             img.naturalHeight;
+
 
           const ctx =
             canvas.getContext(
               '2d'
             );
 
+
           ctx.drawImage(
             img,
             0,
             0
           );
+
 
           resolve(
             canvas.toDataURL(
@@ -2086,8 +2200,10 @@ function loadImageForPdf(
 
         };
 
+
       img.onerror =
         reject;
+
 
       img.src =
         url;
@@ -2129,6 +2245,7 @@ async function addImageToPdf(
   const maxWidth =
     80;
 
+
   const maxHeight =
     65;
 
@@ -2152,6 +2269,7 @@ async function addImageToPdf(
 
     height =
       maxHeight;
+
 
     width =
       (
@@ -2206,6 +2324,7 @@ function getImageDimensions(
       const img =
         new Image();
 
+
       img.onload =
         () => {
 
@@ -2220,6 +2339,7 @@ function getImageDimensions(
           });
 
         };
+
 
       img.src =
         src;
@@ -2244,12 +2364,14 @@ async function startApp() {
 
     setupRealtime();
 
+
   } catch (error) {
 
     console.error(
       'Startup error:',
       error
     );
+
 
     alert(
       'The DGSL Site Register could not connect to Supabase.'
