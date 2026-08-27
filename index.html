@@ -30,15 +30,25 @@
 
 <header>
 
-  <div>
+  <div class="site-title">
 
-    <p class="eyebrow">
-      DGSL BUILDING
-    </p>
+    <img
+      src="dgsl-logo.png"
+      alt="DG Group logo"
+      class="site-logo"
+    >
 
-    <h1>
-      Site Handover Register
-    </h1>
+    <div>
+
+      <p class="eyebrow">
+        DGSL BUILDING
+      </p>
+
+      <h1>
+        Site Handover Register
+      </h1>
+
+    </div>
 
   </div>
 
@@ -122,7 +132,6 @@
 
   <div class="toolbar">
 
-
     <div>
 
       <h2>
@@ -130,14 +139,13 @@
       </h2>
 
       <p>
-        Every handover is saved on this device.
+        Handovers are saved to the shared site register.
       </p>
 
     </div>
 
 
     <div class="actions">
-
 
       <input
         id="search"
@@ -165,9 +173,7 @@
 
       </label>
 
-
     </div>
-
 
   </div>
 
@@ -283,8 +289,26 @@
 >
 
 
-  <div class="form-head">
+  <!-- =====================================================
+       LOGO
+       ===================================================== -->
 
+  <div class="form-logo">
+
+    <img
+      src="dgsl-logo.png"
+      alt="DG Group logo"
+    >
+
+  </div>
+
+
+
+  <!-- =====================================================
+       FORM HEADER
+       ===================================================== -->
+
+  <div class="form-head">
 
     <div>
 
@@ -308,7 +332,6 @@
       ×
     </button>
 
-
   </div>
 
 
@@ -321,15 +344,14 @@
          SUB-CONTRACTOR SECTION
          ===================================================== -->
 
-
-    <div class="wide">
+    <div class="section-heading wide">
 
       <h3>
-        Signatures
+        Sub-Contractor
       </h3>
 
       <p>
-        Sign below using your finger or mouse.
+        Complete the sub-contractor details and sign below.
       </p>
 
     </div>
@@ -361,7 +383,6 @@
         id="contractorSignature"
         width="600"
         height="180"
-        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
       ></canvas>
 
 
@@ -377,8 +398,17 @@
 
 
     <!-- =====================================================
-         MAIN HANDOVER DETAILS
+         DGSL / HANDOVER DETAILS
          ===================================================== -->
+
+    <div class="section-heading wide">
+
+      <h3>
+        DGSL Handover Details
+      </h3>
+
+    </div>
+
 
 
     <label>
@@ -455,7 +485,7 @@
 
     <label>
 
-      Contractor
+      Sub-Contractor
 
       <input
         name="contractor"
@@ -574,7 +604,6 @@
          PHOTOS
          ===================================================== -->
 
-
     <label class="wide">
 
       Site photos
@@ -588,7 +617,6 @@
         capture="environment"
       >
 
-
       <small>
         You can select or take multiple site photos.
       </small>
@@ -599,21 +627,19 @@
 
     <div
       id="photoPreview"
-      class="wide"
-      style="display:flex;flex-wrap:wrap;gap:10px;"
+      class="wide photo-preview"
     ></div>
 
 
 
     <!-- =====================================================
-         DGSL SECTION
+         DGSL SIGNATURE
          ===================================================== -->
 
-
-    <div class="wide">
+    <div class="section-heading wide">
 
       <h3>
-        DGSL Signature
+        DGSL Sign-Off
       </h3>
 
       <p>
@@ -649,7 +675,6 @@
         id="dgslSignature"
         width="600"
         height="180"
-        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
       ></canvas>
 
 
@@ -667,6 +692,10 @@
   </div>
 
 
+
+  <!-- =====================================================
+       FORM BUTTONS
+       ===================================================== -->
 
   <div class="form-actions">
 
