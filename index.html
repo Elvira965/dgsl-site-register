@@ -1,64 +1,143 @@
 <!doctype html>
 <html lang="en">
+
 <head>
+
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1">
-<meta name="theme-color" content="#1f4e78">
+
+<meta
+  name="viewport"
+  content="width=device-width,initial-scale=1"
+>
+
+<meta
+  name="theme-color"
+  content="#1f4e78"
+>
+
 <title>DGSL Site Register</title>
-<link rel="stylesheet" href="styles.css">
+
+<link
+  rel="stylesheet"
+  href="styles.css"
+>
+
 </head>
+
 
 <body>
 
+
 <header>
+
   <div>
-    <p class="eyebrow">DGSL BUILDING</p>
-    <h1>Site Handover Register</h1>
+
+    <p class="eyebrow">
+      DGSL BUILDING
+    </p>
+
+    <h1>
+      Site Handover Register
+    </h1>
+
   </div>
 
-  <button id="newZone" class="primary">
+
+  <button
+    id="newZone"
+    class="primary"
+  >
     + New handover
   </button>
+
 </header>
+
 
 
 <main>
 
-<section class="cards" aria-label="Site summary">
+
+<section
+  class="cards"
+  aria-label="Site summary"
+>
 
   <article>
-    <span>Total zones</span>
-    <strong id="total">0</strong>
+
+    <span>
+      Total zones
+    </span>
+
+    <strong id="total">
+      0
+    </strong>
+
   </article>
+
 
   <article class="amber">
-    <span>In progress</span>
-    <strong id="progress">0</strong>
+
+    <span>
+      In progress
+    </span>
+
+    <strong id="progress">
+      0
+    </strong>
+
   </article>
+
 
   <article class="green">
-    <span>Closed out</span>
-    <strong id="closed">0</strong>
+
+    <span>
+      Closed out
+    </span>
+
+    <strong id="closed">
+      0
+    </strong>
+
   </article>
 
+
   <article class="red">
-    <span>On hold</span>
-    <strong id="hold">0</strong>
+
+    <span>
+      On hold
+    </span>
+
+    <strong id="hold">
+      0
+    </strong>
+
   </article>
 
 </section>
 
 
+
 <section class="panel">
+
 
   <div class="toolbar">
 
+
     <div>
-      <h2>Zone register</h2>
-      <p>Every handover is saved on this device.</p>
+
+      <h2>
+        Zone register
+      </h2>
+
+      <p>
+        Every handover is saved on this device.
+      </p>
+
     </div>
 
+
     <div class="actions">
+
 
       <input
         id="search"
@@ -67,23 +146,31 @@
         aria-label="Search register"
       >
 
+
       <button id="export">
         Export backup
       </button>
 
+
       <label class="button">
+
         Import backup
+
         <input
           id="import"
           type="file"
           accept="application/json"
           hidden
         >
+
       </label>
+
 
     </div>
 
+
   </div>
+
 
 
   <div class="filters">
@@ -95,19 +182,29 @@
       All
     </button>
 
-    <button data-filter="In Progress">
+
+    <button
+      data-filter="In Progress"
+    >
       In Progress
     </button>
 
-    <button data-filter="Closed Out">
+
+    <button
+      data-filter="Closed Out"
+    >
       Closed Out
     </button>
 
-    <button data-filter="On Hold">
+
+    <button
+      data-filter="On Hold"
+    >
       On Hold
     </button>
 
   </div>
+
 
 
   <div class="table-wrap">
@@ -118,18 +215,41 @@
 
         <tr>
 
-          <th>Zone / Area</th>
-          <th>Block / Level</th>
-          <th>Trade</th>
-          <th>Contractor</th>
-          <th>Work description</th>
-          <th>Status</th>
-          <th>Handover</th>
-          <th></th>
+          <th>
+            Zone / Area
+          </th>
+
+          <th>
+            Block / Level
+          </th>
+
+          <th>
+            Trade
+          </th>
+
+          <th>
+            Sub-Contractor
+          </th>
+
+          <th>
+            Work description
+          </th>
+
+          <th>
+            Status
+          </th>
+
+          <th>
+            Handover
+          </th>
+
+          <th>
+          </th>
 
         </tr>
 
       </thead>
+
 
       <tbody id="rows"></tbody>
 
@@ -138,16 +258,24 @@
   </div>
 
 
-  <p id="empty" class="empty">
+
+  <p
+    id="empty"
+    class="empty"
+  >
     No handovers yet. Add your first zone to start the register.
   </p>
 
+
 </section>
+
 
 </main>
 
 
+
 <dialog id="formDialog">
+
 
 <form
   id="handoverForm"
@@ -155,16 +283,13 @@
 >
 
 
-  <!-- =====================================================
-       SUB-CONTRACTOR SECTION
-       ===================================================== -->
-
   <div class="form-head">
+
 
     <div>
 
       <p class="eyebrow">
-        SUB-CONTRACTOR
+        HANDOVER RECORD
       </p>
 
       <h2 id="formTitle">
@@ -183,13 +308,19 @@
       ×
     </button>
 
+
   </div>
+
 
 
   <div class="form-grid">
 
 
-    <!-- SUB-CONTRACTOR SIGNATURE HEADING -->
+
+    <!-- =====================================================
+         SUB-CONTRACTOR SECTION
+         ===================================================== -->
+
 
     <div class="wide">
 
@@ -204,7 +335,6 @@
     </div>
 
 
-    <!-- SUB-CONTRACTOR NAME -->
 
     <label>
 
@@ -217,7 +347,6 @@
     </label>
 
 
-    <!-- SUB-CONTRACTOR SIGNATURE -->
 
     <div class="wide">
 
@@ -246,16 +375,10 @@
     </div>
 
 
-    <!-- =================================================
-         DGSL / HANDOVER INFORMATION
-         ================================================= -->
 
-
-    <div class="wide">
-
-      <hr>
-
-    </div>
+    <!-- =====================================================
+         MAIN HANDOVER DETAILS
+         ===================================================== -->
 
 
     <label>
@@ -271,6 +394,7 @@
     </label>
 
 
+
     <label>
 
       Block / level
@@ -283,6 +407,7 @@
     </label>
 
 
+
     <label>
 
       Drawing / reference
@@ -293,6 +418,7 @@
       >
 
     </label>
+
 
 
     <label>
@@ -326,6 +452,7 @@
     </label>
 
 
+
     <label>
 
       Contractor
@@ -335,6 +462,7 @@
       >
 
     </label>
+
 
 
     <label>
@@ -348,6 +476,7 @@
     </label>
 
 
+
     <label class="wide">
 
       Work description
@@ -359,6 +488,7 @@
       ></textarea>
 
     </label>
+
 
 
     <label>
@@ -388,6 +518,7 @@
     </label>
 
 
+
     <label>
 
       Handover state
@@ -411,6 +542,7 @@
     </label>
 
 
+
     <label>
 
       Handover date
@@ -421,6 +553,7 @@
       >
 
     </label>
+
 
 
     <label class="wide">
@@ -436,7 +569,11 @@
     </label>
 
 
-    <!-- PHOTOS -->
+
+    <!-- =====================================================
+         PHOTOS
+         ===================================================== -->
+
 
     <label class="wide">
 
@@ -451,11 +588,13 @@
         capture="environment"
       >
 
+
       <small>
         You can select or take multiple site photos.
       </small>
 
     </label>
+
 
 
     <div
@@ -465,21 +604,16 @@
     ></div>
 
 
-    <!-- =================================================
-         DGSL SIGNATURE
-         ================================================= -->
 
-    <div class="wide">
-
-      <hr>
-
-    </div>
+    <!-- =====================================================
+         DGSL SECTION
+         ===================================================== -->
 
 
     <div class="wide">
 
       <h3>
-        DGSL Sign-off
+        DGSL Signature
       </h3>
 
       <p>
@@ -487,6 +621,7 @@
       </p>
 
     </div>
+
 
 
     <label>
@@ -498,6 +633,7 @@
       >
 
     </label>
+
 
 
     <div class="wide">
@@ -526,14 +662,14 @@
 
     </div>
 
+
+
   </div>
 
 
-  <!-- =====================================================
-       FORM BUTTONS
-       ===================================================== -->
 
   <div class="form-actions">
+
 
     <button
       type="button"
@@ -571,20 +707,35 @@
       Save handover
     </button>
 
+
   </div>
 
+
 </form>
+
 
 </dialog>
 
 
-<!-- PDF LIBRARIES -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+<!-- ==========================================================
+     PDF LIBRARIES
+     ========================================================== -->
 
-<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
+></script>
+
+
+<script
+  src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
+></script>
+
 
 <script src="app.js"></script>
 
+
 </body>
+
 </html>
