@@ -21,6 +21,7 @@
   </button>
 </header>
 
+
 <main>
 
 <section class="cards" aria-label="Site summary">
@@ -72,14 +73,12 @@
 
       <label class="button">
         Import backup
-
         <input
           id="import"
           type="file"
           accept="application/json"
           hidden
         >
-
       </label>
 
     </div>
@@ -148,20 +147,24 @@
 </main>
 
 
-<!-- =====================================================
-     HANDOVER FORM
-===================================================== -->
-
 <dialog id="formDialog">
 
-<form id="handoverForm" method="dialog">
+<form
+  id="handoverForm"
+  method="dialog"
+>
+
+
+  <!-- =====================================================
+       SUB-CONTRACTOR SECTION
+       ===================================================== -->
 
   <div class="form-head">
 
     <div>
 
       <p class="eyebrow">
-        HANDOVER RECORD
+        SUB-CONTRACTOR
       </p>
 
       <h2 id="formTitle">
@@ -169,6 +172,7 @@
       </h2>
 
     </div>
+
 
     <button
       type="button"
@@ -183,6 +187,75 @@
 
 
   <div class="form-grid">
+
+
+    <!-- SUB-CONTRACTOR SIGNATURE HEADING -->
+
+    <div class="wide">
+
+      <h3>
+        Signatures
+      </h3>
+
+      <p>
+        Sign below using your finger or mouse.
+      </p>
+
+    </div>
+
+
+    <!-- SUB-CONTRACTOR NAME -->
+
+    <label>
+
+      Sub-Contractor name
+
+      <input
+        name="contractorSigner"
+      >
+
+    </label>
+
+
+    <!-- SUB-CONTRACTOR SIGNATURE -->
+
+    <div class="wide">
+
+      <p>
+        <strong>
+          Sub-Contractor signature
+        </strong>
+      </p>
+
+
+      <canvas
+        id="contractorSignature"
+        width="600"
+        height="180"
+        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
+      ></canvas>
+
+
+      <button
+        type="button"
+        id="clearContractorSignature"
+      >
+        Clear signature
+      </button>
+
+    </div>
+
+
+    <!-- =================================================
+         DGSL / HANDOVER INFORMATION
+         ================================================= -->
+
+
+    <div class="wide">
+
+      <hr>
+
+    </div>
 
 
     <label>
@@ -228,11 +301,25 @@
 
       <select name="trade">
 
-        <option>General</option>
-        <option>Structure</option>
-        <option>MEP</option>
-        <option>Finishes</option>
-        <option>External Works</option>
+        <option>
+          General
+        </option>
+
+        <option>
+          Structure
+        </option>
+
+        <option>
+          MEP
+        </option>
+
+        <option>
+          Finishes
+        </option>
+
+        <option>
+          External Works
+        </option>
 
       </select>
 
@@ -243,7 +330,9 @@
 
       Contractor
 
-      <input name="contractor">
+      <input
+        name="contractor"
+      >
 
     </label>
 
@@ -252,7 +341,9 @@
 
       Site foreman
 
-      <input name="foreman">
+      <input
+        name="foreman"
+      >
 
     </label>
 
@@ -276,7 +367,9 @@
 
       <select name="status">
 
-        <option>Not Started</option>
+        <option>
+          Not Started
+        </option>
 
         <option selected>
           In Progress
@@ -372,11 +465,22 @@
     ></div>
 
 
-    <!-- SIGNATURES -->
+    <!-- =================================================
+         DGSL SIGNATURE
+         ================================================= -->
 
     <div class="wide">
 
-      <h3>Signatures</h3>
+      <hr>
+
+    </div>
+
+
+    <div class="wide">
+
+      <h3>
+        DGSL Sign-off
+      </h3>
 
       <p>
         Sign below using your finger or mouse.
@@ -387,45 +491,13 @@
 
     <label>
 
-      Contractor / Foreman name
-
-      <input name="contractorSigner">
-
-    </label>
-
-
-    <label>
-
       DGSL representative
 
-      <input name="dgslSigner">
+      <input
+        name="dgslSigner"
+      >
 
     </label>
-
-
-    <div class="wide">
-
-      <p>
-        <strong>
-          Contractor / Foreman signature
-        </strong>
-      </p>
-
-      <canvas
-        id="contractorSignature"
-        width="600"
-        height="180"
-        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
-      ></canvas>
-
-      <button
-        type="button"
-        id="clearContractorSignature"
-      >
-        Clear signature
-      </button>
-
-    </div>
 
 
     <div class="wide">
@@ -436,12 +508,14 @@
         </strong>
       </p>
 
+
       <canvas
         id="dgslSignature"
         width="600"
         height="180"
         style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
       ></canvas>
+
 
       <button
         type="button"
@@ -452,9 +526,12 @@
 
     </div>
 
-
   </div>
 
+
+  <!-- =====================================================
+       FORM BUTTONS
+       ===================================================== -->
 
   <div class="form-actions">
 
@@ -466,7 +543,9 @@
       Delete record
     </button>
 
+
     <span></span>
+
 
     <button
       type="button"
@@ -475,6 +554,7 @@
       Cancel
     </button>
 
+
     <button
       type="button"
       id="generatePdf"
@@ -482,6 +562,7 @@
     >
       Generate PDF
     </button>
+
 
     <button
       class="primary"
