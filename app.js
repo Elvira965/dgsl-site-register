@@ -1,56 +1,84 @@
 // ============================================================
 // DGSL SITE REGISTER
-// Supabase + Live Updates + Photos + Signatures + PDF
+// Supabase Database + Storage + Live Updates
+// Photos + Signatures + PDF + Backup
 // ============================================================
+
 
 const SUPABASE_URL =
   'https://mgxbsxqgjxpdvdjsixqi.supabase.co';
+
 
 const SUPABASE_KEY =
   'sb_publishable_XWLtSyttiEMQA86unKN37A_ZC9OY19j';
 
 
-// ============================================================
-// SUPABASE CLIENT
-// ============================================================
+const PHOTO_BUCKET =
+  'handover-photos';
+
 
 let supabaseClient = null;
 
+let records = [];
+
+let editing = null;
+
+let filter = 'All';
+
+
+const $ =
+  s => document.querySelector(s);
+
+
+const rows =
+  $('#rows');
+
+
+const dlg =
+  $('#formDialog');
+
+
+const form =
+  $('#handoverForm');
+
+
+const today = () =>
+  new Date()
+    .toISOString()
+    .slice(0, 10);
+
+
+// ============================================================
+// START SUPABASE
+// ============================================================
+
 async function loadSupabase() {
 
-  if (window.supabase) {
+  if (!window.supabase) {
 
-    supabaseClient =
-      window.supabase.createClient(
-        SUPABASE_URL,
-        SUPABASE_KEY
-      );
+    await new Promise(
+      (resolve, reject) => {
 
-    return;
+        const script =
+          document.createElement('script');
+
+        script.src =
+          'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
+
+        script.onload =
+          resolve;
+
+        script.onerror =
+          reject;
+
+        document.head.appendChild(
+          script
+        );
+
+      }
+    );
+
   }
-
-
-  await new Promise(
-    (resolve, reject) => {
-
-      const script =
-        document.createElement('script');
-
-      script.src =
-        'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
-
-      script.onload =
-        resolve;
-
-      script.onerror =
-        reject;
-
-      document.head.appendChild(
-        script
-      );
-
-    }
-  );
 
 
   supabaseClient =
@@ -62,43 +90,26 @@ async function loadSupabase() {
 
 
 // ============================================================
-// VARIABLES
-// ============================================================
-
-let records = [];
-
-let editing = null;
-
-let filter = 'All';
-
-const $ =
-  s => document.querySelector(s);
-
-const rows =
-  $('#rows');
-
-const dlg =
-  $('#formDialog');
-
-const form =
-  $('#handoverForm');
-
-
-// ============================================================
-// DATE
-// ============================================================
-
-const today = () =>
-  new Date()
-    .toISOString()
-    .slice(0, 10);
-
-
-// ============================================================
 // DATABASE → WEBSITE
 // ============================================================
 
 function fromDatabase(x) {
+
+  let photos = [];
+
+  try {
+
+    photos =
+      x.photos
+        ? JSON.parse(x.photos)
+        : [];
+
+  } catch {
+
+    photos = [];
+
+  }
+
 
   return {
 
@@ -154,8 +165,10 @@ function fromDatabase(x) {
       x.dgsl_signature || '',
 
     photos:
-      x.photos || ''
+      photos
+
   };
+
 }
 
 
@@ -219,8 +232,12 @@ function toDatabase(x) {
       x.dgslSignature || null,
 
     photos:
-      x.photos || null
+      JSON.stringify(
+        x.photos || []
+      )
+
   };
+
 }
 
 
@@ -238,13 +255,7 @@ async function loadRecords() {
     } =
       await supabaseClient
         .from('handovers')
-        .select('*')
-        .order(
-          'id',
-          {
-            ascending: false
-          }
-        );
+        .select('*');
 
 
     if (error) {
@@ -272,17 +283,20 @@ async function loadRecords() {
     alert(
       'Could not load the handover register.'
     );
+
   }
+
 }
 
 
 // ============================================================
-// LIVE REAL-TIME UPDATES
+// REAL-TIME UPDATES
 // ============================================================
 
 function setupRealtime() {
 
   supabaseClient
+
     .channel(
       'handovers-live'
     )
@@ -293,11 +307,8 @@ function setupRealtime() {
 
       {
         event: '*',
-
         schema: 'public',
-
         table: 'handovers'
-
       },
 
       async () => {
@@ -314,7 +325,7 @@ function setupRealtime() {
 
 
 // ============================================================
-// ESCAPE HTML
+// HTML ESCAPE
 // ============================================================
 
 function esc(
@@ -343,27 +354,27 @@ function esc(
           '&#39;'
 
       }[c])
+
     );
+
 }
 
 
 // ============================================================
-// RENDER REGISTER
+// RENDER
 // ============================================================
 
 function render() {
 
-  const searchBox =
-    $('#search');
-
   const q =
-    searchBox
-      ? searchBox.value
+    $('#search')
+      ? $('#search')
+        .value
         .toLowerCase()
       : '';
 
 
-  const a =
+  const filtered =
     records.filter(x =>
 
       (
@@ -410,7 +421,8 @@ function render() {
 
 
   rows.innerHTML =
-    a.map(x => `
+    filtered.map(
+      x => `
 
       <tr>
 
@@ -460,9 +472,7 @@ function render() {
         <td>
 
           <span
-            class="status ${esc(
-              x.status.split(' ')[0]
-            )}"
+            class="status"
           >
 
             ${esc(x.status)}
@@ -485,7 +495,8 @@ function render() {
         <td>
 
           <button
-            data-edit="${x.id}"
+            type="button"
+            data-edit="${esc(x.id)}"
           >
             Edit
           </button>
@@ -494,14 +505,15 @@ function render() {
 
       </tr>
 
-    `).join('');
+    `
+    ).join('');
 
 
   $('#empty')
     .classList
     .toggle(
       'hidden',
-      a.length > 0
+      filtered.length > 0
     );
 
 
@@ -509,30 +521,42 @@ function render() {
     .querySelectorAll(
       '[data-edit]'
     )
-    .forEach(button => {
+    .forEach(
+      button => {
 
-      button.onclick =
-        () => {
+        button.onclick =
+          function () {
 
-          const record =
-            records.find(
-              x =>
-                x.id ===
-                button.dataset.edit
-            );
+            const id =
+              this.getAttribute(
+                'data-edit'
+              );
 
 
-          open(record);
+            const record =
+              records.find(
+                x =>
+                  String(x.id) ===
+                  String(id)
+              );
 
-        };
 
-    });
+            if (record) {
+
+              open(record);
+
+            }
+
+          };
+
+      }
+    );
 
 }
 
 
 // ============================================================
-// OPEN HANDOVER
+// OPEN FORM
 // ============================================================
 
 function open(x) {
@@ -573,7 +597,7 @@ function open(x) {
     .innerHTML = '';
 
 
-  const defaults =
+  const values =
     x || {
       handoverDate:
         today()
@@ -582,9 +606,7 @@ function open(x) {
 
   for (
     const [key, value]
-    of Object.entries(
-      defaults
-    )
+    of Object.entries(values)
   ) {
 
     if (
@@ -622,6 +644,7 @@ function open(x) {
 
 
   dlg.showModal();
+
 }
 
 
@@ -639,8 +662,7 @@ $('#newZone').onclick =
 
 $('#cancel').onclick =
 $('#cancel2').onclick =
-  () =>
-    dlg.close();
+  () => dlg.close();
 
 
 // ============================================================
@@ -668,7 +690,8 @@ form.onsubmit =
 
       if (
         x.status ===
-          'Closed Out' &&
+          'Closed Out'
+        &&
         !x.closedDate
       ) {
 
@@ -678,7 +701,9 @@ form.onsubmit =
       }
 
 
-      // Save signatures
+      // ------------------------------------------------------
+      // SIGNATURES
+      // ------------------------------------------------------
 
       x.contractorSignature =
         $('#contractorSignature')
@@ -694,21 +719,19 @@ form.onsubmit =
           );
 
 
-      // Keep previously saved photos
+      // ------------------------------------------------------
+      // EXISTING PHOTOS
+      // ------------------------------------------------------
 
-      if (editing) {
-
-        x.photos =
-          editing.photos || '';
-
-      } else {
-
-        x.photos = '';
-
-      }
+      x.photos =
+        editing?.photos
+          ? [...editing.photos]
+          : [];
 
 
-      // Save new photos
+      // ------------------------------------------------------
+      // NEW PHOTOS
+      // ------------------------------------------------------
 
       const files =
         Array.from(
@@ -716,32 +739,43 @@ form.onsubmit =
         );
 
 
-      if (
-        files.length > 0
+      for (
+        const file
+        of files
       ) {
 
-        const newPhotos =
-          await convertPhotosToData(
-            files
+        if (
+          !file.type.startsWith(
+            'image/'
+          )
+        ) {
+
+          continue;
+
+        }
+
+
+        const photoUrl =
+          await uploadPhoto(
+            file,
+            x.id
           );
 
 
-        const oldPhotos =
-          x.photos
-            ? x.photos.split('|')
-            : [];
+        if (photoUrl) {
 
+          x.photos.push(
+            photoUrl
+          );
 
-        x.photos =
-          [
-            ...oldPhotos,
-            ...newPhotos
-          ]
-          .filter(Boolean)
-          .join('|');
+        }
 
       }
 
+
+      // ------------------------------------------------------
+      // SAVE DATABASE RECORD
+      // ------------------------------------------------------
 
       const databaseRecord =
         toDatabase(x);
@@ -791,6 +825,7 @@ form.onsubmit =
 
       await loadRecords();
 
+
     } catch (error) {
 
       console.error(
@@ -809,165 +844,78 @@ form.onsubmit =
 
 
 // ============================================================
-// DELETE
+// UPLOAD PHOTO
 // ============================================================
 
-$('#delete').onclick =
-  async () => {
-
-    if (!editing) {
-      return;
-    }
-
-
-    if (
-      !confirm(
-        'Delete this handover record?'
-      )
-    ) {
-
-      return;
-
-    }
-
-
-    try {
-
-      const {
-        error
-      } =
-        await supabaseClient
-          .from('handovers')
-          .delete()
-          .eq(
-            'id',
-            editing.id
-          );
-
-
-      if (error) {
-        throw error;
-      }
-
-
-      dlg.close();
-
-
-      await loadRecords();
-
-    } catch (error) {
-
-      console.error(
-        'Delete error:',
-        error
-      );
-
-
-      alert(
-        'There was a problem deleting the handover.'
-      );
-
-    }
-
-  };
-
-
-// ============================================================
-// FILTERS
-// ============================================================
-
-document
-  .querySelectorAll(
-    '[data-filter]'
-  )
-  .forEach(button => {
-
-    button.onclick =
-      () => {
-
-        filter =
-          button.dataset.filter;
-
-
-        document
-          .querySelectorAll(
-            '[data-filter]'
-          )
-          .forEach(x => {
-
-            x.classList.toggle(
-              'active',
-              x === button
-            );
-
-          });
-
-
-        render();
-
-      };
-
-  });
-
-
-// ============================================================
-// SEARCH
-// ============================================================
-
-$('#search').oninput =
-  render;
-
-
-// ============================================================
-// CONVERT PHOTOS TO DATA
-// ============================================================
-
-async function convertPhotosToData(
-  files
+async function uploadPhoto(
+  file,
+  handoverId
 ) {
 
-  const photos = [];
+  const extension =
+    (
+      file.name
+        .split('.')
+        .pop() ||
+      'jpg'
+    )
+      .toLowerCase();
 
 
-  for (
-    const file
-    of files
-  ) {
+  const filename =
+    `${handoverId}/${crypto.randomUUID()}.${extension}`;
 
-    if (
-      !file.type.startsWith(
-        'image/'
+
+  const {
+    error
+  } =
+    await supabaseClient
+      .storage
+      .from(
+        PHOTO_BUCKET
       )
-    ) {
+      .upload(
+        filename,
+        file,
+        {
+          cacheControl:
+            '3600',
 
-      continue;
-
-    }
-
-
-    const data =
-      await readFileAsDataURL(
-        file
+          upsert:
+            false
+        }
       );
 
 
-    photos.push(
-      data
-    );
-
+  if (error) {
+    throw error;
   }
 
 
-  return photos;
+  const {
+    data
+  } =
+    supabaseClient
+      .storage
+      .from(
+        PHOTO_BUCKET
+      )
+      .getPublicUrl(
+        filename
+      );
+
+
+  return data.publicUrl;
+
 }
 
 
 // ============================================================
-// DISPLAY SAVED PHOTOS
+// SHOW SAVED PHOTOS
 // ============================================================
 
 function showSavedPhotos(
-  photoString
+  photos
 ) {
 
   const preview =
@@ -977,19 +925,17 @@ function showSavedPhotos(
   preview.innerHTML = '';
 
 
-  if (!photoString) {
+  if (
+    !Array.isArray(photos)
+  ) {
+
     return;
+
   }
 
 
-  const photos =
-    photoString
-      .split('|')
-      .filter(Boolean);
-
-
   photos.forEach(
-    photo => {
+    url => {
 
       const img =
         document.createElement(
@@ -998,7 +944,7 @@ function showSavedPhotos(
 
 
       img.src =
-        photo;
+        url;
 
 
       img.style.width =
@@ -1035,11 +981,12 @@ function showSavedPhotos(
 
     }
   );
+
 }
 
 
 // ============================================================
-// NEW PHOTO PREVIEW
+// PHOTO PREVIEW
 // ============================================================
 
 $('#photos').onchange =
@@ -1117,6 +1064,204 @@ $('#photos').onchange =
     );
 
   };
+
+
+// ============================================================
+// DELETE HANDOVER
+// ============================================================
+
+$('#delete').onclick =
+  async () => {
+
+    if (!editing) {
+      return;
+    }
+
+
+    if (
+      !confirm(
+        'Delete this handover record?'
+      )
+    ) {
+
+      return;
+
+    }
+
+
+    try {
+
+      // Delete photos from Storage
+
+      if (
+        Array.isArray(
+          editing.photos
+        )
+      ) {
+
+        for (
+          const url
+          of editing.photos
+        ) {
+
+          await deletePhoto(
+            url
+          );
+
+        }
+
+      }
+
+
+      // Delete database record
+
+      const {
+        error
+      } =
+        await supabaseClient
+          .from('handovers')
+          .delete()
+          .eq(
+            'id',
+            editing.id
+          );
+
+
+      if (error) {
+        throw error;
+      }
+
+
+      dlg.close();
+
+
+      await loadRecords();
+
+
+    } catch (error) {
+
+      console.error(
+        'Delete error:',
+        error
+      );
+
+
+      alert(
+        'There was a problem deleting the handover.'
+      );
+
+    }
+
+  };
+
+
+// ============================================================
+// DELETE PHOTO
+// ============================================================
+
+async function deletePhoto(
+  url
+) {
+
+  try {
+
+    const marker =
+      `/object/public/${PHOTO_BUCKET}/`;
+
+
+    const index =
+      url.indexOf(
+        marker
+      );
+
+
+    if (
+      index === -1
+    ) {
+
+      return;
+
+    }
+
+
+    const path =
+      decodeURIComponent(
+        url.substring(
+          index +
+          marker.length
+        )
+      );
+
+
+    await supabaseClient
+      .storage
+      .from(
+        PHOTO_BUCKET
+      )
+      .remove(
+        [path]
+      );
+
+  } catch (error) {
+
+    console.error(
+      'Photo delete error:',
+      error
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// FILTERS
+// ============================================================
+
+document
+  .querySelectorAll(
+    '[data-filter]'
+  )
+  .forEach(
+    button => {
+
+      button.onclick =
+        () => {
+
+          filter =
+            button.dataset.filter;
+
+
+          document
+            .querySelectorAll(
+              '[data-filter]'
+            )
+            .forEach(
+              x => {
+
+                x.classList.toggle(
+                  'active',
+                  x === button
+                );
+
+              }
+            );
+
+
+          render();
+
+        };
+
+    }
+  );
+
+
+// ============================================================
+// SEARCH
+// ============================================================
+
+$('#search').oninput =
+  render;
 
 
 // ============================================================
@@ -1339,7 +1484,7 @@ function clearSignature(
 
 
 // ============================================================
-// RESTORE SAVED SIGNATURE
+// RESTORE SIGNATURE
 // ============================================================
 
 function drawSavedSignature(
@@ -1391,11 +1536,12 @@ function drawSavedSignature(
 
   img.src =
     dataUrl;
+
 }
 
 
 // ============================================================
-// SET UP SIGNATURES
+// INITIALISE SIGNATURES
 // ============================================================
 
 setupSignature(
@@ -1409,7 +1555,7 @@ setupSignature(
 
 
 // ============================================================
-// CLEAR BUTTONS
+// CLEAR SIGNATURE BUTTONS
 // ============================================================
 
 $('#clearContractorSignature')
@@ -1558,7 +1704,9 @@ $('#import').onchange =
 
         } catch (error) {
 
-          console.error(error);
+          console.error(
+            error
+          );
 
 
           alert(
@@ -1711,13 +1859,10 @@ $('#generatePdf').onclick =
 
         const lines =
           pdf.splitTextToSize(
-
             value || '',
-
             pageWidth -
               margin * 2 -
               35
-
           );
 
 
@@ -1826,12 +1971,9 @@ $('#generatePdf').onclick =
 
       const descriptionLines =
         pdf.splitTextToSize(
-
           data.description || '',
-
           pageWidth -
             margin * 2
-
         );
 
 
@@ -1878,12 +2020,9 @@ $('#generatePdf').onclick =
 
       const noteLines =
         pdf.splitTextToSize(
-
           data.notes || '',
-
           pageWidth -
             margin * 2
-
         );
 
 
@@ -2008,23 +2147,12 @@ $('#generatePdf').onclick =
       // PHOTOS
       // ======================================================
 
-      const newPhotoFiles =
-        Array.from(
-          $('#photos').files
-        );
-
-
-      const savedPhotos =
-        editing?.photos
-          ? editing.photos
-              .split('|')
-              .filter(Boolean)
-          : [];
+      const photoUrls =
+        editing?.photos || [];
 
 
       if (
-        newPhotoFiles.length ||
-        savedPhotos.length
+        photoUrls.length > 0
       ) {
 
         pdf.addPage();
@@ -2054,55 +2182,35 @@ $('#generatePdf').onclick =
         y += 10;
 
 
-        // NEW PHOTOS
-
         for (
-          const file
-          of newPhotoFiles
+          const url
+          of photoUrls
         ) {
 
-          if (
-            !file.type.startsWith(
-              'image/'
-            )
-          ) {
+          try {
 
-            continue;
+            const imageData =
+              await loadImageForPdf(
+                url
+              );
+
+
+            y =
+              await addImageToPdf(
+                pdf,
+                imageData,
+                y,
+                margin
+              );
+
+          } catch (error) {
+
+            console.error(
+              'Could not add photo to PDF:',
+              error
+            );
 
           }
-
-
-          const imageData =
-            await readFileAsDataURL(
-              file
-            );
-
-
-          y =
-            await addImageToPdf(
-              pdf,
-              imageData,
-              y,
-              margin
-            );
-
-        }
-
-
-        // SAVED PHOTOS
-
-        for (
-          const imageData
-          of savedPhotos
-        ) {
-
-          y =
-            await addImageToPdf(
-              pdf,
-              imageData,
-              y,
-              margin
-            );
 
         }
 
@@ -2148,6 +2256,81 @@ $('#generatePdf').onclick =
     }
 
   };
+
+
+// ============================================================
+// LOAD IMAGE FOR PDF
+// ============================================================
+
+function loadImageForPdf(
+  url
+) {
+
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+
+      const img =
+        new Image();
+
+
+      img.crossOrigin =
+        'anonymous';
+
+
+      img.onload =
+        () => {
+
+          const canvas =
+            document.createElement(
+              'canvas'
+            );
+
+
+          canvas.width =
+            img.naturalWidth;
+
+
+          canvas.height =
+            img.naturalHeight;
+
+
+          const ctx =
+            canvas.getContext(
+              '2d'
+            );
+
+
+          ctx.drawImage(
+            img,
+            0,
+            0
+          );
+
+
+          resolve(
+            canvas.toDataURL(
+              'image/jpeg',
+              0.85
+            )
+          );
+
+        };
+
+
+      img.onerror =
+        reject;
+
+
+      img.src =
+        url;
+
+    }
+  );
+
+}
 
 
 // ============================================================
@@ -2251,44 +2434,6 @@ async function addImageToPdf(
   return y +
     height +
     8;
-}
-
-
-// ============================================================
-// FILE READER
-// ============================================================
-
-function readFileAsDataURL(
-  file
-) {
-
-  return new Promise(
-    (
-      resolve,
-      reject
-    ) => {
-
-      const reader =
-        new FileReader();
-
-
-      reader.onload =
-        () =>
-          resolve(
-            reader.result
-          );
-
-
-      reader.onerror =
-        reject;
-
-
-      reader.readAsDataURL(
-        file
-      );
-
-    }
-  );
 
 }
 
