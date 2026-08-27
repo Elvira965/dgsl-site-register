@@ -15,12 +15,16 @@
     <p class="eyebrow">DGSL BUILDING</p>
     <h1>Site Handover Register</h1>
   </div>
-  <button id="newZone" class="primary">+ New handover</button>
+
+  <button id="newZone" class="primary">
+    + New handover
+  </button>
 </header>
 
 <main>
 
 <section class="cards" aria-label="Site summary">
+
   <article>
     <span>Total zones</span>
     <strong id="total">0</strong>
@@ -40,17 +44,21 @@
     <span>On hold</span>
     <strong id="hold">0</strong>
   </article>
+
 </section>
+
 
 <section class="panel">
 
   <div class="toolbar">
+
     <div>
       <h2>Zone register</h2>
       <p>Every handover is saved on this device.</p>
     </div>
 
     <div class="actions">
+
       <input
         id="search"
         type="search"
@@ -58,26 +66,59 @@
         aria-label="Search register"
       >
 
-      <button id="export">Export backup</button>
+      <button id="export">
+        Export backup
+      </button>
 
       <label class="button">
         Import backup
-        <input id="import" type="file" accept="application/json" hidden>
+
+        <input
+          id="import"
+          type="file"
+          accept="application/json"
+          hidden
+        >
+
       </label>
+
     </div>
+
   </div>
+
 
   <div class="filters">
-    <button data-filter="All" class="active">All</button>
-    <button data-filter="In Progress">In Progress</button>
-    <button data-filter="Closed Out">Closed Out</button>
-    <button data-filter="On Hold">On Hold</button>
+
+    <button
+      data-filter="All"
+      class="active"
+    >
+      All
+    </button>
+
+    <button data-filter="In Progress">
+      In Progress
+    </button>
+
+    <button data-filter="Closed Out">
+      Closed Out
+    </button>
+
+    <button data-filter="On Hold">
+      On Hold
+    </button>
+
   </div>
 
+
   <div class="table-wrap">
+
     <table>
+
       <thead>
+
         <tr>
+
           <th>Zone / Area</th>
           <th>Block / Level</th>
           <th>Trade</th>
@@ -85,14 +126,18 @@
           <th>Work description</th>
           <th>Status</th>
           <th>Handover</th>
-          <th>Closed out</th>
           <th></th>
+
         </tr>
+
       </thead>
 
       <tbody id="rows"></tbody>
+
     </table>
+
   </div>
+
 
   <p id="empty" class="empty">
     No handovers yet. Add your first zone to start the register.
@@ -103,6 +148,10 @@
 </main>
 
 
+<!-- =====================================================
+     HANDOVER FORM
+===================================================== -->
+
 <dialog id="formDialog">
 
 <form id="handoverForm" method="dialog">
@@ -110,8 +159,15 @@
   <div class="form-head">
 
     <div>
-      <p class="eyebrow">HANDOVER RECORD</p>
-      <h2 id="formTitle">New handover</h2>
+
+      <p class="eyebrow">
+        HANDOVER RECORD
+      </p>
+
+      <h2 id="formTitle">
+        New handover
+      </h2>
+
     </div>
 
     <button
@@ -119,122 +175,180 @@
       id="cancel"
       class="icon"
       aria-label="Close"
-    >×</button>
+    >
+      ×
+    </button>
 
   </div>
 
 
   <div class="form-grid">
 
+
     <label>
+
       Zone / area*
+
       <input
         name="zone"
         required
         placeholder="e.g. Apartment 201"
       >
+
     </label>
 
 
     <label>
+
       Block / level
+
       <input
         name="level"
         placeholder="e.g. Block A / Level 2"
       >
+
     </label>
 
 
     <label>
+
       Drawing / reference
+
       <input
         name="drawing"
         placeholder="Drawing number"
       >
+
     </label>
 
 
     <label>
+
       Trade / workstream
+
       <select name="trade">
+
         <option>General</option>
         <option>Structure</option>
         <option>MEP</option>
         <option>Finishes</option>
         <option>External Works</option>
+
       </select>
+
     </label>
 
 
     <label>
+
       Contractor
+
       <input name="contractor">
+
     </label>
 
 
     <label>
+
       Site foreman
+
       <input name="foreman">
+
     </label>
 
 
     <label class="wide">
+
       Work description
+
       <textarea
         name="description"
         rows="3"
         placeholder="Describe the works handed over"
       ></textarea>
+
     </label>
 
 
     <label>
+
       Status
+
       <select name="status">
+
         <option>Not Started</option>
-        <option selected>In Progress</option>
-        <option>On Hold</option>
-        <option>Closed Out</option>
+
+        <option selected>
+          In Progress
+        </option>
+
+        <option>
+          On Hold
+        </option>
+
+        <option>
+          Closed Out
+        </option>
+
       </select>
+
     </label>
 
 
     <label>
+
       Handover state
+
       <select name="handover">
-        <option>Not Submitted</option>
-        <option>Handover Submitted</option>
-        <option>Take Back Signed</option>
+
+        <option>
+          Not Submitted
+        </option>
+
+        <option>
+          Handover Submitted
+        </option>
+
+        <option>
+          Take Back Signed
+        </option>
+
       </select>
+
     </label>
 
 
     <label>
+
       Handover date
-      <input name="handoverDate" type="date">
-    </label>
 
+      <input
+        name="handoverDate"
+        type="date"
+      >
 
-    <label>
-      Closed out date
-      <input name="closedDate" type="date">
     </label>
 
 
     <label class="wide">
+
       Notes / outstanding items
+
       <textarea
         name="notes"
         rows="3"
         placeholder="Enter any outstanding items, snags or notes"
       ></textarea>
+
     </label>
 
 
     <!-- PHOTOS -->
 
     <label class="wide">
+
       Site photos
+
       <input
         id="photos"
         name="photos"
@@ -247,6 +361,7 @@
       <small>
         You can select or take multiple site photos.
       </small>
+
     </label>
 
 
@@ -271,20 +386,30 @@
 
 
     <label>
+
       Contractor / Foreman name
+
       <input name="contractorSigner">
+
     </label>
 
 
     <label>
+
       DGSL representative
+
       <input name="dgslSigner">
+
     </label>
 
 
     <div class="wide">
 
-      <p><strong>Contractor / Foreman signature</strong></p>
+      <p>
+        <strong>
+          Contractor / Foreman signature
+        </strong>
+      </p>
 
       <canvas
         id="contractorSignature"
@@ -305,7 +430,11 @@
 
     <div class="wide">
 
-      <p><strong>DGSL representative signature</strong></p>
+      <p>
+        <strong>
+          DGSL representative signature
+        </strong>
+      </p>
 
       <canvas
         id="dgslSignature"
@@ -322,6 +451,7 @@
       </button>
 
     </div>
+
 
   </div>
 
