@@ -851,10 +851,12 @@ function open(x) {
 
   form.reset();
 
+selectedPhotos = [];
 
-  clearSignature(
-    $('#contractorSignature')
-  );
+
+clearSignature(
+  $('#contractorSignature')
+);
 
 
   clearSignature(
@@ -1187,54 +1189,46 @@ if (
 
 
       // ------------------------------------------------------
-      // NEW PHOTOS
-      // ------------------------------------------------------
+// NEW PHOTOS
+// ------------------------------------------------------
 
-      const photoInput =
-        $('#photos');
+const files =
+  selectedPhotos || [];
 
+for (
+  const file
+  of files
+) {
 
-      const files =
-        photoInput
-          ? Array.from(
-              photoInput.files
-            )
-          : [];
+  if (
+    !file.type.startsWith(
+      'image/'
+    )
+  ) {
 
+    continue;
 
-      for (
-        const file
-        of files
-      ) {
+  }
 
-        if (
-          !file.type.startsWith(
-            'image/'
-          )
-        ) {
+  const photoUrl =
+    await uploadPhoto(
+      file,
+      x.id
+    );
 
-          continue;
+  if (photoUrl) {
 
-        }
+    x.photos.push(
+      photoUrl
+    );
 
+  }
 
-        const photoUrl =
-          await uploadPhoto(
-            file,
-            x.id
-          );
+}
 
-
-        if (photoUrl) {
-
-          x.photos.push(
-            photoUrl
-          );
-
-        }
-
-      }
-
+// Clear the temporary photo list
+// after the photos have been uploaded.
+selectedPhotos = [];
 
       // ------------------------------------------------------
       // DATABASE RECORD
@@ -1474,86 +1468,114 @@ function showSavedPhotos(
 // PHOTO PREVIEW
 // ============================================================
 
-$('#photos').onchange =
-  e => {
+function updatePhotoPreview() {
 
-    const preview =
-      $('#photoPreview');
+  const preview =
+    $('#photoPreview');
 
+  if (!preview) {
+    return;
+  }
 
-    preview.innerHTML =
-      '';
+  preview.innerHTML =
+    '';
 
+  selectedPhotos.forEach(
+    file => {
 
-    const files =
-      Array.from(
-        e.target.files
-      );
+      if (
+        !file.type.startsWith(
+          'image/'
+        )
+      ) {
 
-
-    files.forEach(
-      file => {
-
-        if (
-          !file.type.startsWith(
-            'image/'
-          )
-        ) {
-
-          return;
-
-        }
-
-
-        const img =
-          document.createElement(
-            'img'
-          );
-
-
-        img.style.width =
-          '110px';
-
-
-        img.style.height =
-          '80px';
-
-
-        img.style.objectFit =
-          'cover';
-
-
-        img.style.borderRadius =
-          '6px';
-
-
-        img.style.border =
-          '1px solid #ccc';
-
-
-        img.style.marginRight =
-          '6px';
-
-
-        img.style.marginBottom =
-          '6px';
-
-
-        img.src =
-          URL.createObjectURL(
-            file
-          );
-
-
-        preview.appendChild(
-          img
-        );
+        return;
 
       }
-    );
 
-  };
+      const img =
+        document.createElement(
+          'img'
+        );
 
+      img.style.width =
+        '110px';
+
+      img.style.height =
+        '80px';
+
+      img.style.objectFit =
+        'cover';
+
+      img.style.borderRadius =
+        '6px';
+
+      img.style.border =
+        '1px solid #ccc';
+
+      img.style.marginRight =
+        '6px';
+
+      img.style.marginBottom =
+        '6px';
+
+      img.src =
+        URL.createObjectURL(
+          file
+        );
+
+      preview.appendChild(
+        img
+      );
+
+    }
+  );
+
+}
+
+
+// Gallery photos
+if (photos) {
+
+  photos.addEventListener(
+    'change',
+    function () {
+
+      addSelectedPhotos(
+        this.files
+      );
+
+      this.value =
+        '';
+
+      updatePhotoPreview();
+
+    }
+  );
+
+}
+
+
+// Camera photos
+if (takePhoto) {
+
+  takePhoto.addEventListener(
+    'change',
+    function () {
+
+      addSelectedPhotos(
+        this.files
+      );
+
+      this.value =
+        '';
+
+      updatePhotoPreview();
+
+    }
+  );
+
+}
 
 // ============================================================
 // DELETE HANDOVER
@@ -3555,18 +3577,151 @@ if (
     function () {
 
       const choice =
-        window.confirm(
-          'OK = Take a photo\n\n' +
-          'Cancel = Choose from gallery'
-        );
+        document.createElement('div');
 
-      if (choice) {
+      choice.style.position = 'fixed';
+      choice.style.left = '0';
+      choice.style.top = '0';
+      choice.style.right = '0';
+      choice.style.bottom = '0';
+      choice.style.background = 'rgba(0,0,0,0.5)';
+      choice.style.display = 'flex';
+      choice.style.alignItems = 'center';
+      choice.style.justifyContent = 'center';
+      choice.style.zIndex = '9999';
+      choice.style.padding = '20px';
+      choice.style.boxSizing = 'border-box';
 
-        takePhoto.click();
 
-      } else {
+      const box =
+        document.createElement('div');
 
-        photos.click();
+      box.style.background = '#fff';
+      box.style.borderRadius = '12px';
+      box.style.padding = '20px';
+      box.style.width = '100%';
+      box.style.maxWidth = '360px';
+      box.style.boxSizing = 'border-box';
+      box.style.textAlign = 'center';
+
+
+      const title =
+        document.createElement('h3');
+
+      title.textContent =
+        'Add site photo';
+
+      title.style.marginTop = '0';
+      title.style.marginBottom = '18px';
+
+
+      const cameraButton =
+        document.createElement('button');
+
+      cameraButton.type = 'button';
+
+      cameraButton.textContent =
+        'Take a photo';
+
+      cameraButton.style.width = '100%';
+      cameraButton.style.marginBottom = '10px';
+
+
+      const galleryButton =
+        document.createElement('button');
+
+      galleryButton.type = 'button';
+
+      galleryButton.textContent =
+        'Choose from gallery';
+
+      galleryButton.style.width = '100%';
+      galleryButton.style.marginBottom = '10px';
+
+
+      const closeButton =
+        document.createElement('button');
+
+      closeButton.type = 'button';
+
+      closeButton.textContent =
+        'Close';
+
+      closeButton.style.width = '100%';
+
+
+      cameraButton.addEventListener(
+        'click',
+        function () {
+
+          choice.remove();
+
+          takePhoto.click();
+
+        }
+      );
+
+
+      galleryButton.addEventListener(
+        'click',
+        function () {
+
+          choice.remove();
+
+          photos.click();
+
+        }
+      );
+
+
+      closeButton.addEventListener(
+        'click',
+        function () {
+
+          choice.remove();
+
+        }
+      );
+
+
+      box.appendChild(title);
+      box.appendChild(cameraButton);
+      box.appendChild(galleryButton);
+      box.appendChild(closeButton);
+
+      choice.appendChild(box);
+
+      document.body.appendChild(choice);
+
+    }
+  );
+
+}
+
+
+// ============================================================
+// ADD PHOTOS ONE AT A TIME WITHOUT REPLACING PREVIOUS PHOTOS
+// ============================================================
+
+let selectedPhotos = [];
+
+
+function addSelectedPhotos(fileList) {
+
+  if (!fileList) {
+    return;
+  }
+
+  Array.from(fileList).forEach(
+    file => {
+
+      if (
+        file &&
+        file.type &&
+        file.type.startsWith('image/')
+      ) {
+
+        selectedPhotos.push(file);
 
       }
 
@@ -3574,3 +3729,5 @@ if (
   );
 
 }
+
+
