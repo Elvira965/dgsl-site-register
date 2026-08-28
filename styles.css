@@ -938,3 +938,13 @@ dialog::backdrop {
 }
 
 
+/* Make date fields match the other form fields */
+.form-grid label input[type="date"] {
+  width: 100%;
+  height: auto;
+  min-height: 0;
+  padding: 9px 10px;
+  margin-top: 6px;
+  box-sizing: border-box;
+  line-height: normal;
+}
