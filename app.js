@@ -741,7 +741,89 @@ document
     }
   );
 
+// ============================================================
+// OTHER DROPDOWN BEHAVIOUR
+// ============================================================
 
+function setupOtherDropdown(
+  selectName,
+  otherId
+) {
+
+  const select =
+    form.elements[selectName];
+
+  const other =
+    document.getElementById(otherId);
+
+  if (!select || !other) {
+    return;
+  }
+
+  select.addEventListener(
+    'change',
+    function () {
+
+      if (this.value === 'Other') {
+
+        other.style.display = '';
+        other.disabled = false;
+
+        other.focus();
+
+      } else {
+
+        other.style.display = 'none';
+        other.disabled = true;
+        other.value = '';
+
+      }
+
+    }
+  );
+
+}
+
+
+setupOtherDropdown(
+  'level',
+  'levelOther'
+);
+
+setupOtherDropdown(
+  'trade',
+  'tradeOther'
+);
+
+setupOtherDropdown(
+  'foreman',
+  'foremanOther'
+);
+
+setupOtherDropdown(
+  'healthSafetyScaffolding',
+  'healthSafetyScaffoldingOther'
+);
+
+setupOtherDropdown(
+  'status',
+  'statusOther'
+);
+
+setupOtherDropdown(
+  'takeBackCompleteDrawings',
+  'takeBackCompleteDrawingsOther'
+);
+
+setupOtherDropdown(
+  'takeBackHousekeeping',
+  'takeBackHousekeepingOther'
+);
+
+setupOtherDropdown(
+  'takeBackSnagCompleted',
+  'takeBackSnagCompletedOther'
+);
 // ============================================================
 // OPEN FORM
 // ============================================================
@@ -845,8 +927,65 @@ function open(x) {
     }
 
 
+    if (
+  element.tagName === 'SELECT' &&
+  element.value !== value
+) {
+
+  const otherField =
+    document.getElementById(
+      element.name + 'Other'
+    );
+
+  const optionExists =
+    Array.from(element.options)
+      .some(
+        option =>
+          option.value === value
+      );
+
+  if (optionExists) {
+
     element.value =
       value || '';
+
+    if (otherField) {
+      otherField.style.display =
+        'none';
+
+      otherField.disabled =
+        true;
+
+      otherField.value =
+        '';
+    }
+
+  } else {
+
+    element.value =
+      'Other';
+
+    if (otherField) {
+
+      otherField.style.display =
+        '';
+
+      otherField.disabled =
+        false;
+
+      otherField.value =
+        value || '';
+
+    }
+
+  }
+
+} else {
+
+  element.value =
+    value || '';
+
+}
 
   }
 
@@ -932,6 +1071,78 @@ form.onsubmit =
         Object.fromEntries(
           new FormData(form)
         );
+      if (
+  form.elements.level?.value === 'Other'
+) {
+  x.level =
+    document.getElementById(
+      'levelOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.trade?.value === 'Other'
+) {
+  x.trade =
+    document.getElementById(
+      'tradeOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.foreman?.value === 'Other'
+) {
+  x.foreman =
+    document.getElementById(
+      'foremanOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.healthSafetyScaffolding?.value === 'Other'
+) {
+  x.healthSafetyScaffolding =
+    document.getElementById(
+      'healthSafetyScaffoldingOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.status?.value === 'Other'
+) {
+  x.status =
+    document.getElementById(
+      'statusOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.takeBackCompleteDrawings?.value === 'Other'
+) {
+  x.takeBackCompleteDrawings =
+    document.getElementById(
+      'takeBackCompleteDrawingsOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.takeBackHousekeeping?.value === 'Other'
+) {
+  x.takeBackHousekeeping =
+    document.getElementById(
+      'takeBackHousekeepingOther'
+    ).value || 'Other';
+}
+
+if (
+  form.elements.takeBackSnagCompleted?.value === 'Other'
+) {
+  x.takeBackSnagCompleted =
+    document.getElementById(
+      'takeBackSnagCompletedOther'
+    ).value || 'Other';
+}
+      
 
 
       x.id =
@@ -2141,20 +2352,43 @@ async function generatePdf() {
   zone: form.elements.zone?.value || '',
   contractor: form.elements.contractor?.value || '',
   drawing: form.elements.drawing?.value || '',
-  level: form.elements.level?.value || '',
-  trade: form.elements.trade?.value || '',
-  foreman: form.elements.foreman?.value || '',
-  healthSafetyScaffolding:
-    form.elements.healthSafetyScaffolding?.value || '',
+  level:
+  form.elements.level?.value === 'Other'
+    ? document.getElementById('levelOther').value || 'Other'
+    : form.elements.level?.value || '',
+
+trade:
+  form.elements.trade?.value === 'Other'
+    ? document.getElementById('tradeOther').value || 'Other'
+    : form.elements.trade?.value || '',
+
+foreman:
+  form.elements.foreman?.value === 'Other'
+    ? document.getElementById('foremanOther').value || 'Other'
+    : form.elements.foreman?.value || '',
+
+healthSafetyScaffolding:
+  form.elements.healthSafetyScaffolding?.value === 'Other'
+    ? document.getElementById('healthSafetyScaffoldingOther').value || 'Other'
+    : form.elements.healthSafetyScaffolding?.value || '',
   description: form.elements.description?.value || '',
-  status: form.elements.status?.value || '',
+  status:
+  form.elements.status?.value === 'Other'
+    ? document.getElementById('statusOther').value || 'Other'
+    : form.elements.status?.value || '',
   handoverDate: form.elements.handoverDate?.value || '',
   takeBackCompleteDrawings:
-    form.elements.takeBackCompleteDrawings?.value || '',
+  form.elements.takeBackCompleteDrawings?.value === 'Other'
+    ? document.getElementById('takeBackCompleteDrawingsOther').value || 'Other'
+    : form.elements.takeBackCompleteDrawings?.value || '',
   takeBackHousekeeping:
-    form.elements.takeBackHousekeeping?.value || '',
+  form.elements.takeBackHousekeeping?.value === 'Other'
+    ? document.getElementById('takeBackHousekeepingOther').value || 'Other'
+    : form.elements.takeBackHousekeeping?.value || '',
   takeBackSnagCompleted:
-    form.elements.takeBackSnagCompleted?.value || '',
+  form.elements.takeBackSnagCompleted?.value === 'Other'
+    ? document.getElementById('takeBackSnagCompletedOther').value || 'Other'
+    : form.elements.takeBackSnagCompleted?.value || '',
   notes: form.elements.notes?.value || '',
   contractorSigner:
     form.elements.contractorSigner?.value || '',
