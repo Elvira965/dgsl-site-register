@@ -3553,26 +3553,54 @@ startApp();
 
 
 // ============================================================
-// PHOTO SOURCE SELECTION
+// PHOTO SOURCE SELECTION AND PHOTO ACCUMULATION
 // ============================================================
 
-const choosePhotos =
+const choosePhotosButton =
   document.getElementById('choosePhotos');
 
-const photos =
+const galleryPhotoInput =
   document.getElementById('photos');
 
-const takePhoto =
+const cameraPhotoInput =
   document.getElementById('takePhoto');
 
 
+let selectedPhotos = [];
+
+
+function addSelectedPhotos(fileList) {
+
+  if (!fileList) {
+    return;
+  }
+
+  Array.from(fileList).forEach(
+    file => {
+
+      if (
+        file &&
+        file.type &&
+        file.type.startsWith('image/')
+      ) {
+
+        selectedPhotos.push(file);
+
+      }
+
+    }
+  );
+
+}
+
+
 if (
-  choosePhotos &&
-  photos &&
-  takePhoto
+  choosePhotosButton &&
+  galleryPhotoInput &&
+  cameraPhotoInput
 ) {
 
-  choosePhotos.addEventListener(
+  choosePhotosButton.addEventListener(
     'click',
     function () {
 
@@ -3584,7 +3612,8 @@ if (
       choice.style.top = '0';
       choice.style.right = '0';
       choice.style.bottom = '0';
-      choice.style.background = 'rgba(0,0,0,0.5)';
+      choice.style.background =
+        'rgba(0,0,0,0.5)';
       choice.style.display = 'flex';
       choice.style.alignItems = 'center';
       choice.style.justifyContent = 'center';
@@ -3611,43 +3640,50 @@ if (
       title.textContent =
         'Add site photo';
 
-      title.style.marginTop = '0';
-      title.style.marginBottom = '18px';
-
 
       const cameraButton =
         document.createElement('button');
 
-      cameraButton.type = 'button';
+      cameraButton.type =
+        'button';
 
       cameraButton.textContent =
         'Take a photo';
 
-      cameraButton.style.width = '100%';
-      cameraButton.style.marginBottom = '10px';
+      cameraButton.style.width =
+        '100%';
+
+      cameraButton.style.marginBottom =
+        '10px';
 
 
       const galleryButton =
         document.createElement('button');
 
-      galleryButton.type = 'button';
+      galleryButton.type =
+        'button';
 
       galleryButton.textContent =
         'Choose from gallery';
 
-      galleryButton.style.width = '100%';
-      galleryButton.style.marginBottom = '10px';
+      galleryButton.style.width =
+        '100%';
+
+      galleryButton.style.marginBottom =
+        '10px';
 
 
       const closeButton =
         document.createElement('button');
 
-      closeButton.type = 'button';
+      closeButton.type =
+        'button';
 
       closeButton.textContent =
         'Close';
 
-      closeButton.style.width = '100%';
+      closeButton.style.width =
+        '100%';
 
 
       cameraButton.addEventListener(
@@ -3656,7 +3692,7 @@ if (
 
           choice.remove();
 
-          takePhoto.click();
+          cameraPhotoInput.click();
 
         }
       );
@@ -3668,7 +3704,7 @@ if (
 
           choice.remove();
 
-          photos.click();
+          galleryPhotoInput.click();
 
         }
       );
@@ -3699,31 +3735,17 @@ if (
 }
 
 
-// ============================================================
-// ADD PHOTOS ONE AT A TIME WITHOUT REPLACING PREVIOUS PHOTOS
-// ============================================================
+if (galleryPhotoInput) {
 
-let selectedPhotos = [];
+  galleryPhotoInput.addEventListener(
+    'change',
+    function () {
 
+      addSelectedPhotos(
+        this.files
+      );
 
-function addSelectedPhotos(fileList) {
-
-  if (!fileList) {
-    return;
-  }
-
-  Array.from(fileList).forEach(
-    file => {
-
-      if (
-        file &&
-        file.type &&
-        file.type.startsWith('image/')
-      ) {
-
-        selectedPhotos.push(file);
-
-      }
+      this.value = '';
 
     }
   );
@@ -3731,3 +3753,19 @@ function addSelectedPhotos(fileList) {
 }
 
 
+if (cameraPhotoInput) {
+
+  cameraPhotoInput.addEventListener(
+    'change',
+    function () {
+
+      addSelectedPhotos(
+        this.files
+      );
+
+      this.value = '';
+
+    }
+  );
+
+}
