@@ -683,6 +683,18 @@
 
 <label>
 
+  Take Back Date
+
+  <input
+    name="takeBackDate"
+    type="date"
+  >
+
+</label>
+
+
+<label>
+
   Housekeeping at time of Take Back
 
   <select name="takeBackHousekeeping">
@@ -717,23 +729,9 @@
 
 <label>
 
-  Take Back Date
-
-  <input
-    name="takeBackDate"
-    type="date"
-  >
-
-</label>
-
-
-<label>
-
   DG to Snag completed works
 
   <select name="takeBackSnagCompleted">
-
-    ...
 
     <option
       value="To be completed"
@@ -762,7 +760,6 @@
 
 </label>
 
-
     <!-- NOTES -->
 
     <label class="wide">
@@ -784,14 +781,34 @@
 
       Site photos
 
-      <input
-        id="photos"
-        name="photos"
-        type="file"
-        accept="image/*"
-        multiple
-        capture="environment"
-      >
+      <div>
+
+  <button
+    type="button"
+    id="choosePhotos"
+  >
+    Choose Files
+  </button>
+
+  <input
+    id="photos"
+    name="photos"
+    type="file"
+    accept="image/*"
+    multiple
+    hidden
+  >
+
+  <input
+    id="takePhoto"
+    type="file"
+    accept="image/*"
+    capture="environment"
+    multiple
+    hidden
+  >
+
+</div>
 
       <small>
         You can select or take multiple site photos.
