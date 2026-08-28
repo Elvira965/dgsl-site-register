@@ -420,7 +420,7 @@ function render() {
     records.filter(
       x =>
         x.status ===
-        'Work Permit in progress'
+        'Work Permit Open'
     ).length;
 
 
@@ -428,7 +428,7 @@ function render() {
     records.filter(
       x =>
         x.status ===
-        'Work Permit closed out'
+        'Work Permit Closed'
     ).length;
 
 
@@ -436,7 +436,7 @@ function render() {
     records.filter(
       x =>
         x.status ===
-        'Work Permit on hold'
+        'Work Permit on Hold'
     ).length;
 
 
@@ -583,7 +583,7 @@ function open(x) {
         today(),
 
       status:
-        'Work Permit in progress'
+        'Work Permit Open'
 
     };
 
