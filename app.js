@@ -13,6 +13,9 @@ const SUPABASE_KEY =
 const PHOTO_BUCKET =
   'handover-photos';
 
+const LOGO_FILE =
+  'dgsl-logo.png';
+
 let supabaseClient = null;
 let records = [];
 let editing = null;
@@ -58,6 +61,66 @@ async function loadSupabase() {
       SUPABASE_URL,
       SUPABASE_KEY
     );
+
+}
+
+
+// ============================================================
+// ADD LOGO TO HANDOVER FORM
+// ============================================================
+
+function addLogoToForm() {
+
+  const formHead =
+    form.querySelector('.form-head');
+
+  if (!formHead) {
+    return;
+  }
+
+  if (
+    form.querySelector(
+      '#handoverFormLogo'
+    )
+  ) {
+    return;
+  }
+
+  const logo =
+    document.createElement('img');
+
+  logo.id =
+    'handoverFormLogo';
+
+  logo.src =
+    LOGO_FILE;
+
+  logo.alt =
+    'DGSL Logo';
+
+  logo.style.display =
+    'block';
+
+  logo.style.width =
+    '220px';
+
+  logo.style.maxWidth =
+    '70%';
+
+  logo.style.height =
+    'auto';
+
+  logo.style.objectFit =
+    'contain';
+
+  logo.style.margin =
+    '0 auto 15px auto';
+
+  formHead.parentNode.insertBefore(
+    logo,
+    formHead
+  );
+
 }
 
 
@@ -84,25 +147,35 @@ function fromDatabase(x) {
 
   return {
 
-    id: x.id,
+    id:
+      x.id,
 
-    zone: x.zone || '',
+    zone:
+      x.zone || '',
 
-    level: x.level || '',
+    level:
+      x.level || '',
 
-    drawing: x.drawing || '',
+    drawing:
+      x.drawing || '',
 
-    trade: x.trade || '',
+    trade:
+      x.trade || '',
 
-    contractor: x.contractor || '',
+    contractor:
+      x.contractor || '',
 
-    foreman: x.foreman || '',
+    foreman:
+      x.foreman || '',
 
-    description: x.description || '',
+    description:
+      x.description || '',
 
-    status: x.status || '',
+    status:
+      x.status || '',
 
-    handover: x.handover || '',
+    handover:
+      x.handover || '',
 
     handoverDate:
       x.handover_date || '',
@@ -110,7 +183,8 @@ function fromDatabase(x) {
     closedDate:
       x.closed_date || '',
 
-    notes: x.notes || '',
+    notes:
+      x.notes || '',
 
     contractorSigner:
       x.contractor_signer || '',
@@ -124,7 +198,11 @@ function fromDatabase(x) {
     dgslSignature:
       x.dgsl_signature || '',
 
-    photos: photos
+    photos:
+      photos,
+
+    healthSafetyScaffolding:
+      x.health_safety_scaffolding || ''
 
   };
 
@@ -139,33 +217,44 @@ function toDatabase(x) {
 
   return {
 
-    id: x.id,
+    id:
+      x.id,
 
-    zone: x.zone || null,
+    zone:
+      x.zone || null,
 
-    level: x.level || null,
+    level:
+      x.level || null,
 
-    drawing: x.drawing || null,
+    drawing:
+      x.drawing || null,
 
-    trade: x.trade || null,
+    trade:
+      x.trade || null,
 
-    contractor: x.contractor || null,
+    contractor:
+      x.contractor || null,
 
-    foreman: x.foreman || null,
+    foreman:
+      x.foreman || null,
 
-    description: x.description || null,
+    description:
+      x.description || null,
 
-    status: x.status || null,
+    status:
+      x.status || null,
 
-    handover: x.handover || null,
+    handover:
+      null,
 
     handover_date:
       x.handoverDate || null,
 
     closed_date:
-      x.closedDate || null,
+      null,
 
-    notes: x.notes || null,
+    notes:
+      x.notes || null,
 
     contractor_signer:
       x.contractorSigner || null,
@@ -182,7 +271,10 @@ function toDatabase(x) {
     photos:
       JSON.stringify(
         x.photos || []
-      )
+      ),
+
+    health_safety_scaffolding:
+      x.healthSafetyScaffolding || null
 
   };
 
@@ -238,29 +330,20 @@ async function loadRecords() {
 function setupRealtime() {
 
   supabaseClient
-
-    .channel(
-      'handovers-live'
-    )
-
+    .channel('handovers-live')
     .on(
-
       'postgres_changes',
-
       {
         event: '*',
         schema: 'public',
         table: 'handovers'
       },
-
       async () => {
 
         await loadRecords();
 
       }
-
     )
-
     .subscribe();
 
 }
@@ -275,17 +358,24 @@ function esc(x = '') {
   return String(x)
     .replace(
       /[&<>"']/g,
-
       c => ({
 
-        '&': '&amp;',
-        '<': '&lt;',
-        '>': '&gt;',
-        '"': '&quot;',
-        "'": '&#39;'
+        '&':
+          '&amp;',
+
+        '<':
+          '&lt;',
+
+        '>':
+          '&gt;',
+
+        '"':
+          '&quot;',
+
+        "'":
+          '&#39;'
 
       }[c])
-
     );
 
 }
@@ -300,8 +390,8 @@ function render() {
   const q =
     $('#search')
       ? $('#search')
-        .value
-        .toLowerCase()
+          .value
+          .toLowerCase()
       : '';
 
   const filtered =
@@ -321,88 +411,84 @@ function render() {
 
     );
 
+
   $('#total').textContent =
     records.length;
+
 
   $('#progress').textContent =
     records.filter(
       x =>
         x.status ===
-        'In Progress'
+        'Work Permit in progress'
     ).length;
+
 
   $('#closed').textContent =
     records.filter(
       x =>
         x.status ===
-        'Closed Out'
+        'Work Permit closed out'
     ).length;
+
 
   $('#hold').textContent =
     records.filter(
       x =>
         x.status ===
-        'On Hold'
+        'Work Permit on hold'
     ).length;
 
 
-  // ==========================================================
-  // REGISTER TABLE
-  // ONLY:
-  // Zone / Area
-  // Sub-Contractor
-  // Work Description
-  // Status
-  // Handover Date
-  // ==========================================================
-
   rows.innerHTML =
-    filtered.map(
-      x => `
+    filtered
+      .map(
+        x => `
 
-      <tr>
+        <tr>
 
-        <td>
-          <b>
-            ${esc(x.zone)}
-          </b>
-        </td>
+          <td>
+            <b>
+              ${esc(x.zone)}
+            </b>
+          </td>
 
-        <td>
-          ${esc(x.contractor)}
-        </td>
+          <td>
+            ${esc(x.contractor)}
+          </td>
 
-        <td>
-          ${esc(x.description)}
-        </td>
+          <td>
+            ${esc(x.description)}
+          </td>
 
-        <td>
+          <td>
 
-          <span class="status">
-            ${esc(x.status)}
-          </span>
+            <span class="status">
+              ${esc(x.status)}
+            </span>
 
-        </td>
+          </td>
 
-        <td>
-          ${esc(x.handoverDate)}
-        </td>
+          <td>
+            ${esc(x.handoverDate)}
+          </td>
 
-        <td>
+          <td>
 
-          <button
-            type="button"
-            data-edit="${esc(x.id)}"
-          >
-            Edit
-          </button>
+            <button
+              type="button"
+              data-edit="${esc(x.id)}"
+            >
+              Edit
+            </button>
 
-        </td>
+          </td>
 
-      </tr>
+        </tr>
 
-    `
-    ).join('');
+        `
+      )
+      .join('');
 
 
   $('#empty')
@@ -456,11 +542,13 @@ function open(x) {
   editing =
     x || null;
 
+
   $('#formTitle')
     .textContent =
       x
         ? 'Edit handover'
         : 'New handover';
+
 
   $('#delete')
     .classList
@@ -469,23 +557,34 @@ function open(x) {
       !x
     );
 
+
   form.reset();
+
 
   clearSignature(
     $('#contractorSignature')
   );
 
+
   clearSignature(
     $('#dgslSignature')
   );
 
+
   $('#photoPreview')
-    .innerHTML = '';
+    .innerHTML =
+      '';
+
 
   const values =
     x || {
+
       handoverDate:
-        today()
+        today(),
+
+      status:
+        'Work Permit in progress'
+
     };
 
 
@@ -497,21 +596,30 @@ function open(x) {
     const element =
       form.elements[key];
 
+
     if (!element) {
       continue;
     }
 
+
     if (
-      element.type === 'file'
+      element.type ===
+      'file'
     ) {
+
       continue;
+
     }
+
 
     if (
       key === 'photos'
     ) {
+
       continue;
+
     }
+
 
     element.value =
       value || '';
@@ -526,10 +634,12 @@ function open(x) {
       x.contractorSignature
     );
 
+
     drawSavedSignature(
       $('#dgslSignature'),
       x.dgslSignature
     );
+
 
     showSavedPhotos(
       x.photos
@@ -569,28 +679,35 @@ form.onsubmit =
 
     e.preventDefault();
 
+
+    const saveButton =
+      form.querySelector(
+        'button[value="default"]'
+      );
+
+
     try {
+
+      if (saveButton) {
+
+        saveButton.disabled =
+          true;
+
+        saveButton.textContent =
+          'Saving...';
+
+      }
+
 
       const x =
         Object.fromEntries(
           new FormData(form)
         );
 
+
       x.id =
         editing?.id ||
         crypto.randomUUID();
-
-      if (
-        x.status ===
-          'Closed Out'
-        &&
-        !x.closedDate
-      ) {
-
-        x.closedDate =
-          today();
-
-      }
 
 
       // ------------------------------------------------------
@@ -602,6 +719,7 @@ form.onsubmit =
           .toDataURL(
             'image/png'
           );
+
 
       x.dgslSignature =
         $('#dgslSignature')
@@ -624,10 +742,16 @@ form.onsubmit =
       // NEW PHOTOS
       // ------------------------------------------------------
 
+      const photoInput =
+        $('#photos');
+
+
       const files =
-        Array.from(
-          $('#photos').files
-        );
+        photoInput
+          ? Array.from(
+              photoInput.files
+            )
+          : [];
 
 
       for (
@@ -645,11 +769,13 @@ form.onsubmit =
 
         }
 
+
         const photoUrl =
           await uploadPhoto(
             file,
             x.id
           );
+
 
         if (photoUrl) {
 
@@ -663,7 +789,7 @@ form.onsubmit =
 
 
       // ------------------------------------------------------
-      // SAVE DATABASE RECORD
+      // DATABASE RECORD
       // ------------------------------------------------------
 
       const databaseRecord =
@@ -685,6 +811,7 @@ form.onsubmit =
               x.id
             );
 
+
         if (error) {
           throw error;
         }
@@ -700,6 +827,7 @@ form.onsubmit =
               databaseRecord
             );
 
+
         if (error) {
           throw error;
         }
@@ -708,6 +836,7 @@ form.onsubmit =
 
 
       dlg.close();
+
 
       await loadRecords();
 
@@ -719,9 +848,24 @@ form.onsubmit =
         error
       );
 
+
       alert(
-        'There was a problem saving the handover.'
+        'There was a problem saving the handover.\n\n' +
+        error.message
       );
+
+
+    } finally {
+
+      if (saveButton) {
+
+        saveButton.disabled =
+          false;
+
+        saveButton.textContent =
+          'Save handover';
+
+      }
 
     }
 
@@ -746,8 +890,10 @@ async function uploadPhoto(
     )
       .toLowerCase();
 
+
   const filename =
     `${handoverId}/${crypto.randomUUID()}.${extension}`;
+
 
   const {
     error
@@ -769,9 +915,11 @@ async function uploadPhoto(
         }
       );
 
+
   if (error) {
     throw error;
   }
+
 
   const {
     data
@@ -784,6 +932,7 @@ async function uploadPhoto(
       .getPublicUrl(
         filename
       );
+
 
   return data.publicUrl;
 
@@ -801,15 +950,26 @@ function showSavedPhotos(
   const preview =
     $('#photoPreview');
 
-  preview.innerHTML = '';
+
+  if (!preview) {
+    return;
+  }
+
+
+  preview.innerHTML =
+    '';
+
 
   if (
-    !Array.isArray(photos)
+    !Array.isArray(
+      photos
+    )
   ) {
 
     return;
 
   }
+
 
   photos.forEach(
     url => {
@@ -819,29 +979,38 @@ function showSavedPhotos(
           'img'
         );
 
+
       img.src =
         url;
+
 
       img.style.width =
         '110px';
 
+
       img.style.height =
         '80px';
+
 
       img.style.objectFit =
         'cover';
 
+
       img.style.borderRadius =
         '6px';
+
 
       img.style.border =
         '1px solid #ccc';
 
+
       img.style.marginRight =
         '6px';
 
+
       img.style.marginBottom =
         '6px';
+
 
       preview.appendChild(
         img
@@ -862,6 +1031,11 @@ $('#photos').onchange =
 
     const preview =
       $('#photoPreview');
+
+
+    preview.innerHTML =
+      '';
+
 
     const files =
       Array.from(
@@ -892,20 +1066,26 @@ $('#photos').onchange =
         img.style.width =
           '110px';
 
+
         img.style.height =
           '80px';
+
 
         img.style.objectFit =
           'cover';
 
+
         img.style.borderRadius =
           '6px';
+
 
         img.style.border =
           '1px solid #ccc';
 
+
         img.style.marginRight =
           '6px';
+
 
         img.style.marginBottom =
           '6px';
@@ -938,6 +1118,7 @@ $('#delete').onclick =
       return;
     }
 
+
     if (
       !confirm(
         'Delete this handover record?'
@@ -947,6 +1128,7 @@ $('#delete').onclick =
       return;
 
     }
+
 
     try {
 
@@ -989,6 +1171,7 @@ $('#delete').onclick =
 
       dlg.close();
 
+
       await loadRecords();
 
 
@@ -998,6 +1181,7 @@ $('#delete').onclick =
         'Delete error:',
         error
       );
+
 
       alert(
         'There was a problem deleting the handover.'
@@ -1021,10 +1205,12 @@ async function deletePhoto(
     const marker =
       `/object/public/${PHOTO_BUCKET}/`;
 
+
     const index =
       url.indexOf(
         marker
       );
+
 
     if (
       index === -1
@@ -1034,6 +1220,7 @@ async function deletePhoto(
 
     }
 
+
     const path =
       decodeURIComponent(
         url.substring(
@@ -1041,6 +1228,7 @@ async function deletePhoto(
           marker.length
         )
       );
+
 
     await supabaseClient
       .storage
@@ -1050,6 +1238,7 @@ async function deletePhoto(
       .remove(
         [path]
       );
+
 
   } catch (error) {
 
@@ -1121,19 +1310,28 @@ function setupSignature(
   canvas
 ) {
 
+  if (!canvas) {
+    return;
+  }
+
+
   const ctx =
     canvas.getContext(
       '2d'
     );
 
+
   ctx.lineWidth =
     2;
+
 
   ctx.lineCap =
     'round';
 
+
   ctx.lineJoin =
     'round';
+
 
   let drawing =
     false;
@@ -1144,10 +1342,12 @@ function setupSignature(
     const rect =
       canvas.getBoundingClientRect();
 
+
     const source =
       e.touches
         ? e.touches[0]
         : e;
+
 
     return {
 
@@ -1160,6 +1360,7 @@ function setupSignature(
           canvas.width /
           rect.width
         ),
+
 
       y:
         (
@@ -1180,13 +1381,17 @@ function setupSignature(
 
     e.preventDefault();
 
+
     drawing =
       true;
+
 
     const p =
       position(e);
 
+
     ctx.beginPath();
+
 
     ctx.moveTo(
       p.x,
@@ -1202,15 +1407,19 @@ function setupSignature(
       return;
     }
 
+
     e.preventDefault();
+
 
     const p =
       position(e);
+
 
     ctx.lineTo(
       p.x,
       p.y
     );
+
 
     ctx.stroke();
 
@@ -1223,10 +1432,13 @@ function setupSignature(
       return;
     }
 
+
     e.preventDefault();
+
 
     drawing =
       false;
+
 
     ctx.closePath();
 
@@ -1238,42 +1450,51 @@ function setupSignature(
     start
   );
 
+
   canvas.addEventListener(
     'mousemove',
     move
   );
+
 
   canvas.addEventListener(
     'mouseup',
     stop
   );
 
+
   canvas.addEventListener(
     'mouseleave',
     stop
   );
 
+
   canvas.addEventListener(
     'touchstart',
     start,
     {
-      passive: false
+      passive:
+        false
     }
   );
+
 
   canvas.addEventListener(
     'touchmove',
     move,
     {
-      passive: false
+      passive:
+        false
     }
   );
+
 
   canvas.addEventListener(
     'touchend',
     stop,
     {
-      passive: false
+      passive:
+        false
     }
   );
 
@@ -1292,10 +1513,12 @@ function clearSignature(
     return;
   }
 
+
   const ctx =
     canvas.getContext(
       '2d'
     );
+
 
   ctx.clearRect(
     0,
@@ -1325,13 +1548,16 @@ function drawSavedSignature(
 
   }
 
+
   const ctx =
     canvas.getContext(
       '2d'
     );
 
+
   const img =
     new Image();
+
 
   img.onload =
     () => {
@@ -1343,6 +1569,7 @@ function drawSavedSignature(
         canvas.height
       );
 
+
       ctx.drawImage(
         img,
         0,
@@ -1352,6 +1579,7 @@ function drawSavedSignature(
       );
 
     };
+
 
   img.src =
     dataUrl;
@@ -1366,6 +1594,7 @@ function drawSavedSignature(
 setupSignature(
   $('#contractorSignature')
 );
+
 
 setupSignature(
   $('#dgslSignature')
@@ -1404,6 +1633,7 @@ $('#export').onclick =
         'a'
       );
 
+
     link.href =
       URL.createObjectURL(
 
@@ -1426,10 +1656,14 @@ $('#export').onclick =
 
       );
 
+
     link.download =
-      `DGSL-site-register-${today()}.json`;
+      `DGSL-site-register-${today()}` +
+      `.json`;
+
 
     link.click();
+
 
     URL.revokeObjectURL(
       link.href
@@ -1448,12 +1682,15 @@ $('#import').onchange =
     const file =
       e.target.files[0];
 
+
     if (!file) {
       return;
     }
 
+
     const reader =
       new FileReader();
+
 
     reader.onload =
       async () => {
@@ -1464,6 +1701,7 @@ $('#import').onchange =
             JSON.parse(
               reader.result
             );
+
 
           if (
             !Array.isArray(
@@ -1484,7 +1722,10 @@ $('#import').onchange =
           ) {
 
             const databaseRecord =
-              toDatabase(record);
+              toDatabase(
+                record
+              );
+
 
             const {
               error
@@ -1494,6 +1735,7 @@ $('#import').onchange =
                 .upsert(
                   databaseRecord
                 );
+
 
             if (error) {
               throw error;
@@ -1516,6 +1758,7 @@ $('#import').onchange =
             error
           );
 
+
           alert(
             'That file is not a valid DGSL backup.'
           );
@@ -1533,476 +1776,623 @@ $('#import').onchange =
 
 
 // ============================================================
-// PDF GENERATION
+// GENERATE PDF
 // ============================================================
 
 $('#generatePdf').onclick =
   async () => {
 
-    try {
+    await generatePdf();
 
-      const {
-        jsPDF
-      } =
-        window.jspdf;
-
-      const pdf =
-        new jsPDF({
-
-          orientation:
-            'portrait',
-
-          unit:
-            'mm',
-
-          format:
-            'a4'
-
-        });
+  };
 
 
-      const margin =
-        15;
+async function generatePdf() {
 
-      const pageWidth =
-        210;
+  try {
 
-      let y =
-        20;
+    const {
+      jsPDF
+    } =
+      window.jspdf;
 
 
-      // ------------------------------------------------------
-      // TITLE
-      // ------------------------------------------------------
+    const pdf =
+      new jsPDF({
 
-      pdf.setFontSize(
-        20
+        orientation:
+          'portrait',
+
+        unit:
+          'mm',
+
+        format:
+          'a4'
+
+      });
+
+
+    const margin =
+      15;
+
+
+    const pageWidth =
+      210;
+
+
+    let y =
+      20;
+
+
+    // --------------------------------------------------------
+    // LOAD DGSL LOGO
+    // --------------------------------------------------------
+
+    const logoData =
+      await loadLogoForPdf();
+
+
+    // --------------------------------------------------------
+    // TITLE
+    // --------------------------------------------------------
+
+    pdf.setFontSize(
+      20
+    );
+
+
+    pdf.setFont(
+      undefined,
+      'bold'
+    );
+
+
+    pdf.text(
+      'DGSL SITE HANDOVER',
+      margin,
+      y
+    );
+
+
+    // --------------------------------------------------------
+    // LOGO TOP RIGHT
+    // --------------------------------------------------------
+
+    if (logoData) {
+
+      pdf.addImage(
+        logoData,
+        'PNG',
+        145,
+        10,
+        50,
+        18
       );
+
+    }
+
+
+    y += 8;
+
+
+    pdf.setFontSize(
+      10
+    );
+
+
+    pdf.setFont(
+      undefined,
+      'normal'
+    );
+
+
+    pdf.text(
+      'Site Handover Record',
+      margin,
+      y
+    );
+
+
+    y += 10;
+
+
+    pdf.line(
+      margin,
+      y,
+      pageWidth - margin,
+      y
+    );
+
+
+    y += 8;
+
+
+    const data =
+      Object.fromEntries(
+        new FormData(form)
+      );
+
+
+    function addField(
+      label,
+      value
+    ) {
 
       pdf.setFont(
         undefined,
         'bold'
       );
 
-      pdf.text(
-        'DGSL SITE HANDOVER',
-        margin,
-        y
-      );
-
-      y += 8;
 
       pdf.setFontSize(
         10
       );
 
+
+      pdf.text(
+        `${label}:`,
+        margin,
+        y
+      );
+
+
       pdf.setFont(
         undefined,
         'normal'
       );
 
+
+      const lines =
+        pdf.splitTextToSize(
+          value || '',
+          pageWidth -
+            margin * 2 -
+            35
+        );
+
+
       pdf.text(
-        'Site Handover Record',
+        lines,
+        margin + 35,
+        y
+      );
+
+
+      y +=
+        Math.max(
+          6,
+          lines.length * 5
+        );
+
+    }
+
+
+    // --------------------------------------------------------
+    // DETAILS
+    // --------------------------------------------------------
+
+    addField(
+      'Zone / Area',
+      data.zone
+    );
+
+
+    addField(
+      'Sub Contractor / Company Name',
+      data.contractor
+    );
+
+
+    addField(
+      'Safety Documents',
+      data.level
+    );
+
+
+    addField(
+      'Housekeeping at time of Take Over',
+      data.trade
+    );
+
+
+    addField(
+      'Materials Checks',
+      data.foreman
+    );
+
+
+    addField(
+      'Health & Safety - Scaffolding / Handrails',
+      data.healthSafetyScaffolding
+    );
+
+
+    addField(
+      'Drawing / Reference',
+      data.drawing
+    );
+
+
+    addField(
+      'Work Description',
+      data.description
+    );
+
+
+    addField(
+      'Status',
+      data.status
+    );
+
+
+    addField(
+      'Handover Date',
+      data.handoverDate
+    );
+
+
+    // --------------------------------------------------------
+    // NOTES
+    // --------------------------------------------------------
+
+    y += 3;
+
+
+    pdf.setFont(
+      undefined,
+      'bold'
+    );
+
+
+    pdf.text(
+      'Notes / Outstanding Items',
+      margin,
+      y
+    );
+
+
+    y += 6;
+
+
+    pdf.setFont(
+      undefined,
+      'normal'
+    );
+
+
+    const noteLines =
+      pdf.splitTextToSize(
+        data.notes || '',
+        pageWidth -
+          margin * 2
+      );
+
+
+    pdf.text(
+      noteLines,
+      margin,
+      y
+    );
+
+
+    y +=
+      Math.max(
+        12,
+        noteLines.length * 5
+      );
+
+
+    // --------------------------------------------------------
+    // SIGNATURES
+    // --------------------------------------------------------
+
+    if (
+      y > 220
+    ) {
+
+      pdf.addPage();
+
+      y =
+        20;
+
+
+      if (logoData) {
+
+        pdf.addImage(
+          logoData,
+          'PNG',
+          145,
+          10,
+          50,
+          18
+        );
+
+      }
+
+    }
+
+
+    pdf.setFont(
+      undefined,
+      'bold'
+    );
+
+
+    pdf.text(
+      'Signatures',
+      margin,
+      y
+    );
+
+
+    y += 8;
+
+
+    pdf.setFont(
+      undefined,
+      'normal'
+    );
+
+
+    pdf.text(
+      `Sub-Contractor Name: ${
+        data.contractorSigner || ''
+      }`,
+      margin,
+      y
+    );
+
+
+    y += 5;
+
+
+    pdf.addImage(
+      $('#contractorSignature')
+        .toDataURL(
+          'image/png'
+        ),
+      'PNG',
+      margin,
+      y,
+      80,
+      24
+    );
+
+
+    y += 32;
+
+
+    pdf.text(
+      `DGSL Representative: ${
+        data.dgslSigner || ''
+      }`,
+      margin,
+      y
+    );
+
+
+    y += 5;
+
+
+    pdf.addImage(
+      $('#dgslSignature')
+        .toDataURL(
+          'image/png'
+        ),
+      'PNG',
+      margin,
+      y,
+      80,
+      24
+    );
+
+
+    // --------------------------------------------------------
+    // PHOTOS
+    // --------------------------------------------------------
+
+    const photoUrls =
+      editing?.photos || [];
+
+
+    if (
+      photoUrls.length > 0
+    ) {
+
+      pdf.addPage();
+
+
+      y =
+        20;
+
+
+      if (logoData) {
+
+        pdf.addImage(
+          logoData,
+          'PNG',
+          145,
+          10,
+          50,
+          18
+        );
+
+      }
+
+
+      pdf.setFontSize(
+        16
+      );
+
+
+      pdf.setFont(
+        undefined,
+        'bold'
+      );
+
+
+      pdf.text(
+        'SITE PHOTOS',
         margin,
         y
       );
+
 
       y += 10;
 
-      pdf.line(
-        margin,
-        y,
-        pageWidth - margin,
-        y
-      );
 
-      y += 8;
-
-
-      const data =
-        Object.fromEntries(
-          new FormData(form)
-        );
-
-
-      function addField(
-        label,
-        value
+      for (
+        const url
+        of photoUrls
       ) {
 
-        pdf.setFont(
-          undefined,
-          'bold'
-        );
-
-        pdf.setFontSize(
-          10
-        );
-
-        pdf.text(
-          `${label}:`,
-          margin,
-          y
-        );
-
-        pdf.setFont(
-          undefined,
-          'normal'
-        );
-
-        const lines =
-          pdf.splitTextToSize(
-            value || '',
-            pageWidth -
-              margin * 2 -
-              35
-          );
-
-        pdf.text(
-          lines,
-          margin + 35,
-          y
-        );
-
-        y +=
-          Math.max(
-            6,
-            lines.length * 5
-          );
-
-      }
-
-
-      // ------------------------------------------------------
-      // DETAILS
-      // ------------------------------------------------------
-
-      addField(
-        'Zone / Area',
-        data.zone
-      );
-
-      addField(
-        'Block / Level',
-        data.level
-      );
-
-      addField(
-        'Drawing / Reference',
-        data.drawing
-      );
-
-      addField(
-        'Trade',
-        data.trade
-      );
-
-      addField(
-        'Contractor',
-        data.contractor
-      );
-
-      addField(
-        'Site Foreman',
-        data.foreman
-      );
-
-      addField(
-        'Status',
-        data.status
-      );
-
-      addField(
-        'Handover State',
-        data.handover
-      );
-
-      addField(
-        'Handover Date',
-        data.handoverDate
-      );
-
-      addField(
-        'Closed Out Date',
-        data.closedDate
-      );
-
-
-      // ------------------------------------------------------
-      // DESCRIPTION
-      // ------------------------------------------------------
-
-      y += 3;
-
-      pdf.setFont(
-        undefined,
-        'bold'
-      );
-
-      pdf.text(
-        'Work Description',
-        margin,
-        y
-      );
-
-      y += 6;
-
-      pdf.setFont(
-        undefined,
-        'normal'
-      );
-
-      const descriptionLines =
-        pdf.splitTextToSize(
-          data.description || '',
-          pageWidth -
-            margin * 2
-        );
-
-      pdf.text(
-        descriptionLines,
-        margin,
-        y
-      );
-
-      y +=
-        Math.max(
-          8,
-          descriptionLines.length * 5
-        );
-
-
-      // ------------------------------------------------------
-      // NOTES
-      // ------------------------------------------------------
-
-      y += 3;
-
-      pdf.setFont(
-        undefined,
-        'bold'
-      );
-
-      pdf.text(
-        'Notes / Outstanding Items',
-        margin,
-        y
-      );
-
-      y += 6;
-
-      pdf.setFont(
-        undefined,
-        'normal'
-      );
-
-      const noteLines =
-        pdf.splitTextToSize(
-          data.notes || '',
-          pageWidth -
-            margin * 2
-        );
-
-      pdf.text(
-        noteLines,
-        margin,
-        y
-      );
-
-      y +=
-        Math.max(
-          12,
-          noteLines.length * 5
-        );
-
-
-      // ------------------------------------------------------
-      // SIGNATURES
-      // ------------------------------------------------------
-
-      if (
-        y > 230
-      ) {
-
-        pdf.addPage();
-
-        y = 20;
-
-      }
-
-      pdf.setFont(
-        undefined,
-        'bold'
-      );
-
-      pdf.text(
-        'Signatures',
-        margin,
-        y
-      );
-
-      y += 8;
-
-      pdf.setFont(
-        undefined,
-        'normal'
-      );
-
-      pdf.text(
-        `Contractor / Foreman: ${
-          data.contractorSigner || ''
-        }`,
-        margin,
-        y
-      );
-
-      y += 5;
-
-      pdf.addImage(
-        $('#contractorSignature')
-          .toDataURL(
-            'image/png'
-          ),
-        'PNG',
-        margin,
-        y,
-        80,
-        24
-      );
-
-      y += 32;
-
-      pdf.text(
-        `DGSL Representative: ${
-          data.dgslSigner || ''
-        }`,
-        margin,
-        y
-      );
-
-      y += 5;
-
-      pdf.addImage(
-        $('#dgslSignature')
-          .toDataURL(
-            'image/png'
-          ),
-        'PNG',
-        margin,
-        y,
-        80,
-        24
-      );
-
-
-      // ------------------------------------------------------
-      // PHOTOS
-      // ------------------------------------------------------
-
-      const photoUrls =
-        editing?.photos || [];
-
-
-      if (
-        photoUrls.length > 0
-      ) {
-
-        pdf.addPage();
-
-        y = 20;
-
-        pdf.setFontSize(
-          16
-        );
-
-        pdf.setFont(
-          undefined,
-          'bold'
-        );
-
-        pdf.text(
-          'SITE PHOTOS',
-          margin,
-          y
-        );
-
-        y += 10;
-
-
-        for (
-          const url
-          of photoUrls
-        ) {
-
-          try {
-
-            const imageData =
-              await loadImageForPdf(
-                url
-              );
-
-            y =
-              await addImageToPdf(
-                pdf,
-                imageData,
-                y,
-                margin
-              );
-
-          } catch (error) {
-
-            console.error(
-              'Could not add photo to PDF:',
-              error
+        try {
+
+          const imageData =
+            await loadImageForPdf(
+              url
             );
 
-          }
+
+          y =
+            await addImageToPdf(
+              pdf,
+              imageData,
+              y,
+              margin
+            );
+
+
+        } catch (error) {
+
+          console.error(
+            'Could not add photo to PDF:',
+            error
+          );
 
         }
 
       }
 
+    }
 
-      // ------------------------------------------------------
-      // SAVE PDF
-      // ------------------------------------------------------
 
-      const safeZone =
-        (
-          data.zone ||
-          'Handover'
+    // --------------------------------------------------------
+    // SAVE PDF
+    // --------------------------------------------------------
+
+    const safeZone =
+      (
+        data.zone ||
+        'Handover'
+      )
+        .replace(
+          /[^a-z0-9-_ ]/gi,
+          ''
         )
+        .replace(
+          /\s+/g,
+          '-'
+        );
 
-          .replace(
-            /[^a-z0-9-_ ]/gi,
-            ''
-          )
 
-          .replace(
-            /\s+/g,
-            '-'
+    pdf.save(
+      `DGSL-${safeZone}-Handover-${today()}.pdf`
+    );
+
+
+  } catch (error) {
+
+    console.error(
+      'PDF error:',
+      error
+    );
+
+
+    alert(
+      'There was a problem creating the PDF.\n\n' +
+      error.message
+    );
+
+  }
+
+}
+
+
+// ============================================================
+// LOAD LOGO FOR PDF
+// ============================================================
+
+function loadLogoForPdf() {
+
+  return new Promise(
+    resolve => {
+
+      const img =
+        new Image();
+
+
+      img.onload =
+        () => {
+
+          const canvas =
+            document.createElement(
+              'canvas'
+            );
+
+
+          canvas.width =
+            img.naturalWidth;
+
+
+          canvas.height =
+            img.naturalHeight;
+
+
+          const ctx =
+            canvas.getContext(
+              '2d'
+            );
+
+
+          ctx.drawImage(
+            img,
+            0,
+            0
           );
 
 
-      pdf.save(
-        `DGSL-${safeZone}-Handover-${today()}.pdf`
-      );
+          resolve(
+            canvas.toDataURL(
+              'image/png'
+            )
+          );
+
+        };
 
 
-    } catch (error) {
+      img.onerror =
+        () => {
 
-      console.error(
-        'PDF error:',
-        error
-      );
+          console.error(
+            `Could not load ${LOGO_FILE}`
+          );
 
-      alert(
-        'There was a problem creating the PDF.'
-      );
+
+          resolve(
+            null
+          );
+
+        };
+
+
+      img.src =
+        LOGO_FILE;
 
     }
+  );
 
-  };
+}
 
 
 // ============================================================
@@ -2022,8 +2412,10 @@ function loadImageForPdf(
       const img =
         new Image();
 
+
       img.crossOrigin =
         'anonymous';
+
 
       img.onload =
         () => {
@@ -2033,22 +2425,27 @@ function loadImageForPdf(
               'canvas'
             );
 
+
           canvas.width =
             img.naturalWidth;
 
+
           canvas.height =
             img.naturalHeight;
+
 
           const ctx =
             canvas.getContext(
               '2d'
             );
 
+
           ctx.drawImage(
             img,
             0,
             0
           );
+
 
           resolve(
             canvas.toDataURL(
@@ -2059,8 +2456,10 @@ function loadImageForPdf(
 
         };
 
+
       img.onerror =
         reject;
+
 
       img.src =
         url;
@@ -2088,7 +2487,27 @@ async function addImageToPdf(
 
     pdf.addPage();
 
-    y = 20;
+
+    y =
+      20;
+
+
+    const logoData =
+      await loadLogoForPdf();
+
+
+    if (logoData) {
+
+      pdf.addImage(
+        logoData,
+        'PNG',
+        145,
+        10,
+        50,
+        18
+      );
+
+    }
 
   }
 
@@ -2101,6 +2520,7 @@ async function addImageToPdf(
 
   const maxWidth =
     80;
+
 
   const maxHeight =
     65;
@@ -2126,6 +2546,7 @@ async function addImageToPdf(
     height =
       maxHeight;
 
+
     width =
       (
         dimensions.width /
@@ -2143,7 +2564,27 @@ async function addImageToPdf(
 
     pdf.addPage();
 
-    y = 20;
+
+    y =
+      20;
+
+
+    const logoData =
+      await loadLogoForPdf();
+
+
+    if (logoData) {
+
+      pdf.addImage(
+        logoData,
+        'PNG',
+        145,
+        10,
+        50,
+        18
+      );
+
+    }
 
   }
 
@@ -2179,6 +2620,7 @@ function getImageDimensions(
       const img =
         new Image();
 
+
       img.onload =
         () => {
 
@@ -2193,6 +2635,7 @@ function getImageDimensions(
           });
 
         };
+
 
       img.src =
         src;
@@ -2211,6 +2654,8 @@ async function startApp() {
 
   try {
 
+    addLogoToForm();
+
     await loadSupabase();
 
     await loadRecords();
@@ -2223,6 +2668,7 @@ async function startApp() {
       'Startup error:',
       error
     );
+
 
     alert(
       'The DGSL Site Register could not connect to Supabase.'
