@@ -12,12 +12,12 @@
 
 <header>
 
-  <div style="display:flex;align-items:center;gap:15px;">
+  <div style="display:flex;align-items:center;gap:15px;min-width:0;">
 
     <img
       src="dgsl-logo.png"
       alt="DGSL Logo"
-      style="height:55px;width:auto;"
+      style="display:block;width:220px;max-width:35vw;height:auto;object-fit:contain;"
     >
 
     <div>
@@ -125,19 +125,12 @@
 
       <thead>
         <tr>
-
           <th>Zone / Area</th>
-
           <th>Sub-Contractor</th>
-
           <th>Work Description</th>
-
           <th>Status</th>
-
           <th>Handover Date</th>
-
           <th></th>
-
         </tr>
       </thead>
 
@@ -206,10 +199,7 @@
 
       Name
 
-      <input
-        name="contractorSigner"
-        required
-      >
+      <input name="contractorSigner">
 
     </label>
 
@@ -250,9 +240,18 @@
 
       Sub Contractor / Company Name
 
+      <input name="contractor">
+
+    </label>
+
+
+    <label>
+
+      Drawing / reference
+
       <input
-        name="contractor"
-        required
+        name="drawing"
+        placeholder="Drawing number"
       >
 
     </label>
@@ -273,36 +272,12 @@
 
     <label>
 
-      Drawing / reference
-
-      <input
-        name="drawing"
-        required
-        placeholder="Drawing number"
-      >
-
-    </label>
-
-
-    <label>
-
       Safety Documents
 
-      <select name="level">
-
-        <option value="Complete">
-          Complete
-        </option>
-
-        <option value="Outstanding">
-          Outstanding
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="level"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -311,21 +286,10 @@
 
       Housekeeping at time of Take Over
 
-      <select name="trade">
-
-        <option value="Good">
-          Good
-        </option>
-
-        <option value="Bad">
-          Bad
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="trade"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -334,21 +298,10 @@
 
       Materials Checks
 
-      <select name="foreman">
-
-        <option value="OK">
-          OK
-        </option>
-
-        <option value="Bad">
-          Bad
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="foreman"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -357,21 +310,10 @@
 
       Health & Safety - Scaffolding / Handrails
 
-      <select name="healthSafetyScaffolding">
-
-        <option value="OK">
-          OK
-        </option>
-
-        <option value="Bad">
-          Bad
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="healthSafetyScaffolding"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -383,7 +325,6 @@
       <textarea
         name="description"
         rows="3"
-        required
         placeholder="Describe the works handed over"
       ></textarea>
 
@@ -396,15 +337,15 @@
 
       <select name="status">
 
-        <option value="Work Permit Open">
+        <option>
           Work Permit Open
         </option>
 
-        <option value="Work Permit on Hold">
+        <option>
           Work Permit on Hold
         </option>
 
-        <option value="Work Permit Closed">
+        <option>
           Work Permit Closed
         </option>
 
@@ -420,7 +361,6 @@
       <input
         name="handoverDate"
         type="date"
-        required
       >
 
     </label>
@@ -437,202 +377,208 @@
 
     <div class="wide">
 
+      <div
+        style="
+          display:grid;
+          grid-template-columns:minmax(0,1fr) 45px 45px;
+          gap:8px 10px;
+          align-items:center;
+        "
+      >
 
-      <div class="checklist-item">
+        <div></div>
 
-        <span>
-          1. Current approved drawings, specification, RFI responses, setting-out data and revisions available at workface.
-        </span>
+        <strong style="text-align:center;">
+          Yes
+        </strong>
 
-        <label>
+        <strong style="text-align:center;">
+          No
+        </strong>
+
+
+        <!-- CHECKLIST 1 -->
+
+        <div>
+          Current approved drawings, specification, RFI responses, setting-out data and revisions available at workface.
+        </div>
+
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist1"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="1"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist1"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="1"
+            data-answer="no"
           >
-          No
-        </label>
-
-      </div>
+        </div>
 
 
-      <div class="checklist-item">
+        <!-- CHECKLIST 2 -->
 
-        <span>
-          2. Task-specific RAMS briefed; workers inducted; Safe Pass / CSCS / trade competence checked as applicable.
-        </span>
+        <div>
+          Task-specific RAMS briefed; workers inducted; Safe Pass / CSCS / trade competence checked as applicable.
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist2"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="2"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist2"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="2"
+            data-answer="no"
           >
-          No
-        </label>
-
-      </div>
+        </div>
 
 
-      <div class="checklist-item">
+        <!-- CHECKLIST 3 -->
 
-        <span>
-          3. Work area, access, lighting, scaffold / edge protection, temporary works, previous trade and substrate accepted
-        </span>
+        <div>
+          Work area, access, lighting, scaffold / edge protection, temporary works, previous trade and substrate accepted
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist3"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="3"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist3"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="3"
+            data-answer="no"
           >
-          No
-        </label>
-
-      </div>
+        </div>
 
 
-      <div class="checklist-item">
+        <!-- CHECKLIST 4 -->
 
-        <span>
-          4. Materials / products approved and traceable; plant, tools and test equipment inspected / certified / calibrated.
-        </span>
+        <div>
+          Materials / products approved and traceable; plant, tools and test equipment inspected / certified / calibrated.
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist4"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="4"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist4"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="4"
+            data-answer="no"
           >
-          No
-        </label>
-
-      </div>
+        </div>
 
 
-      <div class="checklist-item">
+        <!-- CHECKLIST 5 -->
 
-        <span>
-          5. Interfaces with adjacent trades, services, deliveries, exclusion zones and shared access agreed.
-        </span>
+        <div>
+          Interfaces with adjacent trades, services, deliveries, exclusion zones and shared access agreed.
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist5"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="5"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist5"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="5"
+            data-answer="no"
           >
-          No
-        </label>
-
-      </div>
+        </div>
 
 
-      <div class="checklist-item">
+        <!-- CHECKLIST 6 -->
 
-        <span>
-          6. Protection of completed work plus weather, water, dust, noise and environmental controls agreed.
-        </span>
+        <div>
+          Protection of completed work plus weather, water, dust, noise and environmental controls agreed.
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist6"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="6"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist6"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="6"
+            data-answer="no"
           >
-          No
-        </label>
-
-      </div>
+        </div>
 
 
-      <div class="checklist-item">
+        <!-- CHECKLIST 7 -->
 
-        <span>
-          7. Hold / Witness Points, first-off, photos, tests and QA records identified; emergency, waste, housekeeping and security controls agreed.
-        </span>
+        <div>
+          Hold / Witness Points, first-off, photos, tests and QA records identified; emergency, waste, housekeeping and security controls agreed.
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist7"
-            value="yes"
+            type="checkbox"
+            class="takeback-check"
+            data-item="7"
+            data-answer="yes"
             checked
           >
-          Yes
-        </label>
+        </div>
 
-        <label>
+        <div style="text-align:center;">
           <input
-            type="radio"
-            name="checklist7"
-            value="no"
+            type="checkbox"
+            class="takeback-check"
+            data-item="7"
+            data-answer="no"
           >
-          No
-        </label>
+        </div>
 
       </div>
-
 
     </div>
 
@@ -641,32 +587,19 @@
 
     <div class="wide">
 
-      <h3>
-        DGSL Take Back Details
-      </h3>
+      <h3>DGSL Take Back Details</h3>
 
     </div>
 
 
     <label>
 
-      All works complete to drawings
+      All works complete to drawings:
 
-      <select name="takeBackCompleteDrawings">
-
-        <option value="Yes">
-          Yes
-        </option>
-
-        <option value="No">
-          No
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="takeBackCompleteDrawings"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -675,21 +608,10 @@
 
       Housekeeping at time of Take Back
 
-      <select name="takeBackHousekeeping">
-
-        <option value="OK">
-          OK
-        </option>
-
-        <option value="Bad">
-          Bad
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="takeBackHousekeeping"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -698,21 +620,10 @@
 
       DG to Snag completed works
 
-      <select name="takeBackSnagCompleted">
-
-        <option value="Complete">
-          Complete
-        </option>
-
-        <option value="Final snag to be done">
-          Final snag to be done
-        </option>
-
-        <option value="N/A">
-          N/A
-        </option>
-
-      </select>
+      <input
+        name="takeBackSnagCompleted"
+        placeholder="Enter details"
+      >
 
     </label>
 
@@ -726,7 +637,6 @@
       <textarea
         name="notes"
         rows="3"
-        required
         placeholder="Enter any outstanding items, snags or notes"
       ></textarea>
 
@@ -777,10 +687,7 @@
 
       DGSL representative
 
-      <input
-        name="dgslSigner"
-        required
-      >
+      <input name="dgslSigner">
 
     </label>
 
@@ -828,6 +735,14 @@
       id="cancel2"
     >
       Cancel
+    </button>
+
+    <button
+      type="button"
+      id="generatePdf"
+      class="primary"
+    >
+      Generate PDF
     </button>
 
     <button
