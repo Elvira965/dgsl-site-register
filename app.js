@@ -851,8 +851,6 @@ function open(x) {
 
   form.reset();
 
-selectedPhotos = [];
-
 
 clearSignature(
   $('#contractorSignature')
@@ -1193,7 +1191,9 @@ if (
 // ------------------------------------------------------
 
 const files =
-  selectedPhotos || [];
+  Array.from(
+    form.elements.photos?.files || []
+  );
 
 for (
   const file
@@ -1226,9 +1226,6 @@ for (
 
 }
 
-// Clear the temporary photo list
-// after the photos have been uploaded.
-selectedPhotos = [];
 
       // ------------------------------------------------------
       // DATABASE RECORD
@@ -1463,119 +1460,6 @@ function showSavedPhotos(
 
 }
 
-
-// ============================================================
-// PHOTO PREVIEW
-// ============================================================
-
-function updatePhotoPreview() {
-
-  const preview =
-    $('#photoPreview');
-
-  if (!preview) {
-    return;
-  }
-
-  preview.innerHTML =
-    '';
-
-  selectedPhotos.forEach(
-    file => {
-
-      if (
-        !file.type.startsWith(
-          'image/'
-        )
-      ) {
-
-        return;
-
-      }
-
-      const img =
-        document.createElement(
-          'img'
-        );
-
-      img.style.width =
-        '110px';
-
-      img.style.height =
-        '80px';
-
-      img.style.objectFit =
-        'cover';
-
-      img.style.borderRadius =
-        '6px';
-
-      img.style.border =
-        '1px solid #ccc';
-
-      img.style.marginRight =
-        '6px';
-
-      img.style.marginBottom =
-        '6px';
-
-      img.src =
-        URL.createObjectURL(
-          file
-        );
-
-      preview.appendChild(
-        img
-      );
-
-    }
-  );
-
-}
-
-
-// Gallery photos
-if (photos) {
-
-  photos.addEventListener(
-    'change',
-    function () {
-
-      addSelectedPhotos(
-        this.files
-      );
-
-      this.value =
-        '';
-
-      updatePhotoPreview();
-
-    }
-  );
-
-}
-
-
-// Camera photos
-if (takePhoto) {
-
-  takePhoto.addEventListener(
-    'change',
-    function () {
-
-      addSelectedPhotos(
-        this.files
-      );
-
-      this.value =
-        '';
-
-      updatePhotoPreview();
-
-    }
-  );
-
-}
 
 // ============================================================
 // DELETE HANDOVER
