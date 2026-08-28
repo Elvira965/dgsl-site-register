@@ -3528,3 +3528,49 @@ async function startApp() {
 
 
 startApp();
+
+
+// ============================================================
+// PHOTO SOURCE SELECTION
+// ============================================================
+
+const choosePhotos =
+  document.getElementById('choosePhotos');
+
+const photos =
+  document.getElementById('photos');
+
+const takePhoto =
+  document.getElementById('takePhoto');
+
+
+if (
+  choosePhotos &&
+  photos &&
+  takePhoto
+) {
+
+  choosePhotos.addEventListener(
+    'click',
+    function () {
+
+      const choice =
+        window.confirm(
+          'OK = Take a photo\n\n' +
+          'Cancel = Choose from gallery'
+        );
+
+      if (choice) {
+
+        takePhoto.click();
+
+      } else {
+
+        photos.click();
+
+      }
+
+    }
+  );
+
+}
