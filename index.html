@@ -272,62 +272,94 @@
 
     <label>
 
-      Safety Documents
+  Safety Documents
 
-      <select name="level">
+  <select
+    name="level"
+  >
+    <option value="Complete">Complete</option>
+    <option value="Outstanding">Outstanding</option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
 
-        <option value="Complete">Complete</option>
-        <option value="Outstanding">Outstanding</option>
-        <option value="N/A">N/A</option>
+  <input
+    type="text"
+    id="levelOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
 
-      </select>
-
-    </label>
-
-
-    <label>
-
-      Housekeeping at time of Take Over
-
-      <select name="trade">
-
-        <option value="Good">Good</option>
-        <option value="Bad">Bad</option>
-        <option value="N/A">N/A</option>
-
-      </select>
-
-    </label>
+</label>
 
 
     <label>
 
-      Materials Checks
+  Housekeeping at time of Take Over
 
-      <select name="foreman">
+  <select
+    name="trade"
+  >
+    <option value="Good">Good</option>
+    <option value="Bad">Bad</option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
 
-        <option value="OK">OK</option>
-        <option value="Bad">Bad</option>
-        <option value="N/A">N/A</option>
+  <input
+    type="text"
+    id="tradeOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
 
-      </select>
-
-    </label>
+</label>
 
 
     <label>
 
-      Health & Safety - Scaffolding / Handrails
+  Materials Checks
 
-      <select name="healthSafetyScaffolding">
+  <select
+    name="foreman"
+  >
+    <option value="OK">OK</option>
+    <option value="Bad">Bad</option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
 
-        <option value="OK">OK</option>
-        <option value="Bad">Bad</option>
-        <option value="N/A">N/A</option>
+  <input
+    type="text"
+    id="foremanOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
 
-      </select>
+</label>
 
-    </label>
+
+    <label>
+
+  Health & Safety - Scaffolding / Handrails
+
+  <select
+    name="healthSafetyScaffolding"
+  >
+    <option value="OK">OK</option>
+    <option value="Bad">Bad</option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <input
+    type="text"
+    id="healthSafetyScaffoldingOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
+
+</label>
 
 
     <label class="wide">
@@ -349,19 +381,30 @@
 
       <select name="status">
 
-        <option value="Work Permit Open">
-          Work Permit Open
-        </option>
+  <option value="Work Permit Open">
+    Work Permit Open
+  </option>
 
-        <option value="Work Permit on Hold">
-          Work Permit on Hold
-        </option>
+  <option value="Work Permit on Hold">
+    Work Permit on Hold
+  </option>
 
-        <option value="Work Permit Closed">
-          Work Permit Closed
-        </option>
+  <option value="Work Permit Closed">
+    Work Permit Closed
+  </option>
 
-      </select>
+  <option value="Other">
+    Other
+  </option>
+
+</select>
+
+<input
+  type="text"
+  id="statusOther"
+  placeholder="Enter your own status"
+  style="display:none;margin-top:6px;"
+>
 
     </label>
 
@@ -606,47 +649,73 @@
 
     <label>
 
-      All works complete to drawings:
+  All works complete to drawings:
 
-      <select name="takeBackCompleteDrawings">
+  <select
+    name="takeBackCompleteDrawings"
+  >
+    <option value="Yes">Yes</option>
+    <option value="No">No</option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
 
-        <option value="Yes">Yes</option>
-        <option value="No">No</option>
-        <option value="N/A">N/A</option>
+  <input
+    type="text"
+    id="takeBackCompleteDrawingsOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
 
-      </select>
-
-    </label>
-
-
-    <label>
-
-      Housekeeping at time of Take Back
-
-      <select name="takeBackHousekeeping">
-
-        <option value="OK">OK</option>
-        <option value="Bad">Bad</option>
-        <option value="N/A">N/A</option>
-
-      </select>
-
-    </label>
+</label>
 
 
     <label>
 
-      DG to Snag completed works
+  Housekeeping at time of Take Back
 
-      <select name="takeBackSnagCompleted">
+  <select
+    name="takeBackHousekeeping"
+  >
+    <option value="OK">OK</option>
+    <option value="Bad">Bad</option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
 
-        <option value="Complete">Complete</option>
-        <option value="Final snag to be done">Final snag to be done</option>
-        <option value="N/A">N/A</option>
+  <input
+    type="text"
+    id="takeBackHousekeepingOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
 
-      </select>
+</label>
 
-    </label>
+
+    <label>
+
+  DG to Snag completed works
+
+  <select
+    name="takeBackSnagCompleted"
+  >
+    <option value="Complete">Complete</option>
+    <option value="Final snag to be done">
+      Final snag to be done
+    </option>
+    <option value="N/A">N/A</option>
+    <option value="Other">Other</option>
+  </select>
+
+  <input
+    type="text"
+    id="takeBackSnagCompletedOther"
+    placeholder="Enter your own answer"
+    style="display:none;margin-top:6px;"
+  >
+
+</label>
 
 
     <!-- NOTES -->
