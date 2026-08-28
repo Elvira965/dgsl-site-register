@@ -2087,15 +2087,16 @@ async function generatePdf() {
     );
 
 
+    // Correct logo proportions
     if (logoData) {
 
       pdf.addImage(
         logoData,
         'PNG',
-        145,
+        140,
         10,
-        50,
-        18
+        55,
+        11.1
       );
 
     }
@@ -2142,55 +2143,95 @@ async function generatePdf() {
       );
 
 
+    // --------------------------------------------------------
+    // PDF FIELD
+    // Fixed label/value columns so text cannot overlap.
+    // --------------------------------------------------------
+
     function addField(
       label,
       value
     ) {
-
-      pdf.setFont(
-        undefined,
-        'bold'
-      );
-
 
       pdf.setFontSize(
         10
       );
 
 
+      // Dedicated space for the label.
+      const labelWidth =
+        55;
+
+
+      // Value starts after the label area.
+      const valueX =
+        margin + 60;
+
+
+      // Remaining page width for the value.
+      const valueWidth =
+        pageWidth -
+        margin -
+        valueX;
+
+
+      // Wrap long labels.
+      const labelLines =
+        pdf.splitTextToSize(
+          `${label}:`,
+          labelWidth
+        );
+
+
+      // Wrap long values.
+      const valueLines =
+        pdf.splitTextToSize(
+          value || '',
+          valueWidth
+        );
+
+
+      // Label
+      pdf.setFont(
+        undefined,
+        'bold'
+      );
+
+
       pdf.text(
-        `${label}:`,
+        labelLines,
         margin,
         y
       );
 
 
+      // Value
       pdf.setFont(
         undefined,
         'normal'
       );
 
 
-      const lines =
-        pdf.splitTextToSize(
-          value || '',
-          pageWidth -
-            margin * 2 -
-            35
-        );
-
-
       pdf.text(
-        lines,
-        margin + 35,
+        valueLines,
+        valueX,
         y
       );
 
 
+      // Move down far enough for whichever side
+      // contains the most lines.
+      const lineCount =
+        Math.max(
+          labelLines.length,
+          valueLines.length
+        );
+
+
       y +=
         Math.max(
-          6,
-          lines.length * 5
+          7,
+          lineCount * 5
         );
 
     }
@@ -2340,10 +2381,10 @@ async function generatePdf() {
             pdf.addImage(
               logoData,
               'PNG',
-              145,
+              140,
               10,
-              50,
-              18
+              55,
+              11.1
             );
 
           }
@@ -2500,10 +2541,10 @@ async function generatePdf() {
         pdf.addImage(
           logoData,
           'PNG',
-          145,
+          140,
           10,
-          50,
-          18
+          55,
+          11.1
         );
 
       }
@@ -2577,10 +2618,10 @@ async function generatePdf() {
         pdf.addImage(
           logoData,
           'PNG',
-          145,
+          140,
           10,
-          50,
-          18
+          55,
+          11.1
         );
 
       }
@@ -2654,10 +2695,10 @@ async function generatePdf() {
         pdf.addImage(
           logoData,
           'PNG',
-          145,
+          140,
           10,
-          50,
-          18
+          55,
+          11.1
         );
 
       }
@@ -2764,10 +2805,10 @@ async function generatePdf() {
         pdf.addImage(
           logoData,
           'PNG',
-          145,
+          140,
           10,
-          50,
-          18
+          55,
+          11.1
         );
 
       }
@@ -3054,10 +3095,10 @@ async function addImageToPdf(
       pdf.addImage(
         logoData,
         'PNG',
-        145,
+        140,
         10,
-        50,
-        18
+        55,
+        11.1
       );
 
     }
@@ -3131,10 +3172,10 @@ async function addImageToPdf(
       pdf.addImage(
         logoData,
         'PNG',
-        145,
+        140,
         10,
-        50,
-        18
+        55,
+        11.1
       );
 
     }
