@@ -145,6 +145,25 @@ function fromDatabase(x) {
 
   }
 
+
+  let takeBackChecklist = {};
+
+  try {
+
+    takeBackChecklist =
+      x.take_back_checklist
+        ? JSON.parse(
+            x.take_back_checklist
+          )
+        : {};
+
+  } catch {
+
+    takeBackChecklist = {};
+
+  }
+
+
   return {
 
     id:
@@ -202,7 +221,19 @@ function fromDatabase(x) {
       photos,
 
     healthSafetyScaffolding:
-      x.health_safety_scaffolding || ''
+      x.health_safety_scaffolding || '',
+
+    takeBackCompleteDrawings:
+      x.take_back_complete_drawings || '',
+
+    takeBackHousekeeping:
+      x.take_back_housekeeping || '',
+
+    takeBackSnagCompleted:
+      x.take_back_snag_completed || '',
+
+    takeBackChecklist:
+      takeBackChecklist
 
   };
 
@@ -274,7 +305,21 @@ function toDatabase(x) {
       ),
 
     health_safety_scaffolding:
-      x.healthSafetyScaffolding || null
+      x.healthSafetyScaffolding || null,
+
+    take_back_complete_drawings:
+      x.takeBackCompleteDrawings || null,
+
+    take_back_housekeeping:
+      x.takeBackHousekeeping || null,
+
+    take_back_snag_completed:
+      x.takeBackSnagCompleted || null,
+
+    take_back_checklist:
+      JSON.stringify(
+        x.takeBackChecklist || {}
+      )
 
   };
 
@@ -534,6 +579,118 @@ function render() {
 
 
 // ============================================================
+// CHECKLIST
+// ============================================================
+
+function getTakeBackChecklist() {
+
+  const result = {};
+
+  document
+    .querySelectorAll(
+      '.takeback-check'
+    )
+    .forEach(
+      checkbox => {
+
+        const item =
+          checkbox.dataset.item;
+
+        const answer =
+          checkbox.dataset.answer;
+
+        if (!result[item]) {
+          result[item] = '';
+        }
+
+        if (checkbox.checked) {
+          result[item] = answer;
+        }
+
+      }
+    );
+
+  return result;
+
+}
+
+
+// ============================================================
+// RESTORE CHECKLIST
+// ============================================================
+
+function restoreTakeBackChecklist(
+  checklist
+) {
+
+  document
+    .querySelectorAll(
+      '.takeback-check'
+    )
+    .forEach(
+      checkbox => {
+
+        const item =
+          checkbox.dataset.item;
+
+        const answer =
+          checkbox.dataset.answer;
+
+        checkbox.checked =
+          checklist &&
+          checklist[item] === answer;
+
+      }
+    );
+
+}
+
+
+// ============================================================
+// CHECKLIST YES / NO BEHAVIOUR
+// ============================================================
+
+document
+  .querySelectorAll(
+    '.takeback-check'
+  )
+  .forEach(
+    checkbox => {
+
+      checkbox.addEventListener(
+        'change',
+        function () {
+
+          if (!this.checked) {
+            return;
+          }
+
+          const item =
+            this.dataset.item;
+
+          document
+            .querySelectorAll(
+              `.takeback-check[data-item="${item}"]`
+            )
+            .forEach(
+              other => {
+
+                if (other !== this) {
+                  other.checked =
+                    false;
+                }
+
+              }
+            );
+
+        }
+      );
+
+    }
+  );
+
+
+// ============================================================
 // OPEN FORM
 // ============================================================
 
@@ -574,6 +731,11 @@ function open(x) {
   $('#photoPreview')
     .innerHTML =
       '';
+
+
+  restoreTakeBackChecklist(
+    {}
+  );
 
 
   const values =
@@ -621,6 +783,16 @@ function open(x) {
     }
 
 
+    if (
+      key ===
+      'takeBackChecklist'
+    ) {
+
+      continue;
+
+    }
+
+
     element.value =
       value || '';
 
@@ -643,6 +815,11 @@ function open(x) {
 
     showSavedPhotos(
       x.photos
+    );
+
+
+    restoreTakeBackChecklist(
+      x.takeBackChecklist
     );
 
   }
@@ -708,6 +885,14 @@ form.onsubmit =
       x.id =
         editing?.id ||
         crypto.randomUUID();
+
+
+      // ------------------------------------------------------
+      // TAKE BACK CHECKLIST
+      // ------------------------------------------------------
+
+      x.takeBackChecklist =
+        getTakeBackChecklist();
 
 
       // ------------------------------------------------------
@@ -1824,10 +2009,6 @@ async function generatePdf() {
       20;
 
 
-    // --------------------------------------------------------
-    // LOAD DGSL LOGO
-    // --------------------------------------------------------
-
     const logoData =
       await loadLogoForPdf();
 
@@ -1853,10 +2034,6 @@ async function generatePdf() {
       y
     );
 
-
-    // --------------------------------------------------------
-    // LOGO TOP RIGHT
-    // --------------------------------------------------------
 
     if (logoData) {
 
@@ -1968,7 +2145,7 @@ async function generatePdf() {
 
 
     // --------------------------------------------------------
-    // DETAILS
+    // HANDOVER DETAILS
     // --------------------------------------------------------
 
     addField(
@@ -1980,6 +2157,12 @@ async function generatePdf() {
     addField(
       'Sub Contractor / Company Name',
       data.contractor
+    );
+
+
+    addField(
+      'Drawing / Reference',
+      data.drawing
     );
 
 
@@ -2008,12 +2191,6 @@ async function generatePdf() {
 
 
     addField(
-      'Drawing / Reference',
-      data.drawing
-    );
-
-
-    addField(
       'Work Description',
       data.description
     );
@@ -2032,8 +2209,306 @@ async function generatePdf() {
 
 
     // --------------------------------------------------------
+    // DGSL TAKE BACK DETAILS
+    // --------------------------------------------------------
+
+    y += 5;
+
+
+    pdf.setFont(
+      undefined,
+      'bold'
+    );
+
+
+    pdf.setFontSize(
+      12
+    );
+
+
+    pdf.text(
+      'DGSL Take Back Details',
+      margin,
+      y
+    );
+
+
+    y += 7;
+
+
+    pdf.setFontSize(
+      10
+    );
+
+
+    addField(
+      'All works complete to drawings',
+      data.takeBackCompleteDrawings
+    );
+
+
+    addField(
+      'Housekeeping at time of Take Back',
+      data.takeBackHousekeeping
+    );
+
+
+    addField(
+      'DG to Snag completed works',
+      data.takeBackSnagCompleted
+    );
+
+
+    // --------------------------------------------------------
+    // TAKE BACK CHECKLIST
+    // --------------------------------------------------------
+
+    y += 3;
+
+
+    pdf.setFont(
+      undefined,
+      'bold'
+    );
+
+
+    pdf.text(
+      'Checklist',
+      margin,
+      y
+    );
+
+
+    y += 7;
+
+
+    pdf.setFont(
+      undefined,
+      'normal'
+    );
+
+
+    const checklistItems = [
+
+      'Current approved drawings, specification, RFI responses, setting-out data and revisions available at workface.',
+
+      'Task-specific RAMS briefed; workers inducted; Safe Pass / CSCS / trade competence checked as applicable.',
+
+      'Work area, access, lighting, scaffold / edge protection, temporary works, previous trade and substrate accepted',
+
+      'Materials / products approved and traceable; plant, tools and test equipment inspected / certified / calibrated.',
+
+      'Interfaces with adjacent trades, services, deliveries, exclusion zones and shared access agreed.',
+
+      'Protection of completed work plus weather, water, dust, noise and environmental controls agreed.',
+
+      'Hold / Witness Points, first-off, photos, tests and QA records identified; emergency, waste, housekeeping and security controls agreed.'
+
+    ];
+
+
+    let checklist = {};
+
+
+    if (
+      editing &&
+      editing.takeBackChecklist
+    ) {
+
+      checklist =
+        editing.takeBackChecklist;
+
+    } else {
+
+      checklist =
+        getTakeBackChecklist();
+
+    }
+
+
+    checklistItems.forEach(
+      (item, index) => {
+
+        if (
+          y > 265
+        ) {
+
+          pdf.addPage();
+
+          y =
+            20;
+
+          if (logoData) {
+
+            pdf.addImage(
+              logoData,
+              'PNG',
+              145,
+              10,
+              50,
+              18
+            );
+
+          }
+
+        }
+
+
+        const itemNumber =
+          index + 1;
+
+
+        const answer =
+          checklist[itemNumber] ||
+          '';
+
+
+        const lines =
+          pdf.splitTextToSize(
+            `${itemNumber}. ${item}`,
+            145
+          );
+
+
+        pdf.text(
+          lines,
+          margin,
+          y
+        );
+
+
+        pdf.setFont(
+          undefined,
+          'bold'
+        );
+
+
+        pdf.text(
+          'Yes',
+          165,
+          y
+        );
+
+
+        pdf.text(
+          'No',
+          185,
+          y
+        );
+
+
+        pdf.setFont(
+          undefined,
+          'normal'
+        );
+
+
+        const boxY =
+          y - 3;
+
+
+        pdf.rect(
+          160,
+          boxY,
+          4,
+          4
+        );
+
+
+        pdf.rect(
+          180,
+          boxY,
+          4,
+          4
+        );
+
+
+        if (
+          answer === 'yes'
+        ) {
+
+          pdf.setFont(
+            undefined,
+            'bold'
+          );
+
+          pdf.text(
+            'X',
+            161,
+            y
+          );
+
+          pdf.setFont(
+            undefined,
+            'normal'
+          );
+
+        }
+
+
+        if (
+          answer === 'no'
+        ) {
+
+          pdf.setFont(
+            undefined,
+            'bold'
+          );
+
+          pdf.text(
+            'X',
+            181,
+            y
+          );
+
+          pdf.setFont(
+            undefined,
+            'normal'
+          );
+
+        }
+
+
+        y +=
+          Math.max(
+            8,
+            lines.length * 5
+          ) +
+          2;
+
+      }
+    );
+
+
+    // --------------------------------------------------------
     // NOTES
     // --------------------------------------------------------
+
+    if (
+      y > 235
+    ) {
+
+      pdf.addPage();
+
+      y =
+        20;
+
+
+      if (logoData) {
+
+        pdf.addImage(
+          logoData,
+          'PNG',
+          145,
+          10,
+          50,
+          18
+        );
+
+      }
+
+    }
+
 
     y += 3;
 
