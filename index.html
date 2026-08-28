@@ -1,4 +1,5 @@
 <!doctype html>
+
 <html lang="en">
 
 <head>
@@ -6,13 +7,15 @@
 <meta charset="utf-8">
 
 <meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
+name="viewport"
+content="width=device-width,initial-scale=1"
+
 >
 
 <meta
-  name="theme-color"
-  content="#1f4e78"
+name="theme-color"
+content="#1f4e78"
+
 >
 
 <title>DGSL Site Register</title>
@@ -24,48 +27,39 @@
 
 </head>
 
-
 <body>
-
 
 <header>
 
-  <div class="site-title">
+  <div>
 
-    <img
-      src="dgsl-logo.png"
-      alt="DG Group logo"
-      class="site-logo"
-    >
+```
+<p class="eyebrow">
+  DGSL BUILDING
+</p>
 
-    <div>
-
-      <p class="eyebrow">
-        DGSL BUILDING
-      </p>
-
-      <h1>
-        Site Handover Register
-      </h1>
-
-    </div>
+<h1>
+  Site Handover Register
+</h1>
+```
 
   </div>
 
+<button
+id="newZone"
+class="primary"
 
-  <button
-    id="newZone"
-    class="primary"
-  >
-    + New handover
+>
+
+```
++ New handover
+```
+
   </button>
 
 </header>
 
-
-
 <main>
-
 
 <section
   class="cards"
@@ -74,696 +68,669 @@
 
   <article>
 
-    <span>
-      Total zones
-    </span>
+```
+<span>
+  Total zones
+</span>
 
-    <strong id="total">
-      0
-    </strong>
+<strong id="total">
+  0
+</strong>
+```
 
   </article>
-
 
   <article class="amber">
 
-    <span>
-      In progress
-    </span>
+```
+<span>
+  In progress
+</span>
 
-    <strong id="progress">
-      0
-    </strong>
+<strong id="progress">
+  0
+</strong>
+```
 
   </article>
-
 
   <article class="green">
 
-    <span>
-      Closed out
-    </span>
+```
+<span>
+  Closed out
+</span>
 
-    <strong id="closed">
-      0
-    </strong>
+<strong id="closed">
+  0
+</strong>
+```
 
   </article>
-
 
   <article class="red">
 
-    <span>
-      On hold
-    </span>
+```
+<span>
+  On hold
+</span>
 
-    <strong id="hold">
-      0
-    </strong>
+<strong id="hold">
+  0
+</strong>
+```
 
   </article>
 
 </section>
 
-
-
 <section class="panel">
 
+<div class="toolbar">
 
-  <div class="toolbar">
+  <div>
 
-    <div>
+```
+<h2>
+  Zone register
+</h2>
 
-      <h2>
-        Zone register
-      </h2>
-
-      <p>
-        Handovers are saved to the shared site register.
-      </p>
-
-    </div>
-
-
-    <div class="actions">
-
-      <input
-        id="search"
-        type="search"
-        placeholder="Search zones, contractor..."
-        aria-label="Search register"
-      >
-
-
-      <button id="export">
-        Export backup
-      </button>
-
-
-      <label class="button">
-
-        Import backup
-
-        <input
-          id="import"
-          type="file"
-          accept="application/json"
-          hidden
-        >
-
-      </label>
-
-    </div>
+<p>
+  Every handover is saved to the shared register.
+</p>
+```
 
   </div>
 
+  <div class="actions">
+
+```
+<input
+  id="search"
+  type="search"
+  placeholder="Search zones, contractor..."
+  aria-label="Search register"
+>
 
 
-  <div class="filters">
-
-    <button
-      data-filter="All"
-      class="active"
-    >
-      All
-    </button>
+<button id="export">
+  Export backup
+</button>
 
 
-    <button
-      data-filter="In Progress"
-    >
-      In Progress
-    </button>
+<label class="button">
 
+  Import backup
 
-    <button
-      data-filter="Closed Out"
-    >
-      Closed Out
-    </button>
-
-
-    <button
-      data-filter="On Hold"
-    >
-      On Hold
-    </button>
-
-  </div>
-
-
-
-  <div class="table-wrap">
-
-    <table>
-
-      <thead>
-
-        <tr>
-
-          <th>
-            Zone / Area
-          </th>
-
-          <th>
-            Block / Level
-          </th>
-
-          <th>
-            Trade
-          </th>
-
-          <th>
-            Sub-Contractor
-          </th>
-
-          <th>
-            Work description
-          </th>
-
-          <th>
-            Status
-          </th>
-
-          <th>
-            Handover
-          </th>
-
-          <th>
-          </th>
-
-        </tr>
-
-      </thead>
-
-
-      <tbody id="rows"></tbody>
-
-    </table>
-
-  </div>
-
-
-
-  <p
-    id="empty"
-    class="empty"
+  <input
+    id="import"
+    type="file"
+    accept="application/json"
+    hidden
   >
-    No handovers yet. Add your first zone to start the register.
-  </p>
 
+</label>
+```
+
+  </div>
+
+</div>
+
+<div class="filters">
+
+<button
+data-filter="All"
+class="active"
+
+>
+
+```
+All
+```
+
+  </button>
+
+<button
+data-filter="In Progress"
+
+>
+
+```
+In Progress
+```
+
+  </button>
+
+<button
+data-filter="Closed Out"
+
+>
+
+```
+Closed Out
+```
+
+  </button>
+
+<button
+data-filter="On Hold"
+
+>
+
+```
+On Hold
+```
+
+  </button>
+
+</div>
+
+<div class="table-wrap">
+
+<table>
+
+<thead>
+
+<tr>
+
+  <th>
+    Zone / Area
+  </th>
+
+  <th>
+    Block / Level
+  </th>
+
+  <th>
+    Trade
+  </th>
+
+  <th>
+    Sub-Contractor
+  </th>
+
+  <th>
+    Work description
+  </th>
+
+  <th>
+    Status
+  </th>
+
+  <th>
+    Handover
+  </th>
+
+  <th>
+  </th>
+
+</tr>
+
+</thead>
+
+<tbody id="rows"></tbody>
+
+</table>
+
+</div>
+
+<p
+  id="empty"
+  class="empty"
+>
+
+No handovers yet.
+Add your first zone to start the register.
+
+</p>
 
 </section>
 
-
 </main>
 
-
-
 <dialog id="formDialog">
-
 
 <form
   id="handoverForm"
   method="dialog"
 >
 
+<div class="form-head">
 
-  <!-- =====================================================
-       LOGO
-       ===================================================== -->
+  <div>
 
-  <div class="form-logo">
+```
+<p class="eyebrow">
+  HANDOVER RECORD
+</p>
 
-    <img
-      src="dgsl-logo.png"
-      alt="DG Group logo"
-    >
-
-  </div>
-
-
-
-  <!-- =====================================================
-       FORM HEADER
-       ===================================================== -->
-
-  <div class="form-head">
-
-    <div>
-
-      <p class="eyebrow">
-        HANDOVER RECORD
-      </p>
-
-      <h2 id="formTitle">
-        New handover
-      </h2>
-
-    </div>
-
-
-    <button
-      type="button"
-      id="cancel"
-      class="icon"
-      aria-label="Close"
-    >
-      ×
-    </button>
+<h2 id="formTitle">
+  New handover
+</h2>
+```
 
   </div>
 
+<button
+type="button"
+id="cancel"
+class="icon"
+aria-label="Close"
 
+>
 
-  <div class="form-grid">
+```
+×
+```
 
+  </button>
 
+</div>
 
-    <!-- =====================================================
-         SUB-CONTRACTOR SECTION
-         ===================================================== -->
+<div class="form-grid">
 
-    <div class="section-heading wide">
+<!-- =====================================================
+     SUB-CONTRACTOR SECTION
+     ===================================================== -->
 
-      <h3>
-        Sub-Contractor
-      </h3>
+<div class="wide">
 
-      <p>
-        Complete the sub-contractor details and sign below.
-      </p>
+  <h3>
+    Sub-Contractor
+  </h3>
 
-    </div>
+  <p>
+    Complete the sub-contractor section below.
+  </p>
 
+</div>
 
+<label>
 
-    <label>
+Sub-Contractor name
 
-      Sub-Contractor name
+<input
+name="contractorSigner"
 
-      <input
-        name="contractorSigner"
-      >
+>
 
-    </label>
+</label>
 
+<div class="wide">
 
+  <p>
+    <strong>
+      Sub-Contractor signature
+    </strong>
+  </p>
 
-    <div class="wide">
+<canvas
+id="contractorSignature"
+width="600"
+height="180"
+style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
 
-      <p>
-        <strong>
-          Sub-Contractor signature
-        </strong>
-      </p>
+> </canvas>
 
+<button
+type="button"
+id="clearContractorSignature"
 
-      <canvas
-        id="contractorSignature"
-        width="600"
-        height="180"
-      ></canvas>
+>
 
+```
+Clear signature
+```
 
-      <button
-        type="button"
-        id="clearContractorSignature"
-      >
-        Clear signature
-      </button>
+  </button>
 
-    </div>
+</div>
 
+<!-- =====================================================
+     MAIN HANDOVER SECTION
+     ===================================================== -->
 
+<div class="wide">
 
-    <!-- =====================================================
-         DGSL / HANDOVER DETAILS
-         ===================================================== -->
+  <h3>
+    DGSL Handover
+  </h3>
 
-    <div class="section-heading wide">
+</div>
 
-      <h3>
-        DGSL Handover Details
-      </h3>
+<label>
 
-    </div>
+Zone / area*
 
+<input
+name="zone"
+required
+placeholder="e.g. Apartment 201"
 
+>
 
-    <label>
+</label>
 
-      Zone / area*
+<label>
 
-      <input
-        name="zone"
-        required
-        placeholder="e.g. Apartment 201"
-      >
+Block / level
 
-    </label>
+<input
+name="level"
+placeholder="e.g. Block A / Level 2"
 
+>
 
+</label>
 
-    <label>
+<label>
 
-      Block / level
+Drawing / reference
 
-      <input
-        name="level"
-        placeholder="e.g. Block A / Level 2"
-      >
+<input
+name="drawing"
+placeholder="Drawing number"
 
-    </label>
+>
 
+</label>
 
+<label>
 
-    <label>
+Trade / workstream
 
-      Drawing / reference
+  <select name="trade">
 
-      <input
-        name="drawing"
-        placeholder="Drawing number"
-      >
+```
+<option>
+  General
+</option>
 
-    </label>
+<option>
+  Structure
+</option>
 
+<option>
+  MEP
+</option>
 
+<option>
+  Finishes
+</option>
 
-    <label>
+<option>
+  External Works
+</option>
+```
 
-      Trade / workstream
+  </select>
 
-      <select name="trade">
+</label>
 
-        <option>
-          General
-        </option>
+<label>
 
-        <option>
-          Structure
-        </option>
+Sub-Contractor
 
-        <option>
-          MEP
-        </option>
+<input
+name="contractor"
 
-        <option>
-          Finishes
-        </option>
+>
 
-        <option>
-          External Works
-        </option>
+</label>
 
-      </select>
+<label>
 
-    </label>
+Site foreman
 
+<input
+name="foreman"
 
+>
 
-    <label>
+</label>
 
-      Sub-Contractor
+<label class="wide">
 
-      <input
-        name="contractor"
-      >
+Work description
 
-    </label>
+  <textarea
+    name="description"
+    rows="3"
+    placeholder="Describe the works handed over"
+  ></textarea>
 
+</label>
 
+<label>
 
-    <label>
+Status
 
-      Site foreman
+  <select name="status">
 
-      <input
-        name="foreman"
-      >
+```
+<option>
+  Not Started
+</option>
 
-    </label>
+<option selected>
+  In Progress
+</option>
 
+<option>
+  On Hold
+</option>
 
+<option>
+  Closed Out
+</option>
+```
 
-    <label class="wide">
+  </select>
 
-      Work description
+</label>
 
-      <textarea
-        name="description"
-        rows="3"
-        placeholder="Describe the works handed over"
-      ></textarea>
+<label>
 
-    </label>
+Handover state
 
+  <select name="handover">
 
+```
+<option>
+  Not Submitted
+</option>
 
-    <label>
+<option>
+  Handover Submitted
+</option>
 
-      Status
+<option>
+  Take Back Signed
+</option>
+```
 
-      <select name="status">
+  </select>
 
-        <option>
-          Not Started
-        </option>
+</label>
 
-        <option selected>
-          In Progress
-        </option>
+<label>
 
-        <option>
-          On Hold
-        </option>
+Handover date
 
-        <option>
-          Closed Out
-        </option>
+<input
+name="handoverDate"
+type="date"
 
-      </select>
+>
 
-    </label>
+</label>
 
+<label class="wide">
 
+Notes / outstanding items
 
-    <label>
+  <textarea
+    name="notes"
+    rows="3"
+    placeholder="Enter any outstanding items, snags or notes"
+  ></textarea>
 
-      Handover state
+</label>
 
-      <select name="handover">
+<!-- =====================================================
+     PHOTOS
+     ===================================================== -->
 
-        <option>
-          Not Submitted
-        </option>
+<label class="wide">
 
-        <option>
-          Handover Submitted
-        </option>
+Site photos
 
-        <option>
-          Take Back Signed
-        </option>
+<input
+id="photos"
+name="photos"
+type="file"
+accept="image/*"
+multiple
+capture="environment"
 
-      </select>
+>
 
-    </label>
+  <small>
+    Photos are added directly to the generated PDF.
+    They are not stored separately.
+  </small>
 
+</label>
 
+<div
+  id="photoPreview"
+  class="wide"
+  style="display:flex;flex-wrap:wrap;gap:10px;"
+></div>
 
-    <label>
+<!-- =====================================================
+     DGSL SIGNATURE
+     ===================================================== -->
 
-      Handover date
+<div class="wide">
 
-      <input
-        name="handoverDate"
-        type="date"
-      >
+  <h3>
+    DGSL Representative
+  </h3>
 
-    </label>
+  <p>
+    Complete the DGSL section below.
+  </p>
 
+</div>
 
+<label>
 
-    <label class="wide">
+DGSL representative
 
-      Notes / outstanding items
+<input
+name="dgslSigner"
 
-      <textarea
-        name="notes"
-        rows="3"
-        placeholder="Enter any outstanding items, snags or notes"
-      ></textarea>
+>
 
-    </label>
+</label>
 
+<div class="wide">
 
+  <p>
+    <strong>
+      DGSL representative signature
+    </strong>
+  </p>
 
-    <!-- =====================================================
-         PHOTOS
-         ===================================================== -->
+<canvas
+id="dgslSignature"
+width="600"
+height="180"
+style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
 
-    <label class="wide">
+> </canvas>
 
-      Site photos
+<button
+type="button"
+id="clearDgslSignature"
 
-      <input
-        id="photos"
-        name="photos"
-        type="file"
-        accept="image/*"
-        multiple
-        capture="environment"
-      >
+>
 
-      <small>
-        You can select or take multiple site photos.
-      </small>
+```
+Clear signature
+```
 
-    </label>
+  </button>
 
+</div>
 
+</div>
 
-    <div
-      id="photoPreview"
-      class="wide photo-preview"
-    ></div>
+<!-- =====================================================
+     FORM ACTIONS
+     ===================================================== -->
 
+<div class="form-actions">
 
+<button
+type="button"
+id="delete"
+class="danger"
 
-    <!-- =====================================================
-         DGSL SIGNATURE
-         ===================================================== -->
+>
 
-    <div class="section-heading wide">
+```
+Delete record
+```
 
-      <h3>
-        DGSL Sign-Off
-      </h3>
+  </button>
 
-      <p>
-        Sign below using your finger or mouse.
-      </p>
+<span></span>
 
-    </div>
+<button
+type="button"
+id="cancel2"
 
+>
 
+```
+Cancel
+```
 
-    <label>
+  </button>
 
-      DGSL representative
+  <!-- THERE IS NOW ONLY ONE SAVE BUTTON -->
 
-      <input
-        name="dgslSigner"
-      >
+<button
+class="primary"
+value="default"
 
-    </label>
+>
 
+```
+Save handover
+```
 
+  </button>
 
-    <div class="wide">
-
-      <p>
-        <strong>
-          DGSL representative signature
-        </strong>
-      </p>
-
-
-      <canvas
-        id="dgslSignature"
-        width="600"
-        height="180"
-      ></canvas>
-
-
-      <button
-        type="button"
-        id="clearDgslSignature"
-      >
-        Clear signature
-      </button>
-
-    </div>
-
-
-
-  </div>
-
-
-
-  <!-- =====================================================
-       FORM BUTTONS
-       ===================================================== -->
-
-  <div class="form-actions">
-
-
-    <button
-      type="button"
-      id="delete"
-      class="danger"
-    >
-      Delete record
-    </button>
-
-
-    <span></span>
-
-
-    <button
-      type="button"
-      id="cancel2"
-    >
-      Cancel
-    </button>
-
-
-    <button
-      type="button"
-      id="generatePdf"
-      class="primary"
-    >
-      Generate PDF
-    </button>
-
-
-    <button
-      class="primary"
-      value="default"
-    >
-      Save handover
-    </button>
-
-
-  </div>
-
+</div>
 
 </form>
 
-
 </dialog>
 
+<!-- =====================================================
+     LIBRARIES
+     ===================================================== -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- ==========================================================
-     PDF LIBRARIES
-     ========================================================== -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
-
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-></script>
-
-
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-></script>
-
+<script src="https://alcdn.msauth.net/browser/2.38.4/js/msal-browser.min.js"></script>
 
 <script src="app.js"></script>
-
 
 </body>
 
