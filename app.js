@@ -636,9 +636,21 @@ function restoreTakeBackChecklist(
         const answer =
           checkbox.dataset.answer;
 
-        checkbox.checked =
+
+        if (
           checklist &&
-          checklist[item] === answer;
+          checklist[item]
+        ) {
+
+          checkbox.checked =
+            checklist[item] === answer;
+
+        } else {
+
+          checkbox.checked =
+            answer === 'yes';
+
+        }
 
       }
     );
@@ -661,27 +673,67 @@ document
         'change',
         function () {
 
-          if (!this.checked) {
-            return;
-          }
-
           const item =
             this.dataset.item;
 
-          document
-            .querySelectorAll(
-              `.takeback-check[data-item="${item}"]`
-            )
-            .forEach(
-              other => {
+          const answer =
+            this.dataset.answer;
 
-                if (other !== this) {
-                  other.checked =
-                    false;
+
+          if (
+            this.checked &&
+            answer === 'no'
+          ) {
+
+            document
+              .querySelectorAll(
+                `.takeback-check[data-item="${item}"]`
+              )
+              .forEach(
+                other => {
+
+                  if (
+                    other.dataset.answer ===
+                    'yes'
+                  ) {
+
+                    other.checked =
+                      false;
+
+                  }
+
                 }
+              );
 
-              }
-            );
+          }
+
+
+          if (
+            this.checked &&
+            answer === 'yes'
+          ) {
+
+            document
+              .querySelectorAll(
+                `.takeback-check[data-item="${item}"]`
+              )
+              .forEach(
+                other => {
+
+                  if (
+                    other.dataset.answer ===
+                    'no'
+                  ) {
+
+                    other.checked =
+                      false;
+
+                  }
+
+                }
+              );
+
+          }
 
         }
       );
@@ -2209,7 +2261,7 @@ async function generatePdf() {
 
 
     // --------------------------------------------------------
-    // DGSL TAKE BACK DETAILS
+    // CHECKLIST
     // --------------------------------------------------------
 
     y += 5;
@@ -2227,7 +2279,7 @@ async function generatePdf() {
 
 
     pdf.text(
-      'DGSL Take Back Details',
+      'Checklist',
       margin,
       y
     );
@@ -2239,47 +2291,6 @@ async function generatePdf() {
     pdf.setFontSize(
       10
     );
-
-
-    addField(
-      'All works complete to drawings',
-      data.takeBackCompleteDrawings
-    );
-
-
-    addField(
-      'Housekeeping at time of Take Back',
-      data.takeBackHousekeeping
-    );
-
-
-    addField(
-      'DG to Snag completed works',
-      data.takeBackSnagCompleted
-    );
-
-
-    // --------------------------------------------------------
-    // TAKE BACK CHECKLIST
-    // --------------------------------------------------------
-
-    y += 3;
-
-
-    pdf.setFont(
-      undefined,
-      'bold'
-    );
-
-
-    pdf.text(
-      'Checklist',
-      margin,
-      y
-    );
-
-
-    y += 7;
 
 
     pdf.setFont(
@@ -2307,23 +2318,8 @@ async function generatePdf() {
     ];
 
 
-    let checklist = {};
-
-
-    if (
-      editing &&
-      editing.takeBackChecklist
-    ) {
-
-      checklist =
-        editing.takeBackChecklist;
-
-    } else {
-
-      checklist =
-        getTakeBackChecklist();
-
-    }
+    const checklist =
+      getTakeBackChecklist();
 
 
     checklistItems.forEach(
@@ -2337,6 +2333,7 @@ async function generatePdf() {
 
           y =
             20;
+
 
           if (logoData) {
 
@@ -2360,7 +2357,7 @@ async function generatePdf() {
 
         const answer =
           checklist[itemNumber] ||
-          '';
+          'yes';
 
 
         const lines =
@@ -2432,11 +2429,13 @@ async function generatePdf() {
             'bold'
           );
 
+
           pdf.text(
             'X',
             161,
             y
           );
+
 
           pdf.setFont(
             undefined,
@@ -2455,11 +2454,13 @@ async function generatePdf() {
             'bold'
           );
 
+
           pdf.text(
             'X',
             181,
             y
           );
+
 
           pdf.setFont(
             undefined,
@@ -2477,6 +2478,83 @@ async function generatePdf() {
           2;
 
       }
+    );
+
+
+    // --------------------------------------------------------
+    // DGSL TAKE BACK DETAILS
+    // --------------------------------------------------------
+
+    if (
+      y > 235
+    ) {
+
+      pdf.addPage();
+
+      y =
+        20;
+
+
+      if (logoData) {
+
+        pdf.addImage(
+          logoData,
+          'PNG',
+          145,
+          10,
+          50,
+          18
+        );
+
+      }
+
+    }
+
+
+    y += 3;
+
+
+    pdf.setFont(
+      undefined,
+      'bold'
+    );
+
+
+    pdf.setFontSize(
+      12
+    );
+
+
+    pdf.text(
+      'DGSL Take Back Details',
+      margin,
+      y
+    );
+
+
+    y += 7;
+
+
+    pdf.setFontSize(
+      10
+    );
+
+
+    addField(
+      'All works complete to drawings',
+      data.takeBackCompleteDrawings
+    );
+
+
+    addField(
+      'Housekeeping at time of Take Back',
+      data.takeBackHousekeeping
+    );
+
+
+    addField(
+      'DG to Snag completed works',
+      data.takeBackSnagCompleted
     );
 
 
