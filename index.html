@@ -1,149 +1,74 @@
 <!doctype html>
 <html lang="en">
-
 <head>
-
 <meta charset="utf-8">
-
-<meta
-  name="viewport"
-  content="width=device-width,initial-scale=1"
->
-
-<meta
-  name="theme-color"
-  content="#1f4e78"
->
-
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#1f4e78">
 <title>DGSL Site Register</title>
-
-<link
-  rel="stylesheet"
-  href="styles.css"
->
-
+<link rel="stylesheet" href="styles.css">
 </head>
-
 
 <body>
 
-
 <header>
 
-  <div class="site-title">
+  <div style="display:flex;align-items:center;gap:15px;">
 
     <img
-      src="dgsl-logo.png"
-      alt="DG Group logo"
-      class="site-logo"
+      src="logo.png"
+      alt="DGSL Logo"
+      style="height:55px;width:auto;"
     >
 
     <div>
-
-      <p class="eyebrow">
-        DGSL BUILDING
-      </p>
-
-      <h1>
-        Site Handover Register
-      </h1>
-
+      <p class="eyebrow">DGSL BUILDING</p>
+      <h1>Site Handover Register</h1>
     </div>
 
   </div>
 
-
-  <button
-    id="newZone"
-    class="primary"
-  >
+  <button id="newZone" class="primary">
     + New handover
   </button>
 
 </header>
 
 
-
 <main>
 
-
-<section
-  class="cards"
-  aria-label="Site summary"
->
+<section class="cards" aria-label="Site summary">
 
   <article>
-
-    <span>
-      Total zones
-    </span>
-
-    <strong id="total">
-      0
-    </strong>
-
+    <span>Total zones</span>
+    <strong id="total">0</strong>
   </article>
-
 
   <article class="amber">
-
-    <span>
-      In progress
-    </span>
-
-    <strong id="progress">
-      0
-    </strong>
-
+    <span>In progress</span>
+    <strong id="progress">0</strong>
   </article>
-
 
   <article class="green">
-
-    <span>
-      Closed out
-    </span>
-
-    <strong id="closed">
-      0
-    </strong>
-
+    <span>Closed out</span>
+    <strong id="closed">0</strong>
   </article>
 
-
   <article class="red">
-
-    <span>
-      On hold
-    </span>
-
-    <strong id="hold">
-      0
-    </strong>
-
+    <span>On hold</span>
+    <strong id="hold">0</strong>
   </article>
 
 </section>
 
 
-
 <section class="panel">
-
 
   <div class="toolbar">
 
     <div>
-
-      <h2>
-        Zone register
-      </h2>
-
-      <p>
-        Handovers are saved to the shared site register.
-      </p>
-
+      <h2>Zone register</h2>
+      <p>Every handover is saved on this device.</p>
     </div>
-
 
     <div class="actions">
 
@@ -154,23 +79,18 @@
         aria-label="Search register"
       >
 
-
       <button id="export">
         Export backup
       </button>
 
-
       <label class="button">
-
         Import backup
-
         <input
           id="import"
           type="file"
           accept="application/json"
           hidden
         >
-
       </label>
 
     </div>
@@ -178,39 +98,25 @@
   </div>
 
 
-
   <div class="filters">
 
-    <button
-      data-filter="All"
-      class="active"
-    >
+    <button data-filter="All" class="active">
       All
     </button>
 
-
-    <button
-      data-filter="In Progress"
-    >
-      In Progress
+    <button data-filter="Work Permit in progress">
+      Work Permit in progress
     </button>
 
-
-    <button
-      data-filter="Closed Out"
-    >
-      Closed Out
+    <button data-filter="Work Permit closed out">
+      Work Permit closed out
     </button>
 
-
-    <button
-      data-filter="On Hold"
-    >
-      On Hold
+    <button data-filter="Work Permit on hold">
+      Work Permit on hold
     </button>
 
   </div>
-
 
 
   <div class="table-wrap">
@@ -221,41 +127,18 @@
 
         <tr>
 
-          <th>
-            Zone / Area
-          </th>
-
-          <th>
-            Block / Level
-          </th>
-
-          <th>
-            Trade
-          </th>
-
-          <th>
-            Sub-Contractor
-          </th>
-
-          <th>
-            Work description
-          </th>
-
-          <th>
-            Status
-          </th>
-
-          <th>
-            Handover
-          </th>
-
-          <th>
-          </th>
+          <th>Zone / Area</th>
+          <th>Safety Documents</th>
+          <th>Trade</th>
+          <th>Sub Contractor / Company Name</th>
+          <th>Work description</th>
+          <th>Status</th>
+          <th>Handover</th>
+          <th></th>
 
         </tr>
 
       </thead>
-
 
       <tbody id="rows"></tbody>
 
@@ -264,64 +147,31 @@
   </div>
 
 
-
-  <p
-    id="empty"
-    class="empty"
-  >
+  <p id="empty" class="empty">
     No handovers yet. Add your first zone to start the register.
   </p>
 
-
 </section>
-
 
 </main>
 
 
-
 <dialog id="formDialog">
 
+<form id="handoverForm" method="dialog">
 
-<form
-  id="handoverForm"
-  method="dialog"
->
-
-
-  <!-- =====================================================
-       LOGO
-       ===================================================== -->
-
-  <div class="form-logo">
-
-    <img
-      src="dgsl-logo.png"
-      alt="DG Group logo"
-    >
-
-  </div>
-
-
-
-  <!-- =====================================================
-       FORM HEADER
-       ===================================================== -->
 
   <div class="form-head">
 
     <div>
 
-      <p class="eyebrow">
-        HANDOVER RECORD
-      </p>
+      <p class="eyebrow">HANDOVER RECORD</p>
 
       <h2 id="formTitle">
         New handover
       </h2>
 
     </div>
-
 
     <button
       type="button"
@@ -335,56 +185,43 @@
   </div>
 
 
-
   <div class="form-grid">
 
 
+    <!-- SUB-CONTRACTOR SECTION -->
 
-    <!-- =====================================================
-         SUB-CONTRACTOR SECTION
-         ===================================================== -->
+    <div class="wide">
 
-    <div class="section-heading wide">
-
-      <h3>
-        Sub-Contractor
-      </h3>
+      <h3>Signatures</h3>
 
       <p>
-        Complete the sub-contractor details and sign below.
+        Sign below using your finger or mouse.
       </p>
 
     </div>
 
 
-
     <label>
 
-      Sub-Contractor name
+      Name
 
-      <input
-        name="contractorSigner"
-      >
+      <input name="contractorSigner">
 
     </label>
-
 
 
     <div class="wide">
 
       <p>
-        <strong>
-          Sub-Contractor signature
-        </strong>
+        <strong>Signature</strong>
       </p>
-
 
       <canvas
         id="contractorSignature"
         width="600"
         height="180"
+        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
       ></canvas>
-
 
       <button
         type="button"
@@ -396,24 +233,27 @@
     </div>
 
 
+    <!-- DGSL HANDOVER DETAILS -->
 
-    <!-- =====================================================
-         DGSL / HANDOVER DETAILS
-         ===================================================== -->
+    <div class="wide">
 
-    <div class="section-heading wide">
-
-      <h3>
-        DGSL Handover Details
-      </h3>
+      <h3>DGSL Handover Details</h3>
 
     </div>
 
 
+    <label>
+
+      Sub Contractor / Company Name
+
+      <input name="contractor">
+
+    </label>
+
 
     <label>
 
-      Zone / area*
+      Zone / Area
 
       <input
         name="zone"
@@ -424,18 +264,52 @@
     </label>
 
 
-
     <label>
 
-      Block / level
+      Safety Documents
 
       <input
         name="level"
-        placeholder="e.g. Block A / Level 2"
+        placeholder="Enter details"
       >
 
     </label>
 
+
+    <label>
+
+      Housekeeping at time of Take Over
+
+      <input
+        name="trade"
+        placeholder="Enter details"
+      >
+
+    </label>
+
+
+    <label>
+
+      Materials Checks
+
+      <input
+        name="foreman"
+        placeholder="Enter details"
+      >
+
+    </label>
+
+
+    <label>
+
+      Health & Safety - Scaffolding / Handrails
+
+      <input
+        name="healthSafetyScaffolding"
+        placeholder="Enter details"
+      >
+
+    </label>
 
 
     <label>
@@ -448,63 +322,6 @@
       >
 
     </label>
-
-
-
-    <label>
-
-      Trade / workstream
-
-      <select name="trade">
-
-        <option>
-          General
-        </option>
-
-        <option>
-          Structure
-        </option>
-
-        <option>
-          MEP
-        </option>
-
-        <option>
-          Finishes
-        </option>
-
-        <option>
-          External Works
-        </option>
-
-      </select>
-
-    </label>
-
-
-
-    <label>
-
-      Sub-Contractor
-
-      <input
-        name="contractor"
-      >
-
-    </label>
-
-
-
-    <label>
-
-      Site foreman
-
-      <input
-        name="foreman"
-      >
-
-    </label>
-
 
 
     <label class="wide">
@@ -520,7 +337,6 @@
     </label>
 
 
-
     <label>
 
       Status
@@ -528,49 +344,20 @@
       <select name="status">
 
         <option>
-          Not Started
-        </option>
-
-        <option selected>
-          In Progress
+          Work Permit in progress
         </option>
 
         <option>
-          On Hold
+          Work Permit on hold
         </option>
 
         <option>
-          Closed Out
+          Work Permit closed out
         </option>
 
       </select>
 
     </label>
-
-
-
-    <label>
-
-      Handover state
-
-      <select name="handover">
-
-        <option>
-          Not Submitted
-        </option>
-
-        <option>
-          Handover Submitted
-        </option>
-
-        <option>
-          Take Back Signed
-        </option>
-
-      </select>
-
-    </label>
-
 
 
     <label>
@@ -583,7 +370,6 @@
       >
 
     </label>
-
 
 
     <label class="wide">
@@ -599,10 +385,7 @@
     </label>
 
 
-
-    <!-- =====================================================
-         PHOTOS
-         ===================================================== -->
+    <!-- PHOTOS -->
 
     <label class="wide">
 
@@ -624,59 +407,45 @@
     </label>
 
 
-
     <div
       id="photoPreview"
-      class="wide photo-preview"
+      class="wide"
+      style="display:flex;flex-wrap:wrap;gap:10px;"
     ></div>
 
 
+    <!-- DGSL SIGNATURE -->
 
-    <!-- =====================================================
-         DGSL SIGNATURE
-         ===================================================== -->
-
-    <div class="section-heading wide">
-
-      <h3>
-        DGSL Sign-Off
-      </h3>
+    <div class="wide">
 
       <p>
-        Sign below using your finger or mouse.
+        <strong>DGSL representative</strong>
       </p>
 
     </div>
-
 
 
     <label>
 
       DGSL representative
 
-      <input
-        name="dgslSigner"
-      >
+      <input name="dgslSigner">
 
     </label>
-
 
 
     <div class="wide">
 
       <p>
-        <strong>
-          DGSL representative signature
-        </strong>
+        <strong>DGSL representative signature</strong>
       </p>
-
 
       <canvas
         id="dgslSignature"
         width="600"
         height="180"
+        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
       ></canvas>
-
 
       <button
         type="button"
@@ -688,17 +457,10 @@
     </div>
 
 
-
   </div>
 
 
-
-  <!-- =====================================================
-       FORM BUTTONS
-       ===================================================== -->
-
   <div class="form-actions">
-
 
     <button
       type="button"
@@ -708,9 +470,7 @@
       Delete record
     </button>
 
-
     <span></span>
-
 
     <button
       type="button"
@@ -719,16 +479,6 @@
       Cancel
     </button>
 
-
-    <button
-      type="button"
-      id="generatePdf"
-      class="primary"
-    >
-      Generate PDF
-    </button>
-
-
     <button
       class="primary"
       value="default"
@@ -736,35 +486,18 @@
       Save handover
     </button>
 
-
   </div>
 
-
 </form>
-
 
 </dialog>
 
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 
-<!-- ==========================================================
-     PDF LIBRARIES
-     ========================================================== -->
-
-
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"
-></script>
-
-
-<script
-  src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"
-></script>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
 
 <script src="app.js"></script>
 
-
 </body>
-
 </html>
