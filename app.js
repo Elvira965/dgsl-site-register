@@ -2137,10 +2137,30 @@ async function generatePdf() {
     y += 8;
 
 
-    const data =
-      Object.fromEntries(
-        new FormData(form)
-      );
+    const data = {
+  zone: form.elements.zone?.value || '',
+  contractor: form.elements.contractor?.value || '',
+  drawing: form.elements.drawing?.value || '',
+  level: form.elements.level?.value || '',
+  trade: form.elements.trade?.value || '',
+  foreman: form.elements.foreman?.value || '',
+  healthSafetyScaffolding:
+    form.elements.healthSafetyScaffolding?.value || '',
+  description: form.elements.description?.value || '',
+  status: form.elements.status?.value || '',
+  handoverDate: form.elements.handoverDate?.value || '',
+  takeBackCompleteDrawings:
+    form.elements.takeBackCompleteDrawings?.value || '',
+  takeBackHousekeeping:
+    form.elements.takeBackHousekeeping?.value || '',
+  takeBackSnagCompleted:
+    form.elements.takeBackSnagCompleted?.value || '',
+  notes: form.elements.notes?.value || '',
+  contractorSigner:
+    form.elements.contractorSigner?.value || '',
+  dgslSigner:
+    form.elements.dgslSigner?.value || ''
+};
 
 
     // --------------------------------------------------------
