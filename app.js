@@ -508,11 +508,21 @@ function render() {
 
           <td>
 
-            <span class="status">
-              ${esc(x.status)}
-            </span>
+  <span
+    class="status ${
+      x.status === 'Work Permit Open'
+        ? 'status-open'
+        : x.status === 'Work Permit Closed'
+          ? 'status-closed'
+          : x.status === 'Work Permit on Hold'
+            ? 'status-hold'
+            : ''
+    }"
+  >
+    ${esc(x.status)}
+  </span>
 
-          </td>
+</td>
 
           <td>
             ${esc(x.handoverDate)}
