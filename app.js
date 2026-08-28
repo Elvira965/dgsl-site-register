@@ -2233,18 +2233,18 @@ async function generatePdf() {
 
 
     pdf.setFontSize(
-      10
+      14
     );
 
 
     pdf.setFont(
       undefined,
-      'normal'
+      'bold'
     );
 
 
     pdf.text(
-      'Site Handover Record',
+      'Knocksedan, PH3',
       margin,
       y
     );
