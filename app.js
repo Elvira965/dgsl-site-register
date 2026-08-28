@@ -319,125 +319,122 @@ function render() {
       : '';
 
   const filtered =
-    records.filter(x =>
+    records.filter(
+      x =>
 
-      (
-        filter === 'All' ||
-        x.status === filter
-      )
+        (
+          filter === 'All' ||
+          x.status === filter
+        )
 
-      &&
+        &&
 
-      Object.values(x)
-        .join(' ')
-        .toLowerCase()
-        .includes(q)
+        Object.values(x)
+          .join(' ')
+          .toLowerCase()
+          .includes(q)
 
     );
 
 
+  // ----------------------------------------------------------
+  // SUMMARY COUNTERS
+  // ----------------------------------------------------------
+
   $('#total').textContent =
     records.length;
-
 
   $('#progress').textContent =
     records.filter(
       x =>
         x.status ===
-        'Work Permit in progress'
+        'In Progress'
     ).length;
-
 
   $('#closed').textContent =
     records.filter(
       x =>
         x.status ===
-        'Work Permit closed out'
+        'Closed Out'
     ).length;
-
 
   $('#hold').textContent =
     records.filter(
       x =>
         x.status ===
-        'Work Permit on hold'
+        'On Hold'
     ).length;
 
 
+  // ----------------------------------------------------------
+  // REGISTER TABLE
+  // ONLY THESE COLUMNS:
+  // Zone / Area
+  // Sub-Contractor
+  // Work Description
+  // Status
+  // Handover Date
+  // ----------------------------------------------------------
+
   rows.innerHTML =
-    filtered.map(
-      x => `
+    filtered
+      .map(
+        x => `
 
-      <tr>
+        <tr>
 
-        <td>
+          <td>
+            <b>
+              ${esc(x.zone)}
+            </b>
+          </td>
 
-          <b>
-            ${esc(x.zone)}
-          </b>
 
-          <br>
+          <td>
+            ${esc(x.contractor)}
+          </td>
 
-          <small>
-            ${esc(x.drawing)}
-          </small>
 
-        </td>
+          <td>
+            ${esc(x.description)}
+          </td>
 
-        <td>
-          ${esc(x.level)}
-        </td>
 
-        <td>
-          ${esc(x.trade)}
-        </td>
+          <td>
 
-        <td>
+            <span class="status">
+              ${esc(x.status)}
+            </span>
 
-          ${esc(x.contractor)}
+          </td>
 
-          <br>
 
-          <small>
-            ${esc(x.foreman)}
-          </small>
+          <td>
+            ${esc(x.handoverDate)}
+          </td>
 
-        </td>
 
-        <td>
-          ${esc(x.description)}
-        </td>
+          <td>
 
-        <td>
+            <button
+              type="button"
+              data-edit="${esc(x.id)}"
+            >
+              Edit
+            </button>
 
-          <span class="status">
+          </td>
 
-            ${esc(x.status)}
+        </tr>
 
-          </span>
+        `
+      )
+      .join('');
 
-        </td>
 
-        <td>
-          ${esc(x.handoverDate)}
-        </td>
-
-        <td>
-
-          <button
-            type="button"
-            data-edit="${esc(x.id)}"
-          >
-            Edit
-          </button>
-
-        </td>
-
-      </tr>
-
-    `
-    ).join('');
-
+  // ----------------------------------------------------------
+  // EMPTY MESSAGE
+  // ----------------------------------------------------------
 
   $('#empty')
     .classList
@@ -446,6 +443,10 @@ function render() {
       filtered.length > 0
     );
 
+
+  // ----------------------------------------------------------
+  // EDIT BUTTONS
+  // ----------------------------------------------------------
 
   document
     .querySelectorAll(
@@ -462,6 +463,7 @@ function render() {
                 'data-edit'
               );
 
+
             const record =
               records.find(
                 x =>
@@ -469,8 +471,13 @@ function render() {
                   String(id)
               );
 
+
             if (record) {
-              open(record);
+
+              open(
+                record
+              );
+
             }
 
           };
@@ -479,7 +486,6 @@ function render() {
     );
 
 }
-
 
 // ============================================================
 // OPEN FORM
