@@ -5,59 +5,44 @@
 // DGSL Logo
 // ============================================================
 
-
 const SUPABASE_URL =
   'https://mgxbsxqgjxpdvdjsixqi.supabase.co';
-
 
 const SUPABASE_KEY =
   'sb_publishable_XWLtSyttiEMQA86unKN37A_ZC9OY19j';
 
-
 const PHOTO_BUCKET =
   'handover-photos';
-
 
 const LOGO_FILE =
   'dgsl-logo.png';
 
-
 let supabaseClient = null;
-
 let records = [];
-
 let editing = null;
-
 let filter = 'All';
 
-
-const $ =
-  s => document.querySelector(s);
-
+const $ = s =>
+  document.querySelector(s);
 
 const rows =
   $('#rows');
 
-
 const dlg =
   $('#formDialog');
-
 
 const form =
   $('#handoverForm');
 
-
-const today =
-  () =>
-    new Date()
-      .toISOString()
-      .slice(0, 10);
+const today = () =>
+  new Date()
+    .toISOString()
+    .slice(0, 10);
 
 
 // ============================================================
 // START SUPABASE
 // ============================================================
-
 
 async function loadSupabase() {
 
@@ -67,22 +52,16 @@ async function loadSupabase() {
       (resolve, reject) => {
 
         const script =
-          document.createElement(
-            'script'
-          );
-
+          document.createElement('script');
 
         script.src =
           'https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2';
 
-
         script.onload =
           resolve;
 
-
         script.onerror =
           reject;
-
 
         document.head.appendChild(
           script
@@ -92,7 +71,6 @@ async function loadSupabase() {
     );
 
   }
-
 
   supabaseClient =
     window.supabase.createClient(
@@ -107,11 +85,9 @@ async function loadSupabase() {
 // DATABASE → WEBSITE
 // ============================================================
 
-
 function fromDatabase(x) {
 
   let photos = [];
-
 
   try {
 
@@ -120,79 +96,61 @@ function fromDatabase(x) {
         ? JSON.parse(x.photos)
         : [];
 
-
   } catch {
 
     photos = [];
 
   }
 
-
   return {
 
     id:
       x.id,
 
-
     zone:
       x.zone || '',
-
 
     level:
       x.level || '',
 
-
     drawing:
       x.drawing || '',
-
 
     trade:
       x.trade || '',
 
-
     contractor:
       x.contractor || '',
-
 
     foreman:
       x.foreman || '',
 
-
     description:
       x.description || '',
-
 
     status:
       x.status || '',
 
-
     handover:
       x.handover || '',
-
 
     handoverDate:
       x.handover_date || '',
 
-
     notes:
       x.notes || '',
-
 
     contractorSigner:
       x.contractor_signer || '',
 
-
     dgslSigner:
       x.dgsl_signer || '',
-
 
     contractorSignature:
       x.contractor_signature || '',
 
-
     dgslSignature:
       x.dgsl_signature || '',
-
 
     photos:
       photos
@@ -206,7 +164,6 @@ function fromDatabase(x) {
 // WEBSITE → DATABASE
 // ============================================================
 
-
 function toDatabase(x) {
 
   return {
@@ -214,66 +171,50 @@ function toDatabase(x) {
     id:
       x.id,
 
-
     zone:
       x.zone || null,
-
 
     level:
       x.level || null,
 
-
     drawing:
       x.drawing || null,
-
 
     trade:
       x.trade || null,
 
-
     contractor:
       x.contractor || null,
-
 
     foreman:
       x.foreman || null,
 
-
     description:
       x.description || null,
-
 
     status:
       x.status || null,
 
-
     handover:
       x.handover || null,
-
 
     handover_date:
       x.handoverDate || null,
 
-
     notes:
       x.notes || null,
-
 
     contractor_signer:
       x.contractorSigner || null,
 
-
     dgsl_signer:
       x.dgslSigner || null,
-
 
     contractor_signature:
       x.contractorSignature || null,
 
-
     dgsl_signature:
       x.dgslSignature || null,
-
 
     photos:
       JSON.stringify(
@@ -288,7 +229,6 @@ function toDatabase(x) {
 // ============================================================
 // LOAD RECORDS
 // ============================================================
-
 
 async function loadRecords() {
 
@@ -309,21 +249,15 @@ async function loadRecords() {
           }
         );
 
-
     if (error) {
       throw error;
     }
 
-
     records =
       (data || [])
-        .map(
-          fromDatabase
-        );
-
+        .map(fromDatabase);
 
     render();
-
 
   } catch (error) {
 
@@ -331,7 +265,6 @@ async function loadRecords() {
       'Load error:',
       error
     );
-
 
     alert(
       'Could not load the handover register.'
@@ -346,33 +279,23 @@ async function loadRecords() {
 // REAL-TIME UPDATES
 // ============================================================
 
-
 function setupRealtime() {
 
   supabaseClient
-
-    .channel(
-      'handovers-live'
-    )
-
+    .channel('handovers-live')
     .on(
-
       'postgres_changes',
-
       {
         event: '*',
         schema: 'public',
         table: 'handovers'
       },
-
       async () => {
 
         await loadRecords();
 
       }
-
     )
-
     .subscribe();
 
 }
@@ -382,32 +305,18 @@ function setupRealtime() {
 // HTML ESCAPE
 // ============================================================
 
-
 function esc(x = '') {
 
   return String(x)
     .replace(
       /[&<>"']/g,
-
       c => ({
-
-        '&':
-          '&amp;',
-
-        '<':
-          '&lt;',
-
-        '>':
-          '&gt;',
-
-        '"':
-          '&quot;',
-
-        "'":
-          '&#39;'
-
+        '&': '&amp;',
+        '<': '&lt;',
+        '>': '&gt;',
+        '"': '&quot;',
+        "'": '&#39;'
       }[c])
-
     );
 
 }
@@ -417,16 +326,14 @@ function esc(x = '') {
 // RENDER
 // ============================================================
 
-
 function render() {
 
   const q =
     $('#search')
       ? $('#search')
-        .value
-        .toLowerCase()
+          .value
+          .toLowerCase()
       : '';
-
 
   const filtered =
     records.filter(
@@ -446,10 +353,8 @@ function render() {
 
     );
 
-
   $('#total').textContent =
     records.length;
-
 
   $('#progress').textContent =
     records.filter(
@@ -458,7 +363,6 @@ function render() {
         'In Progress'
     ).length;
 
-
   $('#closed').textContent =
     records.filter(
       x =>
@@ -466,14 +370,12 @@ function render() {
         'Closed Out'
     ).length;
 
-
   $('#hold').textContent =
     records.filter(
       x =>
         x.status ===
         'On Hold'
     ).length;
-
 
   rows.innerHTML =
     filtered
@@ -496,16 +398,13 @@ function render() {
 
           </td>
 
-
           <td>
             ${esc(x.level)}
           </td>
 
-
           <td>
             ${esc(x.trade)}
           </td>
-
 
           <td>
 
@@ -519,11 +418,9 @@ function render() {
 
           </td>
 
-
           <td>
             ${esc(x.description)}
           </td>
-
 
           <td>
 
@@ -535,11 +432,9 @@ function render() {
 
           </td>
 
-
           <td>
             ${esc(x.handover)}
           </td>
-
 
           <td>
 
@@ -558,7 +453,6 @@ function render() {
       )
       .join('');
 
-
   $('#empty')
     .classList
     .toggle(
@@ -566,11 +460,8 @@ function render() {
       filtered.length > 0
     );
 
-
   document
-    .querySelectorAll(
-      '[data-edit]'
-    )
+    .querySelectorAll('[data-edit]')
     .forEach(
       button => {
 
@@ -582,14 +473,12 @@ function render() {
                 'data-edit'
               );
 
-
             const record =
               records.find(
                 x =>
                   String(x.id) ===
                   String(id)
               );
-
 
             if (record) {
 
@@ -609,19 +498,16 @@ function render() {
 // OPEN FORM
 // ============================================================
 
-
 function open(x) {
 
   editing =
     x || null;
-
 
   $('#formTitle')
     .textContent =
       x
         ? 'Edit handover'
         : 'New handover';
-
 
   $('#delete')
     .classList
@@ -630,40 +516,24 @@ function open(x) {
       !x
     );
 
-
   form.reset();
-
 
   clearSignature(
     $('#contractorSignature')
   );
 
-
   clearSignature(
     $('#dgslSignature')
   );
 
-
   $('#photoPreview')
     .innerHTML = '';
 
-
   const values =
     x || {
-
       handoverDate:
         today()
-
     };
-
-
-  // ==========================================================
-  // Restore normal form fields.
-  //
-  // File inputs are deliberately skipped because browsers
-  // do not allow JavaScript to put a filename into them.
-  // ==========================================================
-
 
   for (
     const [key, value]
@@ -673,42 +543,27 @@ function open(x) {
     const element =
       form.elements[key];
 
-
     if (!element) {
       continue;
     }
 
-
+    // Never try to set a file input.
     if (
-      element.type ===
-      'file'
+      element.type === 'file'
     ) {
-
       continue;
-
     }
 
-
     if (
-      key ===
-      'photos'
+      key === 'photos'
     ) {
-
       continue;
-
     }
-
 
     element.value =
       value || '';
 
   }
-
-
-  // ==========================================================
-  // Restore saved signatures and photos.
-  // ==========================================================
-
 
   if (x) {
 
@@ -717,19 +572,16 @@ function open(x) {
       x.contractorSignature
     );
 
-
     drawSavedSignature(
       $('#dgslSignature'),
       x.dgslSignature
     );
-
 
     showSavedPhotos(
       x.photos
     );
 
   }
-
 
   dlg.showModal();
 
@@ -740,7 +592,6 @@ function open(x) {
 // NEW HANDOVER
 // ============================================================
 
-
 $('#newZone').onclick =
   () => open();
 
@@ -748,7 +599,6 @@ $('#newZone').onclick =
 // ============================================================
 // CANCEL
 // ============================================================
-
 
 $('#cancel').onclick =
 $('#cancel2').onclick =
@@ -759,12 +609,10 @@ $('#cancel2').onclick =
 // SAVE HANDOVER
 // ============================================================
 
-
 form.onsubmit =
   async e => {
 
     e.preventDefault();
-
 
     try {
 
@@ -772,7 +620,6 @@ form.onsubmit =
         Object.fromEntries(
           new FormData(form)
         );
-
 
       x.id =
         editing?.id ||
@@ -783,13 +630,11 @@ form.onsubmit =
       // SIGNATURES
       // ------------------------------------------------------
 
-
       x.contractorSignature =
         $('#contractorSignature')
           .toDataURL(
             'image/png'
           );
-
 
       x.dgslSignature =
         $('#dgslSignature')
@@ -802,7 +647,6 @@ form.onsubmit =
       // EXISTING PHOTOS
       // ------------------------------------------------------
 
-
       x.photos =
         editing?.photos
           ? [...editing.photos]
@@ -813,12 +657,10 @@ form.onsubmit =
       // NEW PHOTOS
       // ------------------------------------------------------
 
-
       const files =
         Array.from(
           $('#photos').files
         );
-
 
       for (
         const file
@@ -835,13 +677,11 @@ form.onsubmit =
 
         }
 
-
         const photoUrl =
           await uploadPhoto(
             file,
             x.id
           );
-
 
         if (photoUrl) {
 
@@ -855,13 +695,11 @@ form.onsubmit =
 
 
       // ------------------------------------------------------
-      // DATABASE RECORD
+      // SAVE DATABASE RECORD
       // ------------------------------------------------------
-
 
       const databaseRecord =
         toDatabase(x);
-
 
       if (editing) {
 
@@ -878,11 +716,9 @@ form.onsubmit =
               x.id
             );
 
-
         if (error) {
           throw error;
         }
-
 
       } else {
 
@@ -895,19 +731,15 @@ form.onsubmit =
               databaseRecord
             );
 
-
         if (error) {
           throw error;
         }
 
       }
 
-
       dlg.close();
 
-
       await loadRecords();
-
 
     } catch (error) {
 
@@ -915,7 +747,6 @@ form.onsubmit =
         'Save error:',
         error
       );
-
 
       alert(
         'There was a problem saving the handover.'
@@ -929,7 +760,6 @@ form.onsubmit =
 // ============================================================
 // UPLOAD PHOTO
 // ============================================================
-
 
 async function uploadPhoto(
   file,
@@ -945,51 +775,39 @@ async function uploadPhoto(
     )
       .toLowerCase();
 
-
   const filename =
     `${handoverId}/${crypto.randomUUID()}.${extension}`;
-
 
   const {
     error
   } =
     await supabaseClient
       .storage
-      .from(
-        PHOTO_BUCKET
-      )
+      .from(PHOTO_BUCKET)
       .upload(
         filename,
         file,
         {
-
           cacheControl:
             '3600',
-
           upsert:
             false
-
         }
       );
-
 
   if (error) {
     throw error;
   }
-
 
   const {
     data
   } =
     supabaseClient
       .storage
-      .from(
-        PHOTO_BUCKET
-      )
+      .from(PHOTO_BUCKET)
       .getPublicUrl(
         filename
       );
-
 
   return data.publicUrl;
 
@@ -1000,7 +818,6 @@ async function uploadPhoto(
 // SHOW SAVED PHOTOS
 // ============================================================
 
-
 function showSavedPhotos(
   photos
 ) {
@@ -1008,21 +825,13 @@ function showSavedPhotos(
   const preview =
     $('#photoPreview');
 
-
-  preview.innerHTML =
-    '';
-
+  preview.innerHTML = '';
 
   if (
-    !Array.isArray(
-      photos
-    )
+    !Array.isArray(photos)
   ) {
-
     return;
-
   }
-
 
   photos.forEach(
     url => {
@@ -1032,14 +841,29 @@ function showSavedPhotos(
           'img'
         );
 
-
       img.src =
         url;
 
+      img.style.width =
+        '110px';
 
-      img.alt =
-        'Site photo';
+      img.style.height =
+        '80px';
 
+      img.style.objectFit =
+        'cover';
+
+      img.style.borderRadius =
+        '6px';
+
+      img.style.border =
+        '1px solid #ccc';
+
+      img.style.marginRight =
+        '6px';
+
+      img.style.marginBottom =
+        '6px';
 
       preview.appendChild(
         img
@@ -1052,9 +876,8 @@ function showSavedPhotos(
 
 
 // ============================================================
-// NEW PHOTO PREVIEW
+// PHOTO PREVIEW
 // ============================================================
-
 
 $('#photos').onchange =
   e => {
@@ -1062,12 +885,10 @@ $('#photos').onchange =
     const preview =
       $('#photoPreview');
 
-
     const files =
       Array.from(
         e.target.files
       );
-
 
     files.forEach(
       file => {
@@ -1077,27 +898,39 @@ $('#photos').onchange =
             'image/'
           )
         ) {
-
           return;
-
         }
-
 
         const img =
           document.createElement(
             'img'
           );
 
+        img.style.width =
+          '110px';
 
-        img.alt =
-          'Selected site photo';
+        img.style.height =
+          '80px';
 
+        img.style.objectFit =
+          'cover';
+
+        img.style.borderRadius =
+          '6px';
+
+        img.style.border =
+          '1px solid #ccc';
+
+        img.style.marginRight =
+          '6px';
+
+        img.style.marginBottom =
+          '6px';
 
         img.src =
           URL.createObjectURL(
             file
           );
-
 
         preview.appendChild(
           img
@@ -1113,7 +946,6 @@ $('#photos').onchange =
 // DELETE HANDOVER
 // ============================================================
 
-
 $('#delete').onclick =
   async () => {
 
@@ -1121,17 +953,13 @@ $('#delete').onclick =
       return;
     }
 
-
     if (
       !confirm(
         'Delete this handover record?'
       )
     ) {
-
       return;
-
     }
-
 
     try {
 
@@ -1154,7 +982,6 @@ $('#delete').onclick =
 
       }
 
-
       const {
         error
       } =
@@ -1166,17 +993,13 @@ $('#delete').onclick =
             editing.id
           );
 
-
       if (error) {
         throw error;
       }
 
-
       dlg.close();
 
-
       await loadRecords();
-
 
     } catch (error) {
 
@@ -1184,7 +1007,6 @@ $('#delete').onclick =
         'Delete error:',
         error
       );
-
 
       alert(
         'There was a problem deleting the handover.'
@@ -1199,7 +1021,6 @@ $('#delete').onclick =
 // DELETE PHOTO
 // ============================================================
 
-
 async function deletePhoto(
   url
 ) {
@@ -1209,21 +1030,16 @@ async function deletePhoto(
     const marker =
       `/object/public/${PHOTO_BUCKET}/`;
 
-
     const index =
       url.indexOf(
         marker
       );
 
-
     if (
       index === -1
     ) {
-
       return;
-
     }
-
 
     const path =
       decodeURIComponent(
@@ -1233,16 +1049,12 @@ async function deletePhoto(
         )
       );
 
-
     await supabaseClient
       .storage
-      .from(
-        PHOTO_BUCKET
-      )
+      .from(PHOTO_BUCKET)
       .remove(
         [path]
       );
-
 
   } catch (error) {
 
@@ -1260,7 +1072,6 @@ async function deletePhoto(
 // FILTERS
 // ============================================================
 
-
 document
   .querySelectorAll(
     '[data-filter]'
@@ -1273,7 +1084,6 @@ document
 
           filter =
             button.dataset.filter;
-
 
           document
             .querySelectorAll(
@@ -1290,7 +1100,6 @@ document
               }
             );
 
-
           render();
 
         };
@@ -1303,7 +1112,6 @@ document
 // SEARCH
 // ============================================================
 
-
 $('#search').oninput =
   render;
 
@@ -1311,7 +1119,6 @@ $('#search').oninput =
 // ============================================================
 // SIGNATURE PAD
 // ============================================================
-
 
 function setupSignature(
   canvas
@@ -1322,18 +1129,14 @@ function setupSignature(
       '2d'
     );
 
-
   ctx.lineWidth =
     2;
-
 
   ctx.lineCap =
     'round';
 
-
   ctx.lineJoin =
     'round';
-
 
   let drawing =
     false;
@@ -1344,12 +1147,10 @@ function setupSignature(
     const rect =
       canvas.getBoundingClientRect();
 
-
     const source =
       e.touches
         ? e.touches[0]
         : e;
-
 
     return {
 
@@ -1362,7 +1163,6 @@ function setupSignature(
           canvas.width /
           rect.width
         ),
-
 
       y:
         (
@@ -1383,17 +1183,13 @@ function setupSignature(
 
     e.preventDefault();
 
-
     drawing =
       true;
-
 
     const p =
       position(e);
 
-
     ctx.beginPath();
-
 
     ctx.moveTo(
       p.x,
@@ -1409,19 +1205,15 @@ function setupSignature(
       return;
     }
 
-
     e.preventDefault();
-
 
     const p =
       position(e);
-
 
     ctx.lineTo(
       p.x,
       p.y
     );
-
 
     ctx.stroke();
 
@@ -1434,13 +1226,10 @@ function setupSignature(
       return;
     }
 
-
     e.preventDefault();
-
 
     drawing =
       false;
-
 
     ctx.closePath();
 
@@ -1452,24 +1241,20 @@ function setupSignature(
     start
   );
 
-
   canvas.addEventListener(
     'mousemove',
     move
   );
-
 
   canvas.addEventListener(
     'mouseup',
     stop
   );
 
-
   canvas.addEventListener(
     'mouseleave',
     stop
   );
-
 
   canvas.addEventListener(
     'touchstart',
@@ -1479,7 +1264,6 @@ function setupSignature(
     }
   );
 
-
   canvas.addEventListener(
     'touchmove',
     move,
@@ -1487,7 +1271,6 @@ function setupSignature(
       passive: false
     }
   );
-
 
   canvas.addEventListener(
     'touchend',
@@ -1504,7 +1287,6 @@ function setupSignature(
 // CLEAR SIGNATURE
 // ============================================================
 
-
 function clearSignature(
   canvas
 ) {
@@ -1513,12 +1295,10 @@ function clearSignature(
     return;
   }
 
-
   const ctx =
     canvas.getContext(
       '2d'
     );
-
 
   ctx.clearRect(
     0,
@@ -1534,7 +1314,6 @@ function clearSignature(
 // RESTORE SIGNATURE
 // ============================================================
 
-
 function drawSavedSignature(
   canvas,
   dataUrl
@@ -1544,21 +1323,16 @@ function drawSavedSignature(
     !canvas ||
     !dataUrl
   ) {
-
     return;
-
   }
-
 
   const ctx =
     canvas.getContext(
       '2d'
     );
 
-
   const img =
     new Image();
-
 
   img.onload =
     () => {
@@ -1570,7 +1344,6 @@ function drawSavedSignature(
         canvas.height
       );
 
-
       ctx.drawImage(
         img,
         0,
@@ -1580,7 +1353,6 @@ function drawSavedSignature(
       );
 
     };
-
 
   img.src =
     dataUrl;
@@ -1592,11 +1364,9 @@ function drawSavedSignature(
 // INITIALISE SIGNATURES
 // ============================================================
 
-
 setupSignature(
   $('#contractorSignature')
 );
-
 
 setupSignature(
   $('#dgslSignature')
@@ -1607,14 +1377,12 @@ setupSignature(
 // CLEAR SIGNATURE BUTTONS
 // ============================================================
 
-
 $('#clearContractorSignature')
   .onclick =
     () =>
       clearSignature(
         $('#contractorSignature')
       );
-
 
 $('#clearDgslSignature')
   .onclick =
@@ -1628,7 +1396,6 @@ $('#clearDgslSignature')
 // EXPORT BACKUP
 // ============================================================
 
-
 $('#export').onclick =
   () => {
 
@@ -1637,12 +1404,10 @@ $('#export').onclick =
         'a'
       );
 
-
     link.href =
       URL.createObjectURL(
 
         new Blob(
-
           [
             JSON.stringify(
               records,
@@ -1650,23 +1415,18 @@ $('#export').onclick =
               2
             )
           ],
-
           {
             type:
               'application/json'
           }
-
         )
 
       );
 
-
     link.download =
       `DGSL-site-register-${today()}.json`;
 
-
     link.click();
-
 
     URL.revokeObjectURL(
       link.href
@@ -1679,22 +1439,18 @@ $('#export').onclick =
 // IMPORT BACKUP
 // ============================================================
 
-
 $('#import').onchange =
   async e => {
 
     const file =
       e.target.files[0];
 
-
     if (!file) {
       return;
     }
 
-
     const reader =
       new FileReader();
-
 
     reader.onload =
       async () => {
@@ -1705,7 +1461,6 @@ $('#import').onchange =
             JSON.parse(
               reader.result
             );
-
 
           if (
             !Array.isArray(
@@ -1719,7 +1474,6 @@ $('#import').onchange =
 
           }
 
-
           for (
             const record
             of imported
@@ -1730,7 +1484,6 @@ $('#import').onchange =
                 record
               );
 
-
             const {
               error
             } =
@@ -1740,28 +1493,23 @@ $('#import').onchange =
                   databaseRecord
                 );
 
-
             if (error) {
               throw error;
             }
 
           }
 
-
           await loadRecords();
-
 
           alert(
             'Backup imported.'
           );
-
 
         } catch (error) {
 
           console.error(
             error
           );
-
 
           alert(
             'That file is not a valid DGSL backup.'
@@ -1770,7 +1518,6 @@ $('#import').onchange =
         }
 
       };
-
 
     reader.readAsText(
       file
@@ -1783,7 +1530,6 @@ $('#import').onchange =
 // LOAD LOGO FOR PDF
 // ============================================================
 
-
 function loadLogoForPdf() {
 
   return new Promise(
@@ -1795,7 +1541,6 @@ function loadLogoForPdf() {
       const img =
         new Image();
 
-
       img.onload =
         () => {
 
@@ -1804,27 +1549,22 @@ function loadLogoForPdf() {
               'canvas'
             );
 
-
           canvas.width =
             img.naturalWidth;
 
-
           canvas.height =
             img.naturalHeight;
-
 
           const ctx =
             canvas.getContext(
               '2d'
             );
 
-
           ctx.drawImage(
             img,
             0,
             0
           );
-
 
           resolve(
             canvas.toDataURL(
@@ -1834,7 +1574,6 @@ function loadLogoForPdf() {
 
         };
 
-
       img.onerror =
         () =>
           reject(
@@ -1842,7 +1581,6 @@ function loadLogoForPdf() {
               'Could not load DGSL logo.'
             )
           );
-
 
       img.src =
         LOGO_FILE;
@@ -1857,7 +1595,6 @@ function loadLogoForPdf() {
 // PDF GENERATION
 // ============================================================
 
-
 $('#generatePdf').onclick =
   async () => {
 
@@ -1867,7 +1604,6 @@ $('#generatePdf').onclick =
         jsPDF
       } =
         window.jspdf;
-
 
       const pdf =
         new jsPDF({
@@ -1883,14 +1619,11 @@ $('#generatePdf').onclick =
 
         });
 
-
       const margin =
         15;
 
-
       const pageWidth =
         210;
-
 
       let y =
         20;
@@ -1900,12 +1633,10 @@ $('#generatePdf').onclick =
       // LOGO
       // ------------------------------------------------------
 
-
       try {
 
         const logoData =
           await loadLogoForPdf();
-
 
         pdf.addImage(
           logoData,
@@ -1915,7 +1646,6 @@ $('#generatePdf').onclick =
           55,
           13
         );
-
 
       } catch (logoError) {
 
@@ -1931,17 +1661,14 @@ $('#generatePdf').onclick =
       // TITLE
       // ------------------------------------------------------
 
-
       pdf.setFontSize(
         20
       );
-
 
       pdf.setFont(
         undefined,
         'bold'
       );
-
 
       pdf.text(
         'DGSL SITE HANDOVER',
@@ -1949,20 +1676,16 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 8;
-
 
       pdf.setFontSize(
         10
       );
 
-
       pdf.setFont(
         undefined,
         'normal'
       );
-
 
       pdf.text(
         'Site Handover Record',
@@ -1970,9 +1693,7 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 10;
-
 
       pdf.line(
         margin,
@@ -1980,7 +1701,6 @@ $('#generatePdf').onclick =
         pageWidth - margin,
         y
       );
-
 
       y += 8;
 
@@ -1995,7 +1715,6 @@ $('#generatePdf').onclick =
       // FIELD HELPER
       // ------------------------------------------------------
 
-
       function addField(
         label,
         value
@@ -2006,11 +1725,9 @@ $('#generatePdf').onclick =
           'bold'
         );
 
-
         pdf.setFontSize(
           10
         );
-
 
         pdf.text(
           `${label}:`,
@@ -2018,12 +1735,10 @@ $('#generatePdf').onclick =
           y
         );
 
-
         pdf.setFont(
           undefined,
           'normal'
         );
-
 
         const lines =
           pdf.splitTextToSize(
@@ -2033,13 +1748,11 @@ $('#generatePdf').onclick =
               35
           );
 
-
         pdf.text(
           lines,
           margin + 35,
           y
         );
-
 
         y +=
           Math.max(
@@ -2054,54 +1767,45 @@ $('#generatePdf').onclick =
       // DETAILS
       // ------------------------------------------------------
 
-
       addField(
         'Zone / Area',
         data.zone
       );
-
 
       addField(
         'Block / Level',
         data.level
       );
 
-
       addField(
         'Drawing / Reference',
         data.drawing
       );
-
 
       addField(
         'Trade',
         data.trade
       );
 
-
       addField(
         'Sub-Contractor',
         data.contractor
       );
-
 
       addField(
         'Site Foreman',
         data.foreman
       );
 
-
       addField(
         'Status',
         data.status
       );
 
-
       addField(
         'Handover State',
         data.handover
       );
-
 
       addField(
         'Handover Date',
@@ -2113,15 +1817,12 @@ $('#generatePdf').onclick =
       // DESCRIPTION
       // ------------------------------------------------------
 
-
       y += 3;
-
 
       pdf.setFont(
         undefined,
         'bold'
       );
-
 
       pdf.text(
         'Work Description',
@@ -2129,15 +1830,12 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 6;
-
 
       pdf.setFont(
         undefined,
         'normal'
       );
-
 
       const descriptionLines =
         pdf.splitTextToSize(
@@ -2146,13 +1844,11 @@ $('#generatePdf').onclick =
             margin * 2
         );
 
-
       pdf.text(
         descriptionLines,
         margin,
         y
       );
-
 
       y +=
         Math.max(
@@ -2165,15 +1861,12 @@ $('#generatePdf').onclick =
       // NOTES
       // ------------------------------------------------------
 
-
       y += 3;
-
 
       pdf.setFont(
         undefined,
         'bold'
       );
-
 
       pdf.text(
         'Notes / Outstanding Items',
@@ -2181,15 +1874,12 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 6;
-
 
       pdf.setFont(
         undefined,
         'normal'
       );
-
 
       const noteLines =
         pdf.splitTextToSize(
@@ -2198,13 +1888,11 @@ $('#generatePdf').onclick =
             margin * 2
         );
 
-
       pdf.text(
         noteLines,
         margin,
         y
       );
-
 
       y +=
         Math.max(
@@ -2217,7 +1905,6 @@ $('#generatePdf').onclick =
       // SIGNATURES
       // ------------------------------------------------------
 
-
       if (
         y > 220
       ) {
@@ -2228,12 +1915,10 @@ $('#generatePdf').onclick =
 
       }
 
-
       pdf.setFont(
         undefined,
         'bold'
       );
-
 
       pdf.text(
         'Sub-Contractor Sign-Off',
@@ -2241,15 +1926,12 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 8;
-
 
       pdf.setFont(
         undefined,
         'normal'
       );
-
 
       pdf.text(
         `Sub-Contractor: ${
@@ -2259,25 +1941,24 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 5;
 
+      if (
+        data.contractorSignature
+      ) {
 
-      pdf.addImage(
-        $('#contractorSignature')
-          .toDataURL(
-            'image/png'
-          ),
-        'PNG',
-        margin,
-        y,
-        80,
-        24
-      );
+        pdf.addImage(
+          data.contractorSignature,
+          'PNG',
+          margin,
+          y,
+          80,
+          24
+        );
 
+      }
 
       y += 32;
-
 
       if (
         y > 245
@@ -2289,12 +1970,10 @@ $('#generatePdf').onclick =
 
       }
 
-
       pdf.setFont(
         undefined,
         'bold'
       );
-
 
       pdf.text(
         'DGSL Sign-Off',
@@ -2302,15 +1981,12 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 8;
-
 
       pdf.setFont(
         undefined,
         'normal'
       );
-
 
       pdf.text(
         `DGSL Representative: ${
@@ -2320,52 +1996,49 @@ $('#generatePdf').onclick =
         y
       );
 
-
       y += 5;
 
+      if (
+        data.dgslSignature
+      ) {
 
-      pdf.addImage(
-        $('#dgslSignature')
-          .toDataURL(
-            'image/png'
-          ),
-        'PNG',
-        margin,
-        y,
-        80,
-        24
-      );
+        pdf.addImage(
+          data.dgslSignature,
+          'PNG',
+          margin,
+          y,
+          80,
+          24
+        );
+
+      }
 
 
       // ------------------------------------------------------
-      // PHOTOS
+      // CURRENT PHOTOS
       // ------------------------------------------------------
 
-
-      const photoUrls =
-        editing?.photos || [];
-
+      const photoFiles =
+        Array.from(
+          $('#photos').files
+        );
 
       if (
-        photoUrls.length > 0
+        photoFiles.length > 0
       ) {
 
         pdf.addPage();
 
-
         y = 20;
-
 
         pdf.setFontSize(
           16
         );
 
-
         pdf.setFont(
           undefined,
           'bold'
         );
-
 
         pdf.text(
           'SITE PHOTOS',
@@ -2373,13 +2046,82 @@ $('#generatePdf').onclick =
           y
         );
 
-
         y += 10;
 
+        for (
+          const file
+          of photoFiles
+        ) {
+
+          if (
+            !file.type.startsWith(
+              'image/'
+            )
+          ) {
+
+            continue;
+
+          }
+
+          const imageData =
+            await readFileAsDataURL(
+              file
+            );
+
+          y =
+            addImageToPdf(
+              pdf,
+              imageData,
+              y,
+              margin
+            );
+
+        }
+
+      }
+
+
+      // ------------------------------------------------------
+      // SAVED PHOTOS
+      // ------------------------------------------------------
+
+      const savedPhotos =
+        editing?.photos || [];
+
+      if (
+        savedPhotos.length > 0
+      ) {
+
+        if (
+          photoFiles.length === 0
+        ) {
+
+          pdf.addPage();
+
+          y = 20;
+
+          pdf.setFontSize(
+            16
+          );
+
+          pdf.setFont(
+            undefined,
+            'bold'
+          );
+
+          pdf.text(
+            'SITE PHOTOS',
+            margin,
+            y
+          );
+
+          y += 10;
+
+        }
 
         for (
           const url
-          of photoUrls
+          of savedPhotos
         ) {
 
           try {
@@ -2389,20 +2131,18 @@ $('#generatePdf').onclick =
                 url
               );
 
-
             y =
-              await addImageToPdf(
+              addImageToPdf(
                 pdf,
                 imageData,
                 y,
                 margin
               );
 
-
           } catch (error) {
 
             console.error(
-              'Could not add photo to PDF:',
+              'Could not add saved photo to PDF:',
               error
             );
 
@@ -2417,28 +2157,23 @@ $('#generatePdf').onclick =
       // SAVE PDF
       // ------------------------------------------------------
 
-
       const safeZone =
         (
           data.zone ||
           'Handover'
         )
-
           .replace(
             /[^a-z0-9-_ ]/gi,
             ''
           )
-
           .replace(
             /\s+/g,
             '-'
           );
 
-
       pdf.save(
         `DGSL-${safeZone}-Handover-${today()}.pdf`
       );
-
 
     } catch (error) {
 
@@ -2446,7 +2181,6 @@ $('#generatePdf').onclick =
         'PDF error:',
         error
       );
-
 
       alert(
         'There was a problem creating the PDF.'
@@ -2458,9 +2192,44 @@ $('#generatePdf').onclick =
 
 
 // ============================================================
-// LOAD IMAGE FOR PDF
+// FILE → DATA URL
 // ============================================================
 
+function readFileAsDataURL(
+  file
+) {
+
+  return new Promise(
+    (
+      resolve,
+      reject
+    ) => {
+
+      const reader =
+        new FileReader();
+
+      reader.onload =
+        () =>
+          resolve(
+            reader.result
+          );
+
+      reader.onerror =
+        reject;
+
+      reader.readAsDataURL(
+        file
+      );
+
+    }
+  );
+
+}
+
+
+// ============================================================
+// LOAD IMAGE FOR PDF
+// ============================================================
 
 function loadImageForPdf(
   url
@@ -2475,10 +2244,8 @@ function loadImageForPdf(
       const img =
         new Image();
 
-
       img.crossOrigin =
         'anonymous';
-
 
       img.onload =
         () => {
@@ -2488,27 +2255,22 @@ function loadImageForPdf(
               'canvas'
             );
 
-
           canvas.width =
             img.naturalWidth;
 
-
           canvas.height =
             img.naturalHeight;
-
 
           const ctx =
             canvas.getContext(
               '2d'
             );
 
-
           ctx.drawImage(
             img,
             0,
             0
           );
-
 
           resolve(
             canvas.toDataURL(
@@ -2519,10 +2281,8 @@ function loadImageForPdf(
 
         };
 
-
       img.onerror =
         reject;
-
 
       img.src =
         url;
@@ -2537,42 +2297,26 @@ function loadImageForPdf(
 // ADD IMAGE TO PDF
 // ============================================================
 
-
-async function addImageToPdf(
+function addImageToPdf(
   pdf,
   imageData,
   y,
   margin
 ) {
 
-  if (
-    y > 260
-  ) {
-
-    pdf.addPage();
-
-    y = 20;
-
-  }
-
-
   const dimensions =
-    await getImageDimensions(
+    getImageDimensions(
       imageData
     );
-
 
   const maxWidth =
     80;
 
-
   const maxHeight =
     65;
 
-
   let width =
     maxWidth;
-
 
   let height =
     (
@@ -2580,7 +2324,6 @@ async function addImageToPdf(
       dimensions.width
     ) *
     width;
-
 
   if (
     height >
@@ -2590,7 +2333,6 @@ async function addImageToPdf(
     height =
       maxHeight;
 
-
     width =
       (
         dimensions.width /
@@ -2599,7 +2341,6 @@ async function addImageToPdf(
       height;
 
   }
-
 
   if (
     y + height >
@@ -2612,7 +2353,6 @@ async function addImageToPdf(
 
   }
 
-
   pdf.addImage(
     imageData,
     'JPEG',
@@ -2622,10 +2362,11 @@ async function addImageToPdf(
     height
   );
 
-
-  return y +
+  return (
+    y +
     height +
-    8;
+    8
+  );
 
 }
 
@@ -2634,39 +2375,27 @@ async function addImageToPdf(
 // IMAGE DIMENSIONS
 // ============================================================
 
-
 function getImageDimensions(
   src
 ) {
 
-  return new Promise(
-    resolve => {
+  const img =
+    new Image();
 
-      const img =
-        new Image();
+  img.src =
+    src;
 
+  return {
 
-      img.onload =
-        () => {
+    width:
+      img.naturalWidth ||
+      img.width,
 
-          resolve({
+    height:
+      img.naturalHeight ||
+      img.height
 
-            width:
-              img.width,
-
-            height:
-              img.height
-
-          });
-
-        };
-
-
-      img.src =
-        src;
-
-    }
-  );
+  };
 
 }
 
@@ -2675,19 +2404,15 @@ function getImageDimensions(
 // START APPLICATION
 // ============================================================
 
-
 async function startApp() {
 
   try {
 
     await loadSupabase();
 
-
     await loadRecords();
 
-
     setupRealtime();
-
 
   } catch (error) {
 
@@ -2696,7 +2421,6 @@ async function startApp() {
       error
     );
 
-
     alert(
       'The DGSL Site Register could not connect to Supabase.'
     );
@@ -2704,6 +2428,5 @@ async function startApp() {
   }
 
 }
-
 
 startApp();
