@@ -776,12 +776,19 @@ function setupOtherDropdown(
 
       if (this.value === 'Other') {
 
+        // Hide the dropdown and put the text box
+        // in exactly the same position.
+        select.style.display = 'none';
+
         other.style.display = '';
         other.disabled = false;
 
         other.focus();
 
       } else {
+
+        // Bring the dropdown back.
+        select.style.display = '';
 
         other.style.display = 'none';
         other.disabled = true;
