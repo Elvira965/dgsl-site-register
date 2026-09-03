@@ -199,6 +199,9 @@ function fromDatabase(x) {
     handoverDate:
       x.handover_date || '',
 
+    takeBackDate:
+      x.take_back_date || '',
+    
     closedDate:
       x.closed_date || '',
 
@@ -280,6 +283,9 @@ function toDatabase(x) {
 
     handover_date:
       x.handoverDate || null,
+
+    take_back_date:
+      x.takeBackDate || null,
 
     closed_date:
       null,
@@ -397,6 +403,19 @@ function setupRealtime() {
 // ============================================================
 // HTML ESCAPE
 // ============================================================
+
+function formatDate(value) {
+  if (!value) return '';
+
+  const text = String(value).slice(0, 10);
+
+  const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) return String(value);
+
+  return `${match[3]}-${match[2]}-${match[1]}`;
+}
+
 
 function esc(x = '') {
 
@@ -525,12 +544,15 @@ function render() {
 </td>
 
           <td>
-            ${esc(x.handoverDate)}
-          </td>
+  ${esc(formatDate(x.handoverDate))}
+</td>
 
-          <td>
+<td>
+  ${esc(formatDate(x.takeBackDate))}
+</td>
 
-            <button
+<td>
+  <button
               type="button"
               data-edit="${esc(x.id)}"
             >
@@ -2407,6 +2429,7 @@ healthSafetyScaffolding:
     ? document.getElementById('statusOther').value || 'Other'
     : form.elements.status?.value || '',
   handoverDate: form.elements.handoverDate?.value || '',
+  takeBackDate: form.elements.takeBackDate?.value || '',
   takeBackCompleteDrawings:
   form.elements.takeBackCompleteDrawings?.value === 'Other'
     ? document.getElementById('takeBackCompleteDrawingsOther').value || 'Other'
@@ -2581,7 +2604,7 @@ healthSafetyScaffolding:
 
     addField(
       'Handover Date',
-      data.handoverDate
+      formatDate(data.handoverDate)
     );
 
 
@@ -2862,6 +2885,12 @@ healthSafetyScaffolding:
 
     pdf.setFontSize(
       10
+    );
+
+
+    addField(
+      'Take Back Date',
+      formatDate(data.takeBackDate)
     );
 
 
