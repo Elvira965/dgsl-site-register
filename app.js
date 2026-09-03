@@ -770,132 +770,46 @@ function setupOtherDropdown(
     return;
   }
 
-  // Create a small dropdown arrow button
-  let arrowButton =
-    document.getElementById(
-      otherId + 'Change'
-    );
+  // Put the text box in the same position as the
+  // dropdown, but keep the dropdown and its arrow visible.
+  select.style.position = 'relative';
 
-  if (!arrowButton) {
+  other.style.display = 'none';
 
-    arrowButton =
-      document.createElement('button');
-
-    arrowButton.type = 'button';
-
-    arrowButton.id =
-      otherId + 'Change';
-
-    arrowButton.textContent =
-      '▼';
-
-    arrowButton.title =
-      'Change selection';
-
-    arrowButton.style.marginLeft =
-      '8px';
-
-    arrowButton.style.padding =
-      '4px 8px';
-
-    arrowButton.style.cursor =
-      'pointer';
-
-    other.insertAdjacentElement(
-      'afterend',
-      arrowButton
-    );
-  }
-
-  // When the user chooses Other
   select.addEventListener(
     'change',
     function () {
 
       if (this.value === 'Other') {
 
-        // Hide dropdown
-        select.style.display =
-          'none';
+        // Keep the original dropdown and its arrow visible.
+        select.style.display = '';
 
-        // Show text box
-        other.style.display =
-          '';
+        // Put the Other text box over the dropdown.
+        other.style.display = '';
+        other.disabled = false;
 
-        other.disabled =
-          false;
-
-        // Show arrow
-        arrowButton.style.display =
-          '';
+        other.style.position = 'absolute';
+        other.style.left = '0';
+        other.style.top = '0';
+        other.style.width = 'calc(100% - 45px)';
+        other.style.boxSizing = 'border-box';
 
         other.focus();
 
       } else {
 
-        // Normal option selected
-        select.style.display =
-          '';
+        // Normal option selected.
+        other.style.display = 'none';
+        other.disabled = true;
+        other.value = '';
 
-        other.style.display =
-          'none';
-
-        other.disabled =
-          true;
-
-        other.value =
-          '';
-
-        // Hide arrow
-        arrowButton.style.display =
-          'none';
+        select.style.position = '';
       }
-    }
-  );
-
-  // When the little arrow is pressed
-  arrowButton.addEventListener(
-    'click',
-    function () {
-
-      // Show the original dropdown
-      select.style.display =
-        '';
-
-      // Hide the text box
-      other.style.display =
-        'none';
-
-      other.disabled =
-        true;
-
-      // Clear the custom answer
-      other.value =
-        '';
-
-      // Hide the arrow
-      arrowButton.style.display =
-        'none';
-
-      // Open the dropdown so the user
-      // can choose any available option
-      select.focus();
 
     }
   );
 
-  // Initial state
-  select.style.display =
-    '';
-
-  other.style.display =
-    'none';
-
-  other.disabled =
-    true;
-
-  arrowButton.style.display =
-    'none';
 }
 
 
