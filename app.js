@@ -833,7 +833,7 @@ function setupOtherDropdown(
           'calc(100% - 45px)';
 
         other.style.height =
-          '100%';
+          'calc(100% - 2px)';
 
         other.style.boxSizing =
           'border-box';
