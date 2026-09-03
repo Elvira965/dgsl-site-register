@@ -827,7 +827,7 @@ function setupOtherDropdown(
           '0';
 
         other.style.top =
-          '0';
+          '2px';
 
         other.style.width =
           'calc(100% - 45px)';
