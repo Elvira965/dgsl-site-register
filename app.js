@@ -770,35 +770,132 @@ function setupOtherDropdown(
     return;
   }
 
+  // Create a small dropdown arrow button
+  let arrowButton =
+    document.getElementById(
+      otherId + 'Change'
+    );
+
+  if (!arrowButton) {
+
+    arrowButton =
+      document.createElement('button');
+
+    arrowButton.type = 'button';
+
+    arrowButton.id =
+      otherId + 'Change';
+
+    arrowButton.textContent =
+      '▼';
+
+    arrowButton.title =
+      'Change selection';
+
+    arrowButton.style.marginLeft =
+      '8px';
+
+    arrowButton.style.padding =
+      '4px 8px';
+
+    arrowButton.style.cursor =
+      'pointer';
+
+    other.insertAdjacentElement(
+      'afterend',
+      arrowButton
+    );
+  }
+
+  // When the user chooses Other
   select.addEventListener(
     'change',
     function () {
 
       if (this.value === 'Other') {
 
-        // Hide the dropdown and put the text box
-        // in exactly the same position.
-        select.style.display = 'none';
+        // Hide dropdown
+        select.style.display =
+          'none';
 
-        other.style.display = '';
-        other.disabled = false;
+        // Show text box
+        other.style.display =
+          '';
+
+        other.disabled =
+          false;
+
+        // Show arrow
+        arrowButton.style.display =
+          '';
 
         other.focus();
 
       } else {
 
-        // Bring the dropdown back.
-        select.style.display = '';
+        // Normal option selected
+        select.style.display =
+          '';
 
-        other.style.display = 'none';
-        other.disabled = true;
-        other.value = '';
+        other.style.display =
+          'none';
 
+        other.disabled =
+          true;
+
+        other.value =
+          '';
+
+        // Hide arrow
+        arrowButton.style.display =
+          'none';
       }
+    }
+  );
+
+  // When the little arrow is pressed
+  arrowButton.addEventListener(
+    'click',
+    function () {
+
+      // Show the original dropdown
+      select.style.display =
+        '';
+
+      // Hide the text box
+      other.style.display =
+        'none';
+
+      other.disabled =
+        true;
+
+      // Clear the custom answer
+      other.value =
+        '';
+
+      // Hide the arrow
+      arrowButton.style.display =
+        'none';
+
+      // Open the dropdown so the user
+      // can choose any available option
+      select.focus();
 
     }
   );
 
+  // Initial state
+  select.style.display =
+    '';
+
+  other.style.display =
+    'none';
+
+  other.disabled =
+    true;
+
+  arrowButton.style.display =
+    'none';
 }
 
 
@@ -868,6 +965,32 @@ function open(x) {
 
   form.reset();
 
+// Reset all dropdowns to their normal state
+document.querySelectorAll('select').forEach(
+  select => {
+    select.style.display = '';
+  }
+);
+
+// Hide all Other text boxes
+document.querySelectorAll(
+  'input[id$="Other"]'
+).forEach(
+  input => {
+    input.style.display = 'none';
+    input.disabled = true;
+    input.value = '';
+  }
+);
+
+// Hide all Change buttons
+document.querySelectorAll(
+  'button[id$="OtherChange"]'
+).forEach(
+  button => {
+    button.style.display = 'none';
+  }
+);
 
 clearSignature(
   $('#contractorSignature')
