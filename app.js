@@ -770,11 +770,38 @@ function setupOtherDropdown(
     return;
   }
 
-  // Put the text box in the same position as the
-  // dropdown, but keep the dropdown and its arrow visible.
-  select.style.position = 'relative';
+  // Create a container around the dropdown and Other box
+  const wrapper =
+    document.createElement('div');
 
-  other.style.display = 'none';
+  wrapper.style.position =
+    'relative';
+
+  wrapper.style.width =
+    '100%';
+
+  // Put both controls inside the wrapper
+  select.parentNode.insertBefore(
+    wrapper,
+    select
+  );
+
+  wrapper.appendChild(select);
+  wrapper.appendChild(other);
+
+  // Normal dropdown fills the whole field
+  select.style.width =
+    '100%';
+
+  select.style.boxSizing =
+    'border-box';
+
+  // Other box starts hidden
+  other.style.display =
+    'none';
+
+  other.disabled =
+    true;
 
   select.addEventListener(
     'change',
@@ -782,29 +809,66 @@ function setupOtherDropdown(
 
       if (this.value === 'Other') {
 
-        // Keep the original dropdown and its arrow visible.
-        select.style.display = '';
+        // Keep the original dropdown visible,
+        // including its original arrow.
 
-        // Put the Other text box over the dropdown.
-        other.style.display = '';
-        other.disabled = false;
+        other.style.display =
+          '';
 
-        other.style.position = 'absolute';
-        other.style.left = '0';
-        other.style.top = '0';
-        other.style.width = 'calc(100% - 45px)';
-        other.style.boxSizing = 'border-box';
+        other.disabled =
+          false;
+
+        // Put the text box over the dropdown,
+        // leaving the arrow area visible.
+        other.style.position =
+          'absolute';
+
+        other.style.left =
+          '0';
+
+        other.style.top =
+          '0';
+
+        other.style.width =
+          'calc(100% - 45px)';
+
+        other.style.height =
+          '100%';
+
+        other.style.boxSizing =
+          'border-box';
+
+        other.style.margin =
+          '0';
+
+        other.style.zIndex =
+          '2';
 
         other.focus();
 
       } else {
 
-        // Normal option selected.
-        other.style.display = 'none';
-        other.disabled = true;
-        other.value = '';
+        // A normal option was selected.
+        other.style.display =
+          'none';
 
-        select.style.position = '';
+        other.disabled =
+          true;
+
+        other.value =
+          '';
+
+        other.style.position =
+          '';
+
+        other.style.width =
+          '';
+
+        other.style.height =
+          '';
+
+        other.style.zIndex =
+          '';
       }
 
     }
@@ -1022,13 +1086,13 @@ clearSignature(
 
     if (otherField) {
 
-      // Hide the dropdown and show the
-      // custom answer box in its place.
-      element.style.display =
-        'none';
+// Keep the original dropdown visible
+// so its arrow remains available.
+element.style.display =
+  '';
 
-      otherField.style.display =
-        '';
+otherField.style.display =
+  '';
 
       otherField.disabled =
         false;
