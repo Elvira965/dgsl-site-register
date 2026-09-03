@@ -967,6 +967,7 @@ clearSignature(
       value || '';
 
     if (otherField) {
+
       otherField.style.display =
         'none';
 
@@ -983,6 +984,11 @@ clearSignature(
       'Other';
 
     if (otherField) {
+
+      // Hide the dropdown and show the
+      // custom answer box in its place.
+      element.style.display =
+        'none';
 
       otherField.style.display =
         '';
