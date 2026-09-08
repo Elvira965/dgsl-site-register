@@ -27,8 +27,139 @@ const rows = $('#rows');
 const dlg = $('#formDialog');
 const form = $('#handoverForm');
 
+let currentUser = null;
+let authDialog = null;
+
 const today = () =>
   new Date().toISOString().slice(0, 10);
+
+// ============================================================
+// AUTHENTICATION UI
+// ============================================================
+
+function ensureAuthUi() {
+  if (document.getElementById('dgslAuthButton')) return;
+
+  const button = document.createElement('button');
+  button.id = 'dgslAuthButton';
+  button.type = 'button';
+  button.textContent = 'Login';
+  button.style.marginLeft = '8px';
+  button.style.background = '#008e39';
+  button.style.color = '#fff';
+  button.style.borderColor = '#008e39';
+
+  button.onclick = async () => {
+    if (currentUser) {
+      await supabaseClient.auth.signOut();
+    } else {
+      showAuthDialog();
+    }
+  };
+
+  const newButton = document.getElementById('newZone');
+  if (newButton && newButton.parentNode) {
+    newButton.parentNode.insertBefore(button, newButton.nextSibling);
+  } else {
+    document.body.appendChild(button);
+  }
+
+  updateAuthUi();
+}
+
+function updateAuthUi() {
+  const button = document.getElementById('dgslAuthButton');
+  if (button) button.textContent = currentUser ? 'Logout' : 'Login';
+
+  const newButton = document.getElementById('newZone');
+  if (newButton) newButton.style.display = currentUser ? '' : 'none';
+
+  const editHeader = document.getElementById('editHeader');
+  if (editHeader) editHeader.style.display = currentUser ? '' : 'none';
+
+  document.querySelectorAll('[data-edit]').forEach(button => {
+    button.style.display = currentUser ? '' : 'none';
+  });
+
+  const deleteButton = document.getElementById('delete');
+  if (deleteButton && !currentUser) {
+    deleteButton.style.display = 'none';
+  }
+
+  const exportButton = document.getElementById('export');
+  if (exportButton) {
+    exportButton.style.display = currentUser ? '' : 'none';
+  }
+
+  const importButton = document.getElementById('import');
+  const importLabel = importButton?.closest('label.button');
+  if (importLabel) {
+    importLabel.style.display = currentUser ? '' : 'none';
+  }
+}
+
+function showAuthDialog() {
+  if (!authDialog) {
+    authDialog = document.createElement('dialog');
+    authDialog.id = 'dgslAuthDialog';
+    authDialog.style.padding = '0';
+    authDialog.style.border = '0';
+    authDialog.style.borderRadius = '12px';
+    authDialog.style.maxWidth = '360px';
+    authDialog.style.width = 'calc(100% - 32px)';
+
+    authDialog.innerHTML = `
+      <div style="padding:22px;">
+        <div style="font-size:20px;font-weight:700;margin-bottom:16px;">
+          DGSL Site Register Login
+        </div>
+        <label style="display:block;margin-bottom:6px;font-weight:600;">Email</label>
+        <input id="dgslLoginEmail" type="email" autocomplete="email"
+          style="width:100%;box-sizing:border-box;margin-bottom:12px;">
+        <label style="display:block;margin-bottom:6px;font-weight:600;">Password</label>
+        <input id="dgslLoginPassword" type="password" autocomplete="current-password"
+          style="width:100%;box-sizing:border-box;margin-bottom:12px;">
+        <div id="dgslAuthStatus" style="min-height:20px;margin-bottom:12px;font-size:14px;"></div>
+        <div style="display:flex;gap:10px;justify-content:flex-end;">
+          <button type="button" id="dgslLoginCancel">Cancel</button>
+          <button type="button" id="dgslLoginSubmit" style="background:#008e39;color:#fff;border-color:#008e39;">Login</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(authDialog);
+
+    authDialog.querySelector('#dgslLoginCancel').onclick = () => authDialog.close();
+
+    authDialog.querySelector('#dgslLoginSubmit').onclick = async () => {
+      const email = authDialog.querySelector('#dgslLoginEmail').value.trim();
+      const password = authDialog.querySelector('#dgslLoginPassword').value;
+      const status = authDialog.querySelector('#dgslAuthStatus');
+
+      if (!email || !password) {
+        status.textContent = 'Please enter your email and password.';
+        return;
+      }
+
+      status.textContent = 'Logging in...';
+
+      const { error } = await supabaseClient.auth.signInWithPassword({
+        email,
+        password
+      });
+
+      if (error) {
+        status.textContent = error.message;
+        return;
+      }
+
+      status.textContent = '';
+      authDialog.close();
+    };
+  }
+
+  authDialog.showModal();
+}
 
 
 // ============================================================
@@ -131,6 +262,12 @@ function addLogoToForm() {
 function fromDatabase(x) {
 
   let photos = [];
+
+// Photos selected during the current New/Edit session.
+// This must be kept separately from the file input because mobile
+// browsers replace input.files when the camera/gallery is opened again.
+let pendingPhotoFiles = [];
+let photosToRemove = [];
 
   try {
 
@@ -417,6 +554,47 @@ function formatDate(value) {
 }
 
 
+function isThisWeek(value) {
+
+  if (!value) return false;
+
+  const text = String(value).slice(0, 10);
+
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(text)) return false;
+
+  const date = new Date(`${text}T00:00:00`);
+
+  if (Number.isNaN(date.getTime())) return false;
+
+  const todayDate = new Date();
+  todayDate.setHours(0, 0, 0, 0);
+
+  const day = todayDate.getDay();
+  const daysFromMonday = (day + 6) % 7;
+
+  const startOfWeek = new Date(todayDate);
+  startOfWeek.setDate(todayDate.getDate() - daysFromMonday);
+
+  const endOfWeek = new Date(startOfWeek);
+  endOfWeek.setDate(startOfWeek.getDate() + 7);
+
+  return date >= startOfWeek && date < endOfWeek;
+}
+
+
+function updateWeekChange(id, count) {
+
+  const element = $(`#${id}`);
+
+  if (!element) return;
+
+  element.textContent =
+    count > 0
+      ? `↑ ${count} this week`
+      : 'No change';
+}
+
+
 function esc(x = '') {
 
   return String(x)
@@ -504,12 +682,39 @@ function render() {
     ).length;
 
 
+  const thisWeek =
+    records.filter(x => isThisWeek(x.handoverDate));
+
+  updateWeekChange('totalWeek', thisWeek.length);
+
+  updateWeekChange(
+    'progressWeek',
+    thisWeek.filter(
+      x => x.status === 'Work Permit Open'
+    ).length
+  );
+
+  updateWeekChange(
+    'closedWeek',
+    thisWeek.filter(
+      x => x.status === 'Work Permit Closed'
+    ).length
+  );
+
+  updateWeekChange(
+    'holdWeek',
+    thisWeek.filter(
+      x => x.status === 'Work Permit on Hold'
+    ).length
+  );
+
+
   rows.innerHTML =
     filtered
       .map(
         x => `
 
-        <tr>
+        <tr data-row-id="${esc(x.id)}">
 
           <td>
             <b>
@@ -547,18 +752,29 @@ function render() {
   ${esc(formatDate(x.handoverDate))}
 </td>
 
-<td>
+          <td>
   ${esc(formatDate(x.takeBackDate))}
 </td>
 
-<td>
-  <button
+
+${currentUser ? `
+          <td>
+            <button
               type="button"
               data-edit="${esc(x.id)}"
             >
               Edit
             </button>
+          </td>
+          ` : ''}
 
+          <td>
+            <button
+              type="button"
+              data-view="${esc(x.id)}"
+            >
+              View
+            </button>
           </td>
 
         </tr>
@@ -575,6 +791,160 @@ function render() {
       filtered.length > 0
     );
 
+
+  async function loadPdfJs() {
+
+  if (window.pdfjsLib) {
+    return window.pdfjsLib;
+  }
+
+  await new Promise(
+    (resolve, reject) => {
+
+      const script =
+        document.createElement('script');
+
+      script.src =
+        'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js';
+
+      script.onload =
+        resolve;
+
+      script.onerror =
+        reject;
+
+      document.head.appendChild(script);
+
+    }
+  );
+
+  if (!window.pdfjsLib) {
+
+    throw new Error(
+      'PDF viewer library could not be loaded.'
+    );
+
+  }
+
+  window.pdfjsLib.GlobalWorkerOptions.workerSrc =
+    'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+
+  return window.pdfjsLib;
+
+}
+
+
+document
+    .querySelectorAll(
+      '[data-view]'
+    )
+    .forEach(
+      button => {
+
+        button.onclick =
+          async function () {
+
+            const id =
+              this.getAttribute(
+                'data-view'
+              );
+
+            const record =
+              records.find(
+                x => String(x.id) === String(id)
+              );
+
+            if (!record) return;
+
+            try {
+
+              open(record, false);
+
+              const blob =
+                await generatePdf(true);
+
+              const arrayBuffer =
+                await blob.arrayBuffer();
+
+              const pdfjsLib =
+                await loadPdfJs();
+
+              const pdf =
+                await pdfjsLib.getDocument({
+                  data: new Uint8Array(arrayBuffer)
+                }).promise;
+
+              const viewer =
+                $('#pdfViewer');
+
+              viewer.innerHTML = '';
+
+              for (
+                let pageNumber = 1;
+                pageNumber <= pdf.numPages;
+                pageNumber++
+              ) {
+
+                const page =
+                  await pdf.getPage(pageNumber);
+
+                const viewport =
+                  page.getViewport({
+                    scale: 1.25
+                  });
+
+                const canvas =
+                  document.createElement('canvas');
+
+                const context =
+                  canvas.getContext('2d');
+
+                canvas.width =
+                  viewport.width;
+
+                canvas.height =
+                  viewport.height;
+
+                canvas.style.display =
+                  'block';
+
+                canvas.style.width =
+                  '100%';
+
+                canvas.style.height =
+                  'auto';
+
+                canvas.style.marginBottom =
+                  '12px';
+
+                canvas.style.background =
+                  '#fff';
+
+                viewer.appendChild(canvas);
+
+                await page.render({
+                  canvasContext: context,
+                  viewport: viewport
+                }).promise;
+
+              }
+
+              $('#pdfDialog').showModal();
+
+            } catch (error) {
+
+              console.error(error);
+
+              alert(
+                'Unable to generate the PDF.'
+              );
+
+            }
+
+          };
+
+      }
+    );
 
   document
     .querySelectorAll(
@@ -598,7 +968,7 @@ function render() {
                   String(id)
               );
 
-            if (record) {
+            if (record && currentUser) {
               open(record);
             }
 
@@ -606,6 +976,138 @@ function render() {
 
       }
     );
+
+
+  // Make the whole handover row clickable.
+  // Use event delegation on the table body so this also works
+  // reliably after filtering/searching and on mobile browsers.
+  rows.onclick =
+    function (event) {
+
+      let element = event.target;
+
+      // Do not trigger the row action when an existing button is tapped.
+      while (element && element !== rows) {
+
+        if (element.tagName === 'BUTTON' || element.tagName === 'A') {
+          return;
+        }
+
+        if (element.tagName === 'TR') {
+
+          const id =
+            element.getAttribute('data-row-id');
+
+          if (id) {
+            showRowActionDialog(id);
+          }
+
+          return;
+        }
+
+        element = element.parentElement;
+      }
+
+    };
+
+
+}
+
+
+// ============================================================
+// WHOLE-ROW ACTION POPUP
+// ============================================================
+
+function showRowActionDialog(id) {
+
+  const record =
+    records.find(
+      x => String(x.id) === String(id)
+    );
+
+  if (!record) return;
+
+  let dialog =
+    document.getElementById('rowActionDialog');
+
+  if (!dialog) {
+
+    dialog =
+      document.createElement('dialog');
+
+    dialog.id =
+      'rowActionDialog';
+
+    dialog.style.padding = '0';
+    dialog.style.border = '0';
+    dialog.style.borderRadius = '12px';
+    dialog.style.maxWidth = '340px';
+    dialog.style.width = 'calc(100% - 32px)';
+
+    document.body.appendChild(dialog);
+  }
+
+  // Rebuild the popup every time it is opened so the available
+  // actions always match the current login state.
+  dialog.innerHTML = `
+    <div style="padding:22px; text-align:center;">
+      <div style="font-size:18px; font-weight:700; margin-bottom:18px;">
+        What would you like to do?
+      </div>
+      <div style="display:flex; gap:10px; justify-content:center; flex-wrap:wrap;">
+        ${currentUser ? '<button type="button" id="rowActionEdit">Edit</button>' : ''}
+        <button type="button" id="rowActionView">View PDF</button>
+        <button type="button" id="rowActionCancel">Cancel</button>
+      </div>
+    </div>
+  `;
+
+  document.getElementById('rowActionCancel').onclick =
+    () => dialog.close();
+
+  const rowEditButton =
+    document.getElementById('rowActionEdit');
+
+  if (rowEditButton) {
+    rowEditButton.onclick =
+      () => {
+        if (!currentUser) {
+          dialog.close();
+          return;
+        }
+
+        dialog.close();
+        setTimeout(() => open(record), 0);
+      };
+  }
+
+  document.getElementById('rowActionView').onclick =
+    () => {
+      dialog.close();
+      setTimeout(() => {
+
+        // Call the existing View button without relying on CSS.escape.
+        const viewButtons =
+          document.querySelectorAll('[data-view]');
+
+        for (const button of viewButtons) {
+
+          if (
+            String(button.getAttribute('data-view')) ===
+            String(id)
+          ) {
+            button.click();
+            break;
+          }
+
+        }
+
+      }, 0);
+    };
+
+  if (!dialog.open) {
+    dialog.showModal();
+  }
 
 }
 
@@ -938,11 +1440,26 @@ setupOtherDropdown(
   'takeBackSnagCompleted',
   'takeBackSnagCompletedOther'
 );
+
+// Automatically close the work permit when the DGSL representative
+// field is filled in. The status dropdown remains editable afterwards.
+const dgslRepresentativeField = form.elements.dgslSigner;
+const statusField = form.elements.status;
+
+if (dgslRepresentativeField && statusField) {
+  dgslRepresentativeField.addEventListener('input', () => {
+    if (dgslRepresentativeField.value.trim()) {
+      statusField.value = 'Work Permit Closed';
+      statusField.dispatchEvent(new Event('change'));
+    }
+  });
+}
+
 // ============================================================
 // OPEN FORM
 // ============================================================
 
-function open(x) {
+function open(x, showDialog = true) {
 
   editing =
     x || null;
@@ -1005,6 +1522,10 @@ clearSignature(
   $('#photoPreview')
     .innerHTML =
       '';
+
+  // Start a fresh pending-photo list for this New/Edit session.
+  pendingPhotoFiles = [];
+  photosToRemove = [];
 
 
   restoreTakeBackChecklist(
@@ -1162,7 +1683,7 @@ otherField.style.display =
   }
 
 
-  dlg.showModal();
+  if (showDialog) dlg.showModal();
 
 }
 
@@ -1172,7 +1693,9 @@ otherField.style.display =
 // ============================================================
 
 $('#newZone').onclick =
-  () => open();
+  () => {
+    if (currentUser) open();
+  };
 
 
 // ============================================================
@@ -1182,6 +1705,103 @@ $('#newZone').onclick =
 $('#cancel').onclick =
 $('#cancel2').onclick =
   () => dlg.close();
+
+
+// ============================================================
+// ADD PHOTOS
+// ============================================================
+
+// Mobile camera/gallery pickers replace the contents of the file
+// input each time they are opened. Accumulate each selection here.
+if (form.elements.photos) {
+
+  form.elements.photos.onchange =
+    e => {
+
+      const selected =
+        Array.from(
+          e.target.files || []
+        ).filter(
+          file =>
+            file.type.startsWith('image/')
+        );
+
+      if (selected.length) {
+
+        pendingPhotoFiles.push(
+          ...selected
+        );
+
+        renderPendingPhotoPreviews();
+
+      }
+
+      // Clear the input so the user can choose/take another photo,
+      // including the same file again if needed.
+      e.target.value = '';
+
+    };
+
+}
+
+function renderPendingPhotoPreviews() {
+
+  const preview =
+    $('#photoPreview');
+
+  if (!preview) {
+    return;
+  }
+
+  preview.innerHTML = '';
+
+  if (editing?.photos) {
+    showSavedPhotos(editing.photos);
+  }
+
+  pendingPhotoFiles.forEach((file, index) => {
+
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'inline-block';
+    wrapper.style.position = 'relative';
+    wrapper.style.marginRight = '6px';
+    wrapper.style.marginBottom = '6px';
+
+    const img = document.createElement('img');
+    img.src = URL.createObjectURL(file);
+    img.style.width = '110px';
+    img.style.height = '80px';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '6px';
+    img.style.border = '2px solid #1976d2';
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = '×';
+    remove.title = 'Remove photo';
+    remove.style.position = 'absolute';
+    remove.style.top = '2px';
+    remove.style.right = '2px';
+    remove.style.width = '28px';
+    remove.style.height = '28px';
+    remove.style.padding = '0';
+    remove.style.borderRadius = '50%';
+    remove.style.border = '1px solid #fff';
+    remove.style.background = '#d32f2f';
+    remove.style.color = '#fff';
+    remove.style.fontSize = '20px';
+    remove.style.lineHeight = '24px';
+    remove.style.cursor = 'pointer';
+    remove.onclick = () => {
+      pendingPhotoFiles.splice(index, 1);
+      renderPendingPhotoPreviews();
+    };
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(remove);
+    preview.appendChild(wrapper);
+  });
+}
 
 
 // ============================================================
@@ -1328,7 +1948,9 @@ if (
 
       x.photos =
         editing?.photos
-          ? [...editing.photos]
+          ? editing.photos.filter(
+              url => !photosToRemove.includes(url)
+            )
           : [];
 
 
@@ -1336,14 +1958,11 @@ if (
 // NEW PHOTOS
 // ------------------------------------------------------
 
-const files =
-  Array.from(
-    form.elements.photos?.files || []
-  );
-
+// Use the accumulated list so taking/selecting another photo
+// adds to the previous ones instead of replacing them.
 for (
   const file
-  of files
+  of pendingPhotoFiles
 ) {
 
   if (
@@ -1419,6 +2038,11 @@ for (
 
       }
 
+
+      // Delete photos that were removed from the handover.
+      for (const url of photosToRemove) {
+        await deletePhoto(url);
+      }
 
       dlg.close();
 
@@ -1532,78 +2156,64 @@ function showSavedPhotos(
   photos
 ) {
 
-  const preview =
-    $('#photoPreview');
-
+  const preview = $('#photoPreview');
 
   if (!preview) {
     return;
   }
 
-
-  preview.innerHTML =
-    '';
-
-
-  if (
-    !Array.isArray(
-      photos
-    )
-  ) {
-
+  if (!Array.isArray(photos)) {
     return;
-
   }
 
+  photos.forEach(url => {
 
-  photos.forEach(
-    url => {
-
-      const img =
-        document.createElement(
-          'img'
-        );
-
-
-      img.src =
-        url;
-
-
-      img.style.width =
-        '110px';
-
-
-      img.style.height =
-        '80px';
-
-
-      img.style.objectFit =
-        'cover';
-
-
-      img.style.borderRadius =
-        '6px';
-
-
-      img.style.border =
-        '1px solid #ccc';
-
-
-      img.style.marginRight =
-        '6px';
-
-
-      img.style.marginBottom =
-        '6px';
-
-
-      preview.appendChild(
-        img
-      );
-
+    if (photosToRemove.includes(url)) {
+      return;
     }
-  );
 
+    const wrapper = document.createElement('div');
+    wrapper.style.display = 'inline-block';
+    wrapper.style.position = 'relative';
+    wrapper.style.marginRight = '6px';
+    wrapper.style.marginBottom = '6px';
+
+    const img = document.createElement('img');
+    img.src = url;
+    img.style.width = '110px';
+    img.style.height = '80px';
+    img.style.objectFit = 'cover';
+    img.style.borderRadius = '6px';
+    img.style.border = '1px solid #ccc';
+
+    const remove = document.createElement('button');
+    remove.type = 'button';
+    remove.textContent = '×';
+    remove.title = 'Remove photo';
+    remove.style.position = 'absolute';
+    remove.style.top = '2px';
+    remove.style.right = '2px';
+    remove.style.width = '28px';
+    remove.style.height = '28px';
+    remove.style.padding = '0';
+    remove.style.borderRadius = '50%';
+    remove.style.border = '1px solid #fff';
+    remove.style.background = '#d32f2f';
+    remove.style.color = '#fff';
+    remove.style.fontSize = '20px';
+    remove.style.lineHeight = '24px';
+    remove.style.cursor = 'pointer';
+    remove.onclick = () => {
+      if (!photosToRemove.includes(url)) {
+        photosToRemove.push(url);
+      }
+      renderPendingPhotoPreviews();
+    };
+
+    wrapper.appendChild(img);
+    wrapper.appendChild(remove);
+    preview.appendChild(wrapper);
+  });
 }
 
 
@@ -1836,6 +2446,31 @@ function setupSignature(
   let drawing =
     false;
 
+  let signatureActive =
+    false;
+
+
+  function setActive(active) {
+    signatureActive = active;
+    canvas.classList.toggle(
+      'signature-active',
+      active
+    );
+  }
+
+
+  function activate() {
+    // A deliberate click/tap activates drawing.
+    setActive(true);
+  }
+
+
+  // Allow the form-opening/clearing code to fully deactivate this pad.
+  canvas.deactivateSignature = () => {
+    drawing = false;
+    setActive(false);
+  };
+
 
   function position(e) {
 
@@ -1879,6 +2514,12 @@ function setupSignature(
 
   function start(e) {
 
+    // Inactive pads never draw. A click/tap must activate the pad first.
+    if (!signatureActive) {
+      return;
+    }
+
+
     e.preventDefault();
 
 
@@ -1903,7 +2544,7 @@ function setupSignature(
 
   function move(e) {
 
-    if (!drawing) {
+    if (!drawing || !signatureActive) {
       return;
     }
 
@@ -1943,6 +2584,22 @@ function setupSignature(
     ctx.closePath();
 
   }
+
+
+  canvas.addEventListener(
+    'click',
+    activate
+  );
+
+
+  document.addEventListener(
+    'click',
+    (e) => {
+      if (!canvas.contains(e.target)) {
+        canvas.deactivateSignature();
+      }
+    }
+  );
 
 
   canvas.addEventListener(
@@ -2026,6 +2683,11 @@ function clearSignature(
     canvas.width,
     canvas.height
   );
+
+
+  if (canvas.deactivateSignature) {
+    canvas.deactivateSignature();
+  }
 
 }
 
@@ -2287,7 +2949,7 @@ $('#generatePdf').onclick =
   };
 
 
-async function generatePdf() {
+async function generatePdf(viewOnly = false) {
 
   try {
 
@@ -2397,7 +3059,6 @@ async function generatePdf() {
     );
 
 
-    y += 8;
 
 
     const data = {
@@ -2449,6 +3110,65 @@ healthSafetyScaffolding:
     form.elements.dgslSigner?.value || ''
 };
 
+
+    // STATUS BUBBLE — top right, directly beneath the header line.
+    const statusColors = {
+      'Work Permit Open': [246, 196, 83],
+      'Work Permit Closed': [122, 203, 138],
+      'Work Permit on Hold': [239, 119, 119]
+    };
+
+    const statusColor =
+      statusColors[data.status] || [217, 222, 227];
+
+    const statusBubbleX = 145;
+    const statusBubbleY = y + 3;
+    const statusBubbleWidth = 50;
+    const statusBubbleHeight = 9;
+
+    pdf.setFillColor(
+      statusColor[0],
+      statusColor[1],
+      statusColor[2]
+    );
+
+    pdf.roundedRect(
+      statusBubbleX,
+      statusBubbleY,
+      statusBubbleWidth,
+      statusBubbleHeight,
+      3,
+      3,
+      'F'
+    );
+
+    pdf.setFontSize(8);
+    pdf.setFont(undefined, 'bold');
+    pdf.setTextColor(34, 34, 34);
+
+    const statusText = data.status || '';
+    const statusTextLines =
+      pdf.splitTextToSize(
+        statusText,
+        statusBubbleWidth - 6
+      );
+
+    const statusTextY =
+      statusBubbleY +
+      statusBubbleHeight / 2 +
+      (statusTextLines.length === 1 ? 1.1 : 0);
+
+    pdf.text(
+      statusTextLines,
+      statusBubbleX + statusBubbleWidth / 2,
+      statusTextY,
+      { align: 'center' }
+    );
+
+    pdf.setTextColor(0, 0, 0);
+
+
+    y += 8;
 
     // --------------------------------------------------------
     // PDF FIELD
@@ -2593,12 +3313,6 @@ healthSafetyScaffolding:
     addField(
       'Work Description',
       data.description
-    );
-
-
-    addField(
-      'Status',
-      data.status
     );
 
 
@@ -2830,48 +3544,35 @@ healthSafetyScaffolding:
 
 
     // --------------------------------------------------------
-    // DGSL TAKE BACK DETAILS
+    // PAGE 2: DGSL TAKE BACK DETAILS
     // --------------------------------------------------------
 
-    if (
-      y > 235
-    ) {
+    // Keep the Take Back section on page 2.
+    pdf.addPage();
 
-      pdf.addPage();
+    y = 20;
 
-      y =
-        20;
+    if (logoData) {
 
-
-      if (logoData) {
-
-        pdf.addImage(
-          logoData,
-          'PNG',
-          140,
-          10,
-          55,
-          11.1
-        );
-
-      }
+      pdf.addImage(
+        logoData,
+        'PNG',
+        140,
+        10,
+        55,
+        11.1
+      );
 
     }
-
-
-    y += 3;
-
 
     pdf.setFont(
       undefined,
       'bold'
     );
 
-
     pdf.setFontSize(
       12
     );
-
 
     pdf.text(
       'DGSL Take Back Details',
@@ -2879,77 +3580,42 @@ healthSafetyScaffolding:
       y
     );
 
-
     y += 7;
-
 
     pdf.setFontSize(
       10
     );
-
 
     addField(
       'Take Back Date',
       formatDate(data.takeBackDate)
     );
 
-
     addField(
       'All works complete to drawings',
       data.takeBackCompleteDrawings
     );
-
 
     addField(
       'Housekeeping at time of Take Back',
       data.takeBackHousekeeping
     );
 
-
     addField(
       'DG to Snag completed works',
       data.takeBackSnagCompleted
     );
 
-
     // --------------------------------------------------------
     // NOTES
     // --------------------------------------------------------
 
-    if (
-      y > 235
-    ) {
-
-      pdf.addPage();
-
-      y =
-        20;
-
-
-      if (logoData) {
-
-        pdf.addImage(
-          logoData,
-          'PNG',
-          140,
-          10,
-          55,
-          11.1
-        );
-
-      }
-
-    }
-
-
-    y += 3;
-
+    y += 2;
 
     pdf.setFont(
       undefined,
       'bold'
     );
-
 
     pdf.text(
       'Notes / Outstanding Items',
@@ -2957,15 +3623,12 @@ healthSafetyScaffolding:
       y
     );
 
-
     y += 6;
-
 
     pdf.setFont(
       undefined,
       'normal'
     );
-
 
     const noteLines =
       pdf.splitTextToSize(
@@ -2974,13 +3637,11 @@ healthSafetyScaffolding:
           margin * 2
       );
 
-
     pdf.text(
       noteLines,
       margin,
       y
     );
-
 
     y +=
       Math.max(
@@ -2988,42 +3649,16 @@ healthSafetyScaffolding:
         noteLines.length * 5
       );
 
-
     // --------------------------------------------------------
     // SIGNATURES
     // --------------------------------------------------------
 
-    if (
-      y > 220
-    ) {
-
-      pdf.addPage();
-
-      y =
-        20;
-
-
-      if (logoData) {
-
-        pdf.addImage(
-          logoData,
-          'PNG',
-          140,
-          10,
-          55,
-          11.1
-        );
-
-      }
-
-    }
-
+    y += 2;
 
     pdf.setFont(
       undefined,
       'bold'
     );
-
 
     pdf.text(
       'Signatures',
@@ -3031,15 +3666,12 @@ healthSafetyScaffolding:
       y
     );
 
-
-    y += 8;
-
+    y += 7;
 
     pdf.setFont(
       undefined,
       'normal'
     );
-
 
     pdf.text(
       `Sub-Contractor Name: ${
@@ -3049,9 +3681,7 @@ healthSafetyScaffolding:
       y
     );
 
-
     y += 5;
-
 
     pdf.addImage(
       $('#contractorSignature')
@@ -3061,13 +3691,11 @@ healthSafetyScaffolding:
       'PNG',
       margin,
       y,
-      80,
-      24
+      65,
+      20
     );
 
-
-    y += 32;
-
+    y += 26;
 
     pdf.text(
       `DGSL Representative: ${
@@ -3077,9 +3705,7 @@ healthSafetyScaffolding:
       y
     );
 
-
     y += 5;
-
 
     pdf.addImage(
       $('#dgslSignature')
@@ -3089,54 +3715,34 @@ healthSafetyScaffolding:
       'PNG',
       margin,
       y,
-      80,
-      24
+      65,
+      20
     );
 
+    y += 25;
 
     // --------------------------------------------------------
-    // PHOTOS
+    // SITE PHOTOS
+    // Photos are placed immediately below the DGSL
+    // Representative signature and arranged two per row
+    // to help keep the document to two pages.
     // --------------------------------------------------------
 
     const photoUrls =
       editing?.photos || [];
 
-
     if (
       photoUrls.length > 0
     ) {
 
-      pdf.addPage();
-
-
-      y =
-        20;
-
-
-      if (logoData) {
-
-        pdf.addImage(
-          logoData,
-          'PNG',
-          140,
-          10,
-          55,
-          11.1
-        );
-
-      }
-
-
       pdf.setFontSize(
-        16
+        12
       );
-
 
       pdf.setFont(
         undefined,
         'bold'
       );
-
 
       pdf.text(
         'SITE PHOTOS',
@@ -3144,9 +3750,16 @@ healthSafetyScaffolding:
         y
       );
 
+      y += 6;
 
-      y += 10;
+      const photoMaxWidth = 78;
+      const photoMaxHeight = 42;
+      const photoGap = 4;
+      const secondPhotoX = margin + photoMaxWidth + photoGap;
 
+      let photoRowY = y;
+      let photoColumn = 0;
+      let rowHeight = 0;
 
       for (
         const url
@@ -3160,15 +3773,79 @@ healthSafetyScaffolding:
               url
             );
 
-
-          y =
-            await addImageToPdf(
-              pdf,
-              imageData,
-              y,
-              margin
+          const dimensions =
+            await getImageDimensions(
+              imageData
             );
 
+          let width = photoMaxWidth;
+          let height =
+            (dimensions.height / dimensions.width) * width;
+
+          if (height > photoMaxHeight) {
+            height = photoMaxHeight;
+            width =
+              (dimensions.width / dimensions.height) * height;
+          }
+
+          // If the photos cannot fit on page 2, start a new page.
+          // This keeps the layout compact while avoiding clipped photos.
+          if (
+            photoRowY + height > 285
+          ) {
+
+            pdf.addPage();
+
+            photoRowY = 20;
+            photoColumn = 0;
+            rowHeight = 0;
+
+            if (logoData) {
+
+              pdf.addImage(
+                logoData,
+                'PNG',
+                140,
+                10,
+                55,
+                11.1
+              );
+
+            }
+
+          }
+
+          const photoX =
+            photoColumn === 0
+              ? margin
+              : secondPhotoX;
+
+          pdf.addImage(
+            imageData,
+            'JPEG',
+            photoX,
+            photoRowY,
+            width,
+            height
+          );
+
+          rowHeight =
+            Math.max(
+              rowHeight,
+              height
+            );
+
+          if (photoColumn === 0) {
+
+            photoColumn = 1;
+
+          } else {
+
+            photoColumn = 0;
+            photoRowY += rowHeight + 5;
+            rowHeight = 0;
+
+          }
 
         } catch (error) {
 
@@ -3182,7 +3859,6 @@ healthSafetyScaffolding:
       }
 
     }
-
 
     // --------------------------------------------------------
     // SAVE PDF
@@ -3203,9 +3879,13 @@ healthSafetyScaffolding:
         );
 
 
-    pdf.save(
-      `DGSL-${safeZone}-Handover-${today()}.pdf`
-    );
+    if (viewOnly) {
+      return pdf.output('blob');
+    } else {
+      pdf.save(
+        `DGSL-${safeZone}-Handover-${today()}.pdf`
+      );
+    }
 
 
   } catch (error) {
@@ -3565,6 +4245,25 @@ async function startApp() {
 
     await loadSupabase();
 
+    const { data: sessionData } =
+      await supabaseClient.auth.getSession();
+
+    currentUser =
+      sessionData?.session?.user || null;
+
+    ensureAuthUi();
+    updateAuthUi();
+
+    supabaseClient.auth.onAuthStateChange(
+      (_event, session) => {
+        currentUser =
+          session?.user || null;
+
+        updateAuthUi();
+        render();
+      }
+    );
+
     await loadRecords();
 
     setupRealtime();
@@ -3589,3 +4288,21 @@ async function startApp() {
 startApp();
 
 
+
+
+
+// ============================================================
+// PDF VIEWER CLOSE
+// ============================================================
+
+$('#closePdf').onclick =
+  () => {
+
+    const pdfDialog =
+      $('#pdfDialog');
+
+    pdfDialog.close();
+
+    $('#pdfViewer').innerHTML = '';
+
+  };

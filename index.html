@@ -4,11 +4,13 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#1f4e78">
-<title>DGSL Site Register</title>
+<title>DGSL Site Register — TEST</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
+<div style="background:#b91c1c;color:#fff;text-align:center;font-weight:700;padding:8px;">DGSL SITE REGISTER — TEST VERSION</div>
+
 
 <header>
 
@@ -38,24 +40,28 @@
 
 <section class="cards" aria-label="Site summary">
 
-  <article>
+  <article class="blue">
     <span>Total Work Permits</span>
     <strong id="total">0</strong>
+    <small id="totalWeek" class="week-change">No change</small>
   </article>
 
   <article class="amber">
     <span>Work Permits Open</span>
     <strong id="progress">0</strong>
+    <small id="progressWeek" class="week-change">No change</small>
   </article>
 
   <article class="green">
     <span>Work Permits Closed</span>
     <strong id="closed">0</strong>
+    <small id="closedWeek" class="week-change">No change</small>
   </article>
 
   <article class="red">
     <span>Work Permits On hold</span>
     <strong id="hold">0</strong>
+    <small id="holdWeek" class="week-change">No change</small>
   </article>
 
 </section>
@@ -80,11 +86,11 @@
       >
 
       <button id="export">
-        Export backup
+        Export
       </button>
 
       <label class="button">
-        Import backup
+        Import
         <input
           id="import"
           type="file"
@@ -130,7 +136,9 @@
           <th>Work Description</th>
           <th>Status</th>
           <th>Handover Date</th>
-          <th></th>
+          <th>Take Back Date</th>
+          <th id="editHeader" style="display:none;">Edit</th>
+          <th>View</th>
         </tr>
       </thead>
 
@@ -148,6 +156,38 @@
 </section>
 
 </main>
+
+
+<dialog id="pdfDialog">
+
+  <div style="height:92vh;display:flex;flex-direction:column;">
+
+    <div class="form-head" style="padding:20px 25px;flex:0 0 auto;">
+
+      <div>
+        <p class="eyebrow">DGSL HANDOVER PDF</p>
+        <h2>View PDF</h2>
+      </div>
+
+      <button
+        type="button"
+        id="closePdf"
+        class="icon"
+        aria-label="Close"
+      >
+        ×
+      </button>
+
+    </div>
+
+    <div
+      id="pdfViewer"
+      style="flex:1 1 auto;min-height:0;overflow:auto;background:#eee;padding:12px;box-sizing:border-box;"
+    ></div>
+
+  </div>
+
+</dialog>
 
 
 <dialog id="formDialog">
@@ -214,7 +254,7 @@
         id="contractorSignature"
         width="600"
         height="180"
-        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
+        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:pan-y;background:#fff;"
       ></canvas>
 
       <button
@@ -371,40 +411,6 @@
         rows="3"
         placeholder="Describe the works handed over"
       ></textarea>
-
-    </label>
-
-
-    <label>
-
-      Status
-
-      <select name="status">
-
-  <option value="Work Permit Open">
-    Work Permit Open
-  </option>
-
-  <option value="Work Permit on Hold">
-    Work Permit on Hold
-  </option>
-
-  <option value="Work Permit Closed">
-    Work Permit Closed
-  </option>
-
-  <option value="Other">
-    Other
-  </option>
-
-</select>
-
-<input
-  type="text"
-  id="statusOther"
-  placeholder="Enter your own status"
-  style="display:none;margin-top:6px;"
->
 
     </label>
 
@@ -638,6 +644,11 @@
     </div>
 
 
+    <div class="wide" style="margin-top:12px;margin-bottom:22px;">
+      <div style="color:red;font-weight:600;">To be completed at Take Back stage</div>
+    </div>
+
+
     <!-- DGSL TAKE BACK DETAILS -->
 
 <div class="wide">
@@ -694,7 +705,6 @@
   <input
     name="takeBackDate"
     type="date"
-    style="height:42px;box-sizing:border-box;"
   >
 </label>
 
@@ -712,8 +722,8 @@
       To be completed
     </option>
 
-    <option value="OK">
-      OK
+    <option value="Good">
+      Good
     </option>
 
     <option value="Bad">
@@ -807,11 +817,10 @@
     type="file"
     accept="image/*"
     multiple
-    capture="environment"
   >
 
   <small>
-    You can select or take multiple site photos.
+    Select multiple photos from your gallery, or choose the camera option to take a photo.
   </small>
 
 </label>
@@ -822,6 +831,42 @@
       class="wide"
       style="display:flex;flex-wrap:wrap;gap:10px;"
     ></div>
+
+
+    <!-- STATUS -->
+
+    <label>
+
+      Status
+
+      <select name="status">
+
+        <option value="Work Permit Open">
+          Work Permit Open
+        </option>
+
+        <option value="Work Permit on Hold">
+          Work Permit on Hold
+        </option>
+
+        <option value="Work Permit Closed">
+          Work Permit Closed
+        </option>
+
+        <option value="Other">
+          Other
+        </option>
+
+      </select>
+
+      <input
+        type="text"
+        id="statusOther"
+        placeholder="Enter your own status"
+        style="display:none;margin-top:6px;"
+      >
+
+    </label>
 
 
     <!-- DGSL SIGNATURE -->
@@ -854,7 +899,7 @@
         id="dgslSignature"
         width="600"
         height="180"
-        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:none;background:#fff;"
+        style="width:100%;max-width:600px;border:1px solid #ccc;border-radius:6px;touch-action:pan-y;background:#fff;"
       ></canvas>
 
       <button
