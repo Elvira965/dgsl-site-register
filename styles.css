@@ -604,8 +604,6 @@ dialog {
 
   width: min(950px, 94vw);
 
-  height: min(92vh, 900px);
-
   max-height: 92vh;
 
   padding: 0;
@@ -618,13 +616,6 @@ dialog {
     0 20px 60px
     rgba(0, 0, 0, 0.25);
 
-  overflow: hidden;
-
-}
-
-/* Keep the page behind the handover form from scrolling while the form is open. */
-body:has(#formDialog[open]) {
-  overflow: hidden;
 }
 
 
@@ -640,17 +631,9 @@ dialog::backdrop {
 
   padding: 25px;
 
-  height: 100%;
-
   overflow-y: auto;
 
-  overflow-x: hidden;
-
-  max-height: none;
-
-  -webkit-overflow-scrolling: touch;
-
-  overscroll-behavior: contain;
+  max-height: 92vh;
 
 }
 
@@ -1063,13 +1046,6 @@ canvas.signature-active {
 
 /* Prevent mobile browsers from zooming the page when a form field is focused. */
 @media (max-width: 700px) {
-
-  dialog {
-    width: 94vw;
-    height: calc(100dvh - 24px);
-    max-height: calc(100dvh - 24px);
-  }
-
   input,
   select,
   textarea {
@@ -1103,4 +1079,20 @@ canvas.signature-active {
 
 body {
   padding-bottom: 28px;
+}
+
+/* Keep the small row-action popup compact on phones and desktops. */
+#rowActionDialog {
+  width: min(340px, calc(100vw - 32px)) !important;
+  max-width: min(340px, calc(100vw - 32px)) !important;
+  min-width: 0 !important;
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
+}
+
+#rowActionDialog > div {
+  height: auto !important;
+  max-height: none !important;
+  min-height: 0 !important;
 }
