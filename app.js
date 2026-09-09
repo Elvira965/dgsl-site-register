@@ -478,7 +478,7 @@ function toDatabase(x) {
       x.status || null,
 
     handover:
-      null,
+      x.handover || null,
 
     handover_date:
       x.handoverDate || null,
@@ -788,7 +788,7 @@ function render() {
       .map(
         x => `
 
-        <tr data-row-id="${esc(x.id)}">
+        <tr class="${x.handover === 'COPY' ? 'copied-handover-row' : ''}" data-row-id="${esc(x.id)}">
 
           <td>
             <b>
@@ -2143,6 +2143,11 @@ for (
 }
 
 
+      // A copied handover stays marked until it is actually edited and saved.
+      if (editing?.handover === 'COPY') {
+        x.handover = '';
+      }
+
       // ------------------------------------------------------
       // DATABASE RECORD
       // ------------------------------------------------------
@@ -2335,7 +2340,8 @@ async function copyHandover(record) {
     const copiedRecord = {
       ...record,
       id: newId,
-      photos: copiedPhotos
+      photos: copiedPhotos,
+      handover: 'COPY'
     };
 
     const databaseRecord =

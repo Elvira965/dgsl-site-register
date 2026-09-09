@@ -1167,3 +1167,9 @@ body.form-dialog-open {
   overflow: hidden !important;
   overscroll-behavior: none !important;
 }
+
+
+/* Light red background for copied handovers until they are edited and saved. */
+tr.copied-handover-row td {
+  background: #fff0f0 !important;
+}
