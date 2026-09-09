@@ -1059,10 +1059,10 @@ canvas.signature-active {
    ============================================================ */
 
 .version-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   z-index: 1000;
   height: 28px;
   display: flex;
@@ -1081,18 +1081,59 @@ body {
   padding-bottom: 28px;
 }
 
-/* Keep the small row-action popup compact on phones and desktops. */
-#rowActionDialog {
+/* ============================================================
+   FORM SCROLLING + ROW ACTION POPUP FIX
+   ============================================================ */
+
+/* Keep the page behind the handover form from scrolling while the form is open. */
+body:has(#formDialog[open]) {
+  overflow: hidden;
+}
+
+/* The full handover form is the only dialog that should be tall and scrollable. */
+#formDialog {
+  height: min(92vh, 900px);
+  max-height: 92vh;
+  overflow: hidden;
+}
+
+#handoverForm {
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+  max-height: none;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* The small row-action popup must NOT inherit the large handover-form dialog height. */
+#rowActionDialog,
+#rowActionDialog[open] {
   width: min(340px, calc(100vw - 32px)) !important;
   max-width: min(340px, calc(100vw - 32px)) !important;
   min-width: 0 !important;
   height: auto !important;
-  max-height: none !important;
   min-height: 0 !important;
+  max-height: none !important;
+  padding: 0 !important;
+  overflow: visible !important;
+  box-sizing: border-box !important;
 }
 
 #rowActionDialog > div {
   height: auto !important;
-  max-height: none !important;
   min-height: 0 !important;
+  max-height: none !important;
+  box-sizing: border-box !important;
+}
+
+/* Keep the row popup compact on smaller screens too. */
+@media (max-width: 700px) {
+  #rowActionDialog,
+  #rowActionDialog[open] {
+    width: min(340px, calc(100vw - 32px)) !important;
+    max-width: min(340px, calc(100vw - 32px)) !important;
+    height: auto !important;
+    max-height: none !important;
+  }
 }
