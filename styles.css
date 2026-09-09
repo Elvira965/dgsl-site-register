@@ -1065,17 +1065,15 @@ canvas.signature-active {
    ============================================================ */
 
 .version-bar {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
-  z-index: 1000;
+  position: static !important;
+  width: 100%;
   height: 28px;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   padding: 0 12px;
+  margin-top: 20px;
   background: #1f4e78;
   color: #fff;
   font-size: 12px;
@@ -1083,9 +1081,6 @@ canvas.signature-active {
   letter-spacing: .2px;
 }
 
-body {
-  padding-bottom: 28px;
-}
 
 /* ============================================================
    ROW ACTION POPUP — COMPACT ON ALL DEVICES
@@ -1215,12 +1210,11 @@ body.pdf-dialog-open {
   overscroll-behavior: none !important;
 }
 
-/* Keep the fixed version bar stable during mobile scrolling without a transform. */
+/* Keep the version bar at the bottom of the document.
+   It is not fixed to the phone viewport, so it is only visible
+   after scrolling to the bottom of the website. */
 .version-bar {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
+  position: static !important;
   transform: none !important;
   -webkit-transform: none !important;
   will-change: auto !important;
