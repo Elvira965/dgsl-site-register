@@ -1003,6 +1003,7 @@ document
 
               }
 
+              document.body.classList.add('pdf-dialog-open');
               $('#pdfDialog').showModal();
 
             } catch (error) {
@@ -2392,7 +2393,8 @@ async function copyHandover(record) {
       ...record,
       id: newId,
       photos: copiedPhotos,
-      handover: 'COPY'
+      handover: 'COPY',
+      handoverDate: today()
     };
 
     const databaseRecord =
@@ -4659,6 +4661,7 @@ $('#closePdf').onclick =
       $('#pdfDialog');
 
     pdfDialog.close();
+    document.body.classList.remove('pdf-dialog-open');
 
     $('#pdfViewer').innerHTML = '';
 
