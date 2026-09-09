@@ -604,6 +604,8 @@ dialog {
 
   width: min(950px, 94vw);
 
+  height: min(92vh, 900px);
+
   max-height: 92vh;
 
   padding: 0;
@@ -616,6 +618,13 @@ dialog {
     0 20px 60px
     rgba(0, 0, 0, 0.25);
 
+  overflow: hidden;
+
+}
+
+/* Keep the page behind the handover form from scrolling while the form is open. */
+body:has(#formDialog[open]) {
+  overflow: hidden;
 }
 
 
@@ -631,9 +640,17 @@ dialog::backdrop {
 
   padding: 25px;
 
+  height: 100%;
+
   overflow-y: auto;
 
-  max-height: 92vh;
+  overflow-x: hidden;
+
+  max-height: none;
+
+  -webkit-overflow-scrolling: touch;
+
+  overscroll-behavior: contain;
 
 }
 
@@ -1046,6 +1063,13 @@ canvas.signature-active {
 
 /* Prevent mobile browsers from zooming the page when a form field is focused. */
 @media (max-width: 700px) {
+
+  dialog {
+    width: 94vw;
+    height: calc(100dvh - 24px);
+    max-height: calc(100dvh - 24px);
+  }
+
   input,
   select,
   textarea {
@@ -1059,10 +1083,10 @@ canvas.signature-active {
    ============================================================ */
 
 .version-bar {
-  position: fixed !important;
-  left: 0 !important;
-  right: 0 !important;
-  bottom: 0 !important;
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
   z-index: 1000;
   height: 28px;
   display: flex;
