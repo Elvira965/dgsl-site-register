@@ -51,7 +51,7 @@ function ensureAuthUi() {
 
   button.onclick = async () => {
     if (currentUser) {
-      await supabaseClient.auth.signOut();
+      showLogoutConfirmDialog();
     } else {
       showAuthDialog();
     }
@@ -101,6 +101,67 @@ function updateAuthUi() {
     element.style.display = currentUser ? '' : 'none';
   });
 }
+
+function showLogoutConfirmDialog() {
+  let dialog = document.getElementById('dgslLogoutDialog');
+
+  if (!dialog) {
+    dialog = document.createElement('dialog');
+    dialog.id = 'dgslLogoutDialog';
+    dialog.style.padding = '0';
+    dialog.style.border = '0';
+    dialog.style.borderRadius = '12px';
+    dialog.style.width = 'min(360px, calc(100% - 32px))';
+    dialog.style.maxWidth = '360px';
+    dialog.style.boxSizing = 'border-box';
+    dialog.style.margin = 'auto';
+    dialog.style.overflow = 'hidden';
+
+    dialog.innerHTML = `
+      <div style="padding:22px;text-align:center;box-sizing:border-box;">
+        <div style="font-size:20px;font-weight:700;margin-bottom:10px;">
+          Log out?
+        </div>
+        <div style="font-size:16px;margin-bottom:20px;">
+          Are you sure you want to log out?
+        </div>
+        <div style="display:flex;gap:10px;justify-content:center;">
+          <button type="button" id="dgslLogoutCancel">Cancel</button>
+          <button type="button" id="dgslLogoutConfirm" style="background:#008e39;color:#fff;border-color:#008e39;">Log out</button>
+        </div>
+      </div>
+    `;
+
+    document.body.appendChild(dialog);
+
+    dialog.querySelector('#dgslLogoutCancel').onclick = () => {
+      dialog.close();
+    };
+
+    dialog.querySelector('#dgslLogoutConfirm').onclick = async () => {
+      const confirmButton = dialog.querySelector('#dgslLogoutConfirm');
+      confirmButton.disabled = true;
+      confirmButton.textContent = 'Logging out...';
+
+      const { error } = await supabaseClient.auth.signOut();
+
+      if (error) {
+        console.error('Logout error:', error);
+        confirmButton.disabled = false;
+        confirmButton.textContent = 'Log out';
+        alert('Unable to log out. Please try again.');
+        return;
+      }
+
+      dialog.close();
+    };
+  }
+
+  if (!dialog.open) {
+    dialog.showModal();
+  }
+}
+
 
 function showAuthDialog() {
   if (!authDialog) {
@@ -542,6 +603,18 @@ function setupRealtime() {
 // HTML ESCAPE
 // ============================================================
 
+function formatTableDate(value) {
+  if (!value) return '—';
+
+  const text = String(value).slice(0, 10);
+  const match = text.match(/^(\d{4})-(\d{2})-(\d{2})$/);
+
+  if (!match) return String(value);
+
+  return `${match[3]}/${match[2]}/${match[1].slice(2)}`;
+}
+
+
 function formatDate(value) {
   if (!value) return '';
 
@@ -749,12 +822,12 @@ function render() {
 
 </td>
 
-          <td>
-  ${esc(formatDate(x.handoverDate))}
+          <td class="table-date">
+  ${esc(formatTableDate(x.handoverDate))}
 </td>
 
-          <td>
-  ${esc(formatDate(x.takeBackDate))}
+          <td class="table-date">
+  ${esc(formatTableDate(x.takeBackDate))}
 </td>
 
 

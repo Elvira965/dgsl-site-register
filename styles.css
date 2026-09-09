@@ -546,6 +546,12 @@ td small {
 
 }
 
+/* Keep the register dates neat and on one line. */
+td.table-date {
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+
 
 /* Keep Edit and View headings and their cells centered over the controls. */
 th:nth-child(7),
