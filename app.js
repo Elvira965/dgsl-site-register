@@ -117,9 +117,6 @@ function showAuthDialog() {
         <div style="font-size:20px;font-weight:700;margin-bottom:16px;">
           DGSL Site Register Login
         </div>
-        <label style="display:block;margin-bottom:6px;font-weight:600;">Email</label>
-        <input id="dgslLoginEmail" type="email" autocomplete="email"
-          style="width:100%;box-sizing:border-box;margin-bottom:12px;">
         <label style="display:block;margin-bottom:6px;font-weight:600;">Password</label>
         <input id="dgslLoginPassword" type="password" autocomplete="current-password"
           style="width:100%;box-sizing:border-box;margin-bottom:12px;">
@@ -136,12 +133,12 @@ function showAuthDialog() {
     authDialog.querySelector('#dgslLoginCancel').onclick = () => authDialog.close();
 
     authDialog.querySelector('#dgslLoginSubmit').onclick = async () => {
-      const email = authDialog.querySelector('#dgslLoginEmail').value.trim();
+      const email = 'elvira@dgsl.ie';
       const password = authDialog.querySelector('#dgslLoginPassword').value;
       const status = authDialog.querySelector('#dgslAuthStatus');
 
       if (!email || !password) {
-        status.textContent = 'Please enter your email and password.';
+        status.textContent = 'Please enter your password.';
         return;
       }
 
