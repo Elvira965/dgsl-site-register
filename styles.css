@@ -1059,10 +1059,10 @@ canvas.signature-active {
    ============================================================ */
 
 .version-bar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
   z-index: 1000;
   height: 28px;
   display: flex;
