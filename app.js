@@ -1019,6 +1019,14 @@ document
 // WHOLE-ROW ACTION POPUP
 // ============================================================
 
+function lockFormDialogBackground() {
+  document.body.classList.add('form-dialog-open');
+}
+
+function unlockFormDialogBackground() {
+  document.body.classList.remove('form-dialog-open');
+}
+
 function showRowActionDialog(id) {
 
   const record =
@@ -1049,7 +1057,18 @@ function showRowActionDialog(id) {
     dialog.style.maxHeight = 'none';
     dialog.style.margin = 'auto';
     dialog.style.boxSizing = 'border-box';
-    dialog.style.overflow = 'visible';
+    dialog.style.overflow = 'hidden';
+
+    dialog.style.setProperty('position', 'fixed', 'important');
+    dialog.style.setProperty('top', '50%', 'important');
+    dialog.style.setProperty('left', '50%', 'important');
+    dialog.style.setProperty('right', 'auto', 'important');
+    dialog.style.setProperty('bottom', 'auto', 'important');
+    dialog.style.setProperty('transform', 'translate(-50%, -50%)', 'important');
+    dialog.style.setProperty('width', 'min(340px, calc(100vw - 32px))', 'important');
+    dialog.style.setProperty('height', '190px', 'important');
+    dialog.style.setProperty('min-height', '190px', 'important');
+    dialog.style.setProperty('max-height', '190px', 'important');
 
     document.body.appendChild(dialog);
   }
@@ -1736,7 +1755,10 @@ otherField.style.display =
   }
 
 
-  if (showDialog) dlg.showModal();
+  if (showDialog) {
+    lockFormDialogBackground();
+    dlg.showModal();
+  }
 
 }
 
@@ -1757,7 +1779,10 @@ $('#newZone').onclick =
 
 $('#cancel').onclick =
 $('#cancel2').onclick =
-  () => dlg.close();
+  () => {
+    unlockFormDialogBackground();
+    dlg.close();
+  };
 
 
 // ============================================================
@@ -2097,7 +2122,8 @@ for (
         await deletePhoto(url);
       }
 
-      dlg.close();
+      unlockFormDialogBackground();
+    dlg.close();
 
 
       await loadRecords();
@@ -2467,7 +2493,8 @@ $('#delete').onclick =
       }
 
 
-      dlg.close();
+      unlockFormDialogBackground();
+    dlg.close();
 
 
       await loadRecords();

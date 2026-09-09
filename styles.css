@@ -1081,25 +1081,83 @@ body {
   padding-bottom: 28px;
 }
 
-/* Keep touch scrolling inside an open modal/form on phones and tablets. */
-html:has(dialog[open]),
-body:has(dialog[open]) {
+/* ============================================================
+   ROW ACTION POPUP — COMPACT ON ALL DEVICES
+   ============================================================ */
+
+#rowActionDialog {
+  position: fixed !important;
+  top: 50% !important;
+  left: 50% !important;
+  right: auto !important;
+  bottom: auto !important;
+  transform: translate(-50%, -50%) !important;
+  width: min(340px, calc(100vw - 32px)) !important;
+  min-width: 0 !important;
+  max-width: min(340px, calc(100vw - 32px)) !important;
+  height: 190px !important;
+  min-height: 190px !important;
+  max-height: 190px !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  box-sizing: border-box !important;
   overflow: hidden !important;
-  overscroll-behavior: none !important;
 }
 
-dialog[open] {
+#rowActionDialog > div {
+  width: 100% !important;
+  height: auto !important;
+  min-height: 0 !important;
+  max-height: 240px !important;
+  box-sizing: border-box !important;
+  overflow: hidden !important;
+}
+
+/* ============================================================
+   FORM DIALOG — SHORTER WINDOW + INTERNAL SCROLL
+   ============================================================ */
+
+#formDialog {
+  width: min(950px, 94vw) !important;
+  max-width: 950px !important;
+  height: 82vh !important;
+  max-height: 82vh !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
   overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
 }
 
 #handoverForm {
+  height: 82vh !important;
+  max-height: 82vh !important;
+  min-height: 0 !important;
+  overflow-y: auto !important;
+  overflow-x: hidden !important;
   overscroll-behavior: contain !important;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+  -webkit-overflow-scrolling: touch !important;
+  touch-action: pan-y !important;
+  box-sizing: border-box !important;
 }
 
-#pdfViewer {
-  overscroll-behavior: contain !important;
-  -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
+/* Make the iPhone/iPad date field the same compact height as the other fields. */
+#handoverForm input[type="date"] {
+  width: 100% !important;
+  height: 36px !important;
+  min-height: 36px !important;
+  max-height: 36px !important;
+  padding: 6px 10px !important;
+  margin-top: 6px !important;
+  box-sizing: border-box !important;
+  font-size: 16px !important;
+  line-height: 20px !important;
+  -webkit-appearance: none !important;
+  appearance: none !important;
+}
+
+/* Keep the page behind the form from participating in touch scrolling. */
+body.form-dialog-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
 }
