@@ -1229,24 +1229,14 @@ function showRowActionDialog(id) {
 
   if (rowCopyButton) {
     rowCopyButton.onclick =
-      async () => {
+      () => {
         if (!currentUser) {
           dialog.close();
           return;
         }
 
         dialog.close();
-
-        try {
-          rowCopyButton.disabled = true;
-          await copyHandover(record);
-        } catch (error) {
-          console.error('Copy handover error:', error);
-          alert(
-            'There was a problem copying the handover.\n\n' +
-            error.message
-          );
-        }
+        setTimeout(() => showCopyConfirmDialog(record), 0);
       };
   }
 
@@ -2314,6 +2304,67 @@ async function copyPhotoForHandover(
       .getPublicUrl(filename);
 
   return data.publicUrl;
+
+}
+
+
+function showCopyConfirmDialog(record) {
+
+  let dialog = document.getElementById('dgslCopyConfirmDialog');
+
+  if (!dialog) {
+    dialog = document.createElement('dialog');
+    dialog.id = 'dgslCopyConfirmDialog';
+    dialog.style.padding = '0';
+    dialog.style.border = '0';
+    dialog.style.borderRadius = '12px';
+    dialog.style.width = 'min(360px, calc(100vw - 32px))';
+    dialog.style.maxWidth = '360px';
+    dialog.style.boxSizing = 'border-box';
+    document.body.appendChild(dialog);
+  }
+
+  dialog.innerHTML = `
+    <div style="padding:22px;text-align:center;box-sizing:border-box;">
+      <div style="font-size:18px;font-weight:700;margin-bottom:10px;">
+        Create a copy?
+      </div>
+      <div style="font-size:15px;line-height:1.4;margin-bottom:20px;">
+        Are you sure you want to create a copy of this handover?
+      </div>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button type="button" id="copyConfirmCancel">Cancel</button>
+        <button type="button" id="copyConfirmYes" class="primary">Create copy</button>
+      </div>
+    </div>
+  `;
+
+  dialog.querySelector('#copyConfirmCancel').onclick =
+    () => dialog.close();
+
+  dialog.querySelector('#copyConfirmYes').onclick =
+    async () => {
+      const confirmButton = dialog.querySelector('#copyConfirmYes');
+      confirmButton.disabled = true;
+      confirmButton.textContent = 'Creating...';
+
+      try {
+        await copyHandover(record);
+        dialog.close();
+      } catch (error) {
+        console.error('Copy handover error:', error);
+        alert(
+          'There was a problem copying the handover.\n\n' +
+          error.message
+        );
+        confirmButton.disabled = false;
+        confirmButton.textContent = 'Create copy';
+      }
+    };
+
+  if (!dialog.open) {
+    dialog.showModal();
+  }
 
 }
 
