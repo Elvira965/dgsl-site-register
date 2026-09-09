@@ -545,7 +545,8 @@ async function loadRecords() {
     } =
       await supabaseClient
         .from('handovers')
-        .select('*');
+        .select('*')
+        .order('created_at', { ascending: true });
 
     if (error) {
       throw error;
@@ -1003,12 +1004,14 @@ document
 
               }
 
-              document.body.classList.add('pdf-dialog-open');
+              lockPdfDialogBackground();
               $('#pdfDialog').showModal();
 
             } catch (error) {
 
               console.error(error);
+
+              unlockPdfDialogBackground();
 
               alert(
                 'Unable to generate the PDF.'
@@ -1099,6 +1102,14 @@ function lockFormDialogBackground() {
 
 function unlockFormDialogBackground() {
   document.body.classList.remove('form-dialog-open');
+}
+
+function lockPdfDialogBackground() {
+  document.body.classList.add('pdf-dialog-open');
+}
+
+function unlockPdfDialogBackground() {
+  document.body.classList.remove('pdf-dialog-open');
 }
 
 function showRowActionDialog(id) {
@@ -2392,9 +2403,9 @@ async function copyHandover(record) {
     const copiedRecord = {
       ...record,
       id: newId,
+      handoverDate: today(),
       photos: copiedPhotos,
-      handover: 'COPY',
-      handoverDate: today()
+      handover: 'COPY'
     };
 
     const databaseRecord =
@@ -3048,51 +3059,28 @@ function drawSavedSignature(
   dataUrl
 ) {
 
-  if (
-    !canvas ||
-    !dataUrl
-  ) {
-
-    return;
-
+  if (!canvas || !dataUrl) {
+    if (canvas) canvas._signatureReady = Promise.resolve();
+    return Promise.resolve();
   }
 
+  const ctx = canvas.getContext('2d');
 
-  const ctx =
-    canvas.getContext(
-      '2d'
-    );
+  const ready = new Promise((resolve, reject) => {
+    const img = new Image();
 
-
-  const img =
-    new Image();
-
-
-  img.onload =
-    () => {
-
-      ctx.clearRect(
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
-
-      ctx.drawImage(
-        img,
-        0,
-        0,
-        canvas.width,
-        canvas.height
-      );
-
+    img.onload = () => {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
+      resolve();
     };
 
+    img.onerror = reject;
+    img.src = dataUrl;
+  });
 
-  img.src =
-    dataUrl;
-
+  canvas._signatureReady = ready;
+  return ready;
 }
 
 
@@ -3407,6 +3395,11 @@ async function generatePdf(viewOnly = false) {
 
 
 
+
+    await Promise.all([
+      $('#contractorSignature')?._signatureReady,
+      $('#dgslSignature')?._signatureReady
+    ].filter(Boolean));
 
     const data = {
   zone: form.elements.zone?.value || '',
@@ -4661,7 +4654,7 @@ $('#closePdf').onclick =
       $('#pdfDialog');
 
     pdfDialog.close();
-    document.body.classList.remove('pdf-dialog-open');
+    unlockPdfDialogBackground();
 
     $('#pdfViewer').innerHTML = '';
 

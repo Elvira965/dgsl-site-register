@@ -1176,14 +1176,14 @@ tr.copied-handover-row td {
 
 
 /* ============================================================
-   PDF VIEWER — KEEP SCROLL INSIDE THE PDF ON MOBILE
+   PDF VIEWER — SAME COMPACT SIZE AS HANDOVER FORM
    ============================================================ */
 
 #pdfDialog {
   width: min(950px, 94vw) !important;
   max-width: 950px !important;
-  height: 92vh !important;
-  max-height: 92vh !important;
+  height: 82vh !important;
+  max-height: 82vh !important;
   min-height: 0 !important;
   padding: 0 !important;
   overflow: hidden !important;
@@ -1192,24 +1192,31 @@ tr.copied-handover-row td {
 }
 
 #pdfDialog > div {
-  height: 92vh !important;
-  max-height: 92vh !important;
+  height: 100% !important;
+  max-height: none !important;
   min-height: 0 !important;
-  overflow: hidden !important;
   box-sizing: border-box !important;
+  overflow: hidden !important;
 }
 
 #pdfViewer {
   min-height: 0 !important;
   overflow-y: auto !important;
   overflow-x: hidden !important;
-  -webkit-overflow-scrolling: touch !important;
   overscroll-behavior: contain !important;
+  -webkit-overflow-scrolling: touch !important;
   touch-action: pan-y !important;
 }
 
-/* Lock the page behind the PDF viewer, including on iPhone/iPad. */
 body.pdf-dialog-open {
   overflow: hidden !important;
   overscroll-behavior: none !important;
+}
+
+/* Keep the fixed version bar visually stable during mobile scrolling. */
+.version-bar {
+  -webkit-transform: translate3d(0, 0, 0);
+  transform: translate3d(0, 0, 0);
+  -webkit-backface-visibility: hidden;
+  backface-visibility: hidden;
 }
