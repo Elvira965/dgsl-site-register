@@ -30,8 +30,13 @@ const form = $('#handoverForm');
 let currentUser = null;
 let authDialog = null;
 
-const today = () =>
-  new Date().toISOString().slice(0, 10);
+const today = () => {
+  const d = new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+};
 
 // ============================================================
 // AUTHENTICATION UI
@@ -545,8 +550,7 @@ async function loadRecords() {
     } =
       await supabaseClient
         .from('handovers')
-        .select('*')
-        .order('created_at', { ascending: true });
+        .select('*');
 
     if (error) {
       throw error;
@@ -712,21 +716,27 @@ function render() {
       : '';
 
   const filtered =
-    records.filter(x =>
+    records
+      .filter(x =>
 
-      (
-        filter === 'All' ||
-        x.status === filter
+        (
+          filter === 'All' ||
+          x.status === filter
+        )
+
+        &&
+
+        Object.values(x)
+          .join(' ')
+          .toLowerCase()
+          .includes(q)
+
       )
-
-      &&
-
-      Object.values(x)
-        .join(' ')
-        .toLowerCase()
-        .includes(q)
-
-    );
+      .sort((a, b) => {
+        const aCopy = a.handover === 'COPY' ? 1 : 0;
+        const bCopy = b.handover === 'COPY' ? 1 : 0;
+        return aCopy - bCopy;
+      });
 
 
   $('#total').textContent =
@@ -1004,8 +1014,37 @@ document
 
               }
 
+              const pdfDialog = $('#pdfDialog');
+              const pdfInner = pdfDialog.querySelector(':scope > div');
+
+              // Match the handover form window exactly.
+              pdfDialog.style.width = 'min(950px, 94vw)';
+              pdfDialog.style.maxWidth = '950px';
+              pdfDialog.style.height = '82vh';
+              pdfDialog.style.maxHeight = '82vh';
+              pdfDialog.style.minHeight = '0';
+              pdfDialog.style.padding = '0';
+              pdfDialog.style.overflow = 'hidden';
+              pdfDialog.style.boxSizing = 'border-box';
+
+              if (pdfInner) {
+                pdfInner.style.height = '100%';
+                pdfInner.style.maxHeight = 'none';
+                pdfInner.style.minHeight = '0';
+                pdfInner.style.overflow = 'hidden';
+                pdfInner.style.boxSizing = 'border-box';
+              }
+
+              viewer.style.height = 'auto';
+              viewer.style.minHeight = '0';
+              viewer.style.overflowY = 'auto';
+              viewer.style.overflowX = 'hidden';
+              viewer.style.overscrollBehavior = 'contain';
+              viewer.style.touchAction = 'pan-y';
+
               lockPdfDialogBackground();
-              $('#pdfDialog').showModal();
+              document.documentElement.classList.add('pdf-dialog-open');
+              pdfDialog.showModal();
 
             } catch (error) {
 
@@ -4643,6 +4682,21 @@ startApp();
 
 
 
+// Prevent iOS touch scrolling from leaking out of the PDF viewer.
+document.addEventListener(
+  'touchmove',
+  event => {
+    if (!document.body.classList.contains('pdf-dialog-open')) return;
+
+    const viewer = document.getElementById('pdfViewer');
+    if (viewer && viewer.contains(event.target)) return;
+
+    event.preventDefault();
+  },
+  { passive: false }
+);
+
+
 // ============================================================
 // PDF VIEWER CLOSE
 // ============================================================
@@ -4655,6 +4709,7 @@ $('#closePdf').onclick =
 
     pdfDialog.close();
     unlockPdfDialogBackground();
+    document.documentElement.classList.remove('pdf-dialog-open');
 
     $('#pdfViewer').innerHTML = '';
 
