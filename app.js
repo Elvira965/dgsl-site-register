@@ -82,8 +82,8 @@ function updateAuthUi() {
   });
 
   const deleteButton = document.getElementById('delete');
-  if (deleteButton && !currentUser) {
-    deleteButton.style.display = 'none';
+  if (deleteButton) {
+    deleteButton.style.display = currentUser ? '' : 'none';
   }
 
   const exportButton = document.getElementById('export');
