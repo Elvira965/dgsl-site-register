@@ -2581,6 +2581,9 @@ function showSavedPhotos(
     img.style.objectFit = 'cover';
     img.style.borderRadius = '6px';
     img.style.border = '1px solid #ccc';
+    img.style.cursor = 'pointer';
+    img.title = 'Click to view photo';
+    img.onclick = () => openPhotoViewer(url);
 
     const remove = document.createElement('button');
     remove.type = 'button';
@@ -2610,6 +2613,37 @@ function showSavedPhotos(
     wrapper.appendChild(remove);
     preview.appendChild(wrapper);
   });
+}
+
+
+// ============================================================
+// PHOTO VIEWER
+// ============================================================
+
+function openPhotoViewer(url) {
+
+  let dialog = document.getElementById('photoViewerDialog');
+
+  if (!dialog) {
+    dialog = document.createElement('dialog');
+    dialog.id = 'photoViewerDialog';
+    dialog.innerHTML = `
+      <div class="photo-viewer-inner">
+        <button type="button" class="photo-viewer-close" aria-label="Close">×</button>
+        <img class="photo-viewer-image" alt="Site photo">
+      </div>
+    `;
+    document.body.appendChild(dialog);
+
+    dialog.querySelector('.photo-viewer-close').onclick = () => dialog.close();
+    dialog.addEventListener('click', e => {
+      if (e.target === dialog) dialog.close();
+    });
+  }
+
+  const image = dialog.querySelector('.photo-viewer-image');
+  image.src = url;
+  dialog.showModal();
 }
 
 
