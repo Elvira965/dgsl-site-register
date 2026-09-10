@@ -4734,6 +4734,52 @@ function getImageDimensions(
 
 
 // ============================================================
+// CHANGE LOG
+// ============================================================
+
+function setupChangeLog() {
+  const versionBar = document.getElementById('versionBar');
+  const dialog = document.getElementById('changeLogDialog');
+  const closeButton = document.getElementById('closeChangeLog');
+
+  if (!versionBar || !dialog) return;
+
+  const openChangeLog = () => {
+    document.documentElement.classList.add('change-log-open');
+    document.body.classList.add('change-log-open');
+    if (!dialog.open) dialog.showModal();
+  };
+
+  versionBar.addEventListener('click', openChangeLog);
+  versionBar.addEventListener('keydown', event => {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      openChangeLog();
+    }
+  });
+
+  closeButton?.addEventListener('click', () => dialog.close());
+
+  dialog.addEventListener('click', event => {
+    if (event.target === dialog) dialog.close();
+  });
+
+  const unlock = () => {
+    document.documentElement.classList.remove('change-log-open');
+    document.body.classList.remove('change-log-open');
+  };
+  dialog.addEventListener('close', unlock);
+  dialog.addEventListener('cancel', unlock);
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', setupChangeLog);
+} else {
+  setupChangeLog();
+}
+
+
+// ============================================================
 // START APPLICATION
 // ============================================================
 
@@ -4823,3 +4869,19 @@ $('#closePdf').onclick =
     $('#pdfViewer').innerHTML = '';
 
   };
+
+// Keep browser/page zoom disabled. Photo zoom is handled only inside the photo viewer.
+document.addEventListener('wheel', event => {
+  if (event.ctrlKey) event.preventDefault();
+}, { passive: false });
+
+document.addEventListener('keydown', event => {
+  if (!event.ctrlKey && !event.metaKey) return;
+  if (['+', '=', '-', '_', '0'].includes(event.key)) {
+    event.preventDefault();
+  }
+});
+
+document.addEventListener('gesturestart', event => event.preventDefault(), { passive: false });
+document.addEventListener('gesturechange', event => event.preventDefault(), { passive: false });
+document.addEventListener('gestureend', event => event.preventDefault(), { passive: false });

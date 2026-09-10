@@ -1358,3 +1358,117 @@ body.photo-viewer-open {
   overscroll-behavior: none !important;
 }
 
+
+
+/* ============================================================
+   PAGE ZOOM LOCK + CHANGE LOG
+   ============================================================ */
+
+html, body {
+  touch-action: pan-x pan-y;
+  overscroll-behavior-x: none;
+}
+
+#photoViewerDialog,
+#photoViewerDialog .photo-viewer-inner,
+#photoViewerDialog .photo-viewer-image {
+  touch-action: none !important;
+}
+
+html.change-log-open,
+body.change-log-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+#changeLogDialog {
+  width: min(680px, 92vw) !important;
+  max-width: 680px !important;
+  max-height: 82vh !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  box-sizing: border-box !important;
+}
+
+#changeLogDialog::backdrop {
+  background: rgba(15, 23, 42, 0.55) !important;
+}
+
+.change-log-inner {
+  display: flex;
+  flex-direction: column;
+  max-height: 82vh;
+  background: #fff;
+}
+
+.change-log-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding: 20px 24px;
+  border-bottom: 1px solid #e0e5e9;
+}
+
+.change-log-head h2 {
+  color: #1f4e78;
+}
+
+.change-log-content {
+  overflow-y: auto;
+  padding: 20px 24px 24px;
+  box-sizing: border-box;
+  -webkit-overflow-scrolling: touch;
+  touch-action: pan-y;
+}
+
+.change-log-content section + section {
+  margin-top: 24px;
+  padding-top: 20px;
+  border-top: 1px solid #e0e5e9;
+}
+
+.change-log-content h3 {
+  color: #1f4e78;
+  margin-bottom: 10px;
+}
+
+.change-log-content ul {
+  margin: 0;
+  padding-left: 22px;
+}
+
+.change-log-content li {
+  margin: 7px 0;
+  line-height: 1.45;
+}
+
+.change-log-current {
+  display: inline-block;
+  margin-left: 6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  background: #7acb8a;
+  color: #173b26;
+  font-size: 11px;
+  vertical-align: middle;
+}
+
+@media (max-width: 500px) {
+  #changeLogDialog {
+    width: calc(100vw - 24px) !important;
+    max-height: 86vh !important;
+  }
+
+  .change-log-inner {
+    max-height: 86vh;
+  }
+
+  .change-log-head,
+  .change-log-content {
+    padding-left: 18px;
+    padding-right: 18px;
+  }
+}
