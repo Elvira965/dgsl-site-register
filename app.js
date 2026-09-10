@@ -38,33 +38,6 @@ const today = () => {
   return `${y}-${m}-${day}`;
 };
 
-
-// ============================================================
-// VERSION BAR / CHANGE LOG
-// ============================================================
-
-function ensureChangeLog() {
-  const bar = document.getElementById('versionBar');
-  const dialog = document.getElementById('changelogDialog');
-  const close = document.getElementById('changelogClose');
-
-  if (!bar || !dialog || !close || bar.dataset.wired) return;
-
-  bar.addEventListener('click', () => {
-    if (!dialog.open) dialog.showModal();
-  });
-
-  close.addEventListener('click', () => dialog.close());
-
-  dialog.addEventListener('click', e => {
-    if (e.target === dialog) dialog.close();
-  });
-
-  bar.dataset.wired = '1';
-}
-
-ensureChangeLog();
-
 // ============================================================
 // AUTHENTICATION UI
 // ============================================================
