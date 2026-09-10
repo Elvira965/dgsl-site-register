@@ -2643,6 +2643,18 @@ function openPhotoViewer(url) {
 
   const image = dialog.querySelector('.photo-viewer-image');
   image.src = url;
+
+  document.documentElement.classList.add('photo-viewer-open');
+  document.body.classList.add('photo-viewer-open');
+
+  if (!dialog.dataset.lockWired) {
+    dialog.addEventListener('close', () => {
+      document.documentElement.classList.remove('photo-viewer-open');
+      document.body.classList.remove('photo-viewer-open');
+    });
+    dialog.dataset.lockWired = '1';
+  }
+
   dialog.showModal();
 }
 
