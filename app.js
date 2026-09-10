@@ -2630,7 +2630,7 @@ function openPhotoViewer(url) {
     dialog.innerHTML = `
       <div class="photo-viewer-inner">
         <button type="button" class="photo-viewer-close" aria-label="Close">×</button>
-        <img class="photo-viewer-image" alt="Site photo">
+        <img class="photo-viewer-image" alt="Site photo" draggable="false">
       </div>
     `;
     document.body.appendChild(dialog);
@@ -2638,6 +2638,67 @@ function openPhotoViewer(url) {
     dialog.querySelector('.photo-viewer-close').onclick = () => dialog.close();
     dialog.addEventListener('click', e => {
       if (e.target === dialog) dialog.close();
+    });
+
+    // Zoom the photo itself rather than allowing the browser to zoom the page.
+    const image = dialog.querySelector('.photo-viewer-image');
+    const state = { scale: 1, pointers: new Map(), pinchDistance: 0, pinchScale: 1 };
+
+    const applyZoom = () => {
+      const scale = Math.max(1, Math.min(5, state.scale));
+      state.scale = scale;
+      image.style.transform = `translate3d(0, 0, 0) scale(${scale})`;
+    };
+
+    const distance = (a, b) =>
+      Math.hypot(a.clientX - b.clientX, a.clientY - b.clientY);
+
+    image.addEventListener('pointerdown', e => {
+      e.preventDefault();
+      image.setPointerCapture?.(e.pointerId);
+      state.pointers.set(e.pointerId, e);
+      if (state.pointers.size === 2) {
+        const pts = [...state.pointers.values()];
+        state.pinchDistance = distance(pts[0], pts[1]);
+        state.pinchScale = state.scale;
+      }
+    });
+
+    image.addEventListener('pointermove', e => {
+      if (!state.pointers.has(e.pointerId)) return;
+      e.preventDefault();
+      state.pointers.set(e.pointerId, e);
+      if (state.pointers.size === 2 && state.pinchDistance > 0) {
+        const pts = [...state.pointers.values()];
+        const ratio = distance(pts[0], pts[1]) / state.pinchDistance;
+        state.scale = state.pinchScale * ratio;
+        applyZoom();
+      }
+    });
+
+    const releasePointer = e => {
+      state.pointers.delete(e.pointerId);
+      if (state.pointers.size < 2) {
+        state.pinchDistance = 0;
+      }
+    };
+    image.addEventListener('pointerup', releasePointer);
+    image.addEventListener('pointercancel', releasePointer);
+    image.addEventListener('pointerleave', e => {
+      if (state.pointers.size < 2) releasePointer(e);
+    });
+
+    image.addEventListener('wheel', e => {
+      e.preventDefault();
+      state.scale += e.deltaY < 0 ? 0.25 : -0.25;
+      applyZoom();
+    }, { passive: false });
+
+    dialog.addEventListener('close', () => {
+      state.scale = 1;
+      state.pointers.clear();
+      state.pinchDistance = 0;
+      image.style.transform = 'translate3d(0, 0, 0) scale(1)';
     });
   }
 
@@ -2655,7 +2716,9 @@ function openPhotoViewer(url) {
     dialog.dataset.lockWired = '1';
   }
 
-  dialog.showModal();
+  if (!dialog.open) {
+    dialog.showModal();
+  }
 }
 
 

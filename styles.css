@@ -1288,9 +1288,19 @@ html, body {
   min-height: 100%;
 }
 
+/* Keep the footer at the true bottom of the document.
+   Short lists still create a small amount of page height below the viewport,
+   so the footer is reached by scrolling to the bottom rather than floating
+   on the screen. */
 body {
   min-height: calc(100vh + 28px);
   padding-bottom: 0 !important;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
 }
 
 .version-bar {
@@ -1323,6 +1333,23 @@ body {
   margin: 0 !important;
   box-sizing: border-box !important;
   overflow: hidden !important;
+  touch-action: none !important;
+  overscroll-behavior: none !important;
+}
+
+#photoViewerDialog .photo-viewer-inner {
+  touch-action: none !important;
+  overflow: hidden !important;
+}
+
+#photoViewerDialog .photo-viewer-image {
+  touch-action: none !important;
+  transform: translate3d(0, 0, 0) scale(1);
+  transform-origin: center center;
+  will-change: transform;
+  user-select: none;
+  -webkit-user-select: none;
+  -webkit-user-drag: none;
 }
 
 html.photo-viewer-open,
