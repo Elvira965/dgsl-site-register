@@ -1459,8 +1459,38 @@ button.version-bar {
   background: #fff !important;
   color: #243447;
 }
+#changeLogDialog {
+  width: min(950px, 94vw) !important;
+  max-width: 950px !important;
+  height: 82vh !important;
+  max-height: 82vh !important;
+  min-height: 0 !important;
+  padding: 0 !important;
+  overflow: hidden !important;
+  overscroll-behavior: contain !important;
+  box-sizing: border-box !important;
+}
+
 #changeLogDialog::backdrop { background: rgba(15,31,45,.62) !important; }
-.changelog-inner { position: relative; max-height: min(760px,calc(100vh - 40px)); overflow-y:auto; box-sizing:border-box; }
+
+.changelog-inner {
+  position: relative;
+  height: 82vh;
+  max-height: 82vh;
+  min-height: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+  overscroll-behavior: contain;
+  -webkit-overflow-scrolling: touch;
+  box-sizing: border-box;
+}
+
+html.change-log-open,
+body.change-log-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
 .changelog-header { padding:26px 30px 20px; background:#f5f8fb; border-bottom:1px solid #dbe3ea; }
 .changelog-kicker { font-size:11px; font-weight:700; letter-spacing:1.2px; color:#1f4e78; margin-bottom:5px; }
 .changelog-header h2 { margin:0 0 6px; font-size:28px; color:#162b3d; }
@@ -1505,7 +1535,5 @@ button.version-bar {
 }
 @media (max-width:700px) {
   html { -webkit-text-size-adjust:100%; }
-  #changeLogDialog { width:calc(100vw - 20px) !important; max-height:calc(100vh - 24px) !important; }
-  .changelog-inner { max-height:calc(100vh - 24px); }
   .changelog-header,.changelog-list { padding-left:20px; padding-right:20px; }
 }
