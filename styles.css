@@ -1361,114 +1361,99 @@ body.photo-viewer-open {
 
 
 /* ============================================================
-   PAGE ZOOM LOCK + CHANGE LOG
+   MOBILE PAGE SCALE / LAYOUT RESTORE
    ============================================================ */
+html, body {
+  width: 100%;
+  max-width: 100%;
+  overflow-x: hidden;
+}
 
+@media (max-width: 800px) {
+  .cards {
+    width: 100%;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 12px;
+  }
+
+  .cards article {
+    min-width: 0;
+  }
+
+  main {
+    width: 100%;
+    max-width: 100%;
+  }
+}
+
+/* Prevent pinch/page zoom. Photo zoom remains handled only inside the photo viewer. */
 html, body {
   touch-action: pan-x pan-y;
-  overscroll-behavior-x: none;
+  -ms-touch-action: pan-x pan-y;
 }
 
-#photoViewerDialog,
-#photoViewerDialog .photo-viewer-inner,
-#photoViewerDialog .photo-viewer-image {
-  touch-action: none !important;
-}
-
-html.change-log-open,
-body.change-log-open {
-  overflow: hidden !important;
-  overscroll-behavior: none !important;
-}
-
+/* Change Log */
 #changeLogDialog {
-  width: min(680px, 92vw) !important;
-  max-width: 680px !important;
+  width: min(620px, 92vw) !important;
+  max-width: 620px !important;
   max-height: 82vh !important;
   padding: 0 !important;
   border: 0 !important;
   border-radius: 12px !important;
   overflow: hidden !important;
-  box-sizing: border-box !important;
+  margin: auto !important;
 }
 
 #changeLogDialog::backdrop {
-  background: rgba(15, 23, 42, 0.55) !important;
+  background: rgba(15, 23, 42, 0.55);
 }
 
 .change-log-inner {
+  max-height: 82vh;
   display: flex;
   flex-direction: column;
-  max-height: 82vh;
   background: #fff;
 }
 
 .change-log-head {
   display: flex;
-  align-items: flex-start;
   justify-content: space-between;
+  align-items: flex-start;
   gap: 15px;
-  padding: 20px 24px;
+  padding: 20px 25px;
   border-bottom: 1px solid #e0e5e9;
+  flex: 0 0 auto;
 }
 
-.change-log-head h2 {
-  color: #1f4e78;
-}
+.change-log-head h2 { color: #1f4e78; }
 
 .change-log-content {
+  padding: 22px 25px;
   overflow-y: auto;
-  padding: 20px 24px 24px;
-  box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
-  touch-action: pan-y;
 }
 
 .change-log-content section + section {
   margin-top: 24px;
-  padding-top: 20px;
+  padding-top: 18px;
   border-top: 1px solid #e0e5e9;
 }
 
 .change-log-content h3 {
   color: #1f4e78;
-  margin-bottom: 10px;
-}
-
-.change-log-content ul {
-  margin: 0;
-  padding-left: 22px;
-}
-
-.change-log-content li {
-  margin: 7px 0;
-  line-height: 1.45;
+  margin: 0 0 4px;
 }
 
 .change-log-current {
-  display: inline-block;
-  margin-left: 6px;
-  padding: 3px 8px;
-  border-radius: 999px;
-  background: #7acb8a;
-  color: #173b26;
-  font-size: 11px;
-  vertical-align: middle;
+  margin: 0 0 10px;
+  color: #3b8f5a;
+  font-size: 13px;
+  font-weight: 600;
 }
 
-@media (max-width: 500px) {
-  #changeLogDialog {
-    width: calc(100vw - 24px) !important;
-    max-height: 86vh !important;
-  }
+.change-log-content li { margin: 7px 0; }
 
-  .change-log-inner {
-    max-height: 86vh;
-  }
-
-  .change-log-head,
-  .change-log-content {
-    padding-left: 18px;
-    padding-right: 18px;
-  }
+html.change-log-open, body.change-log-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
 }

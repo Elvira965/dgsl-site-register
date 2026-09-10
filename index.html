@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="utf-8">
-<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
 <meta name="theme-color" content="#1f4e78">
 <title>DGSL Site Register</title>
 <link rel="stylesheet" href="styles.css">
@@ -155,6 +155,38 @@
 
 </main>
 
+
+<dialog id="changeLogDialog" aria-labelledby="changeLogTitle">
+  <div class="change-log-inner">
+    <div class="change-log-head">
+      <div>
+        <p class="eyebrow">DGSL SITE REGISTER</p>
+        <h2 id="changeLogTitle">Change Log</h2>
+      </div>
+      <button type="button" class="icon" id="closeChangeLog" aria-label="Close">×</button>
+    </div>
+    <div class="change-log-content">
+      <section>
+        <h3>Version 1.2.1</h3>
+        <p class="change-log-current">Current version</p>
+        <ul>
+          <li>Improved mobile and tablet layout.</li>
+          <li>Photo viewer with photo-only zoom and page background lock.</li>
+          <li>Handover list sorted newest first by Handover Date.</li>
+          <li>Copied handovers remain clearly marked until edited and saved.</li>
+          <li>Added secure login and authenticated editing controls.</li>
+          <li>Added PDF generation, viewing, downloading, signatures and site photos.</li>
+          <li>Added work permit status colours, dashboard totals and weekly changes.</li>
+          <li>Added search, filters, copy handover, export and import tools.</li>
+        </ul>
+      </section>
+      <section>
+        <h3>Earlier development</h3>
+        <p>The DGSL Site Register has been progressively improved with usability, security, PDF, photo, signature and mobile/tablet updates.</p>
+      </section>
+    </div>
+  </div>
+</dialog>
 
 <dialog id="pdfDialog">
 
@@ -969,46 +1001,7 @@
 <script src="app.js"></script>
 
 
-<dialog id="changeLogDialog" aria-labelledby="changeLogTitle">
-  <div class="change-log-inner">
-    <div class="change-log-head">
-      <div>
-        <p class="eyebrow">DGSL SITE REGISTER</p>
-        <h2 id="changeLogTitle">Change Log</h2>
-      </div>
-      <button type="button" id="closeChangeLog" class="icon" aria-label="Close">×</button>
-    </div>
-
-    <div class="change-log-content">
-      <section>
-        <h3>Version 1.2.1 <span class="change-log-current">Current</span></h3>
-        <ul>
-          <li>Locked the website page to its normal phone/tablet/desktop scale so the page itself cannot be pinch-zoomed.</li>
-          <li>Kept photo zoom inside the photo viewer only.</li>
-          <li>Restored the normal responsive layout for smaller screens.</li>
-          <li>Added this Change Log, opened by clicking the version bar.</li>
-        </ul>
-      </section>
-
-      <section>
-        <h3>Earlier improvements</h3>
-        <ul>
-          <li>Secure login and authenticated editing, creation and deletion.</li>
-          <li>Site handover and Take Back records with status tracking.</li>
-          <li>PDF generation, viewing, downloading, signatures and site photos.</li>
-          <li>Photo upload, removal and in-page photo viewing with photo-only zoom.</li>
-          <li>Search, status filters, dashboard totals and weekly changes.</li>
-          <li>Copy Handover with independent photos and red copy marking until the copy is edited and saved.</li>
-          <li>Handover list sorted newest first by Handover Date.</li>
-          <li>Mobile/tablet form, date-field and signature-pad improvements.</li>
-          <li>Export and Import backup tools for authorised users.</li>
-        </ul>
-      </section>
-    </div>
-  </div>
-</dialog>
-
-<div class="version-bar" id="versionBar" role="button" tabindex="0" aria-label="Open change log">
+<div class="version-bar" aria-label="Website version">
   DGSL Site Register · Version 1.2.1
 </div>
 
