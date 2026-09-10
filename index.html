@@ -969,9 +969,51 @@
 <script src="app.js"></script>
 
 
-<div class="version-bar" aria-label="Website version">
-  DGSL Site Register · Version 2.1
-</div>
+<button class="version-bar" id="versionBar" type="button" aria-label="Open change log">
+  DGSL Site Register · Version 1.2.0
+</button>
+
+<dialog id="changelogDialog" aria-labelledby="changelogTitle">
+  <div class="changelog-inner">
+    <button type="button" class="changelog-close" id="changelogClose" aria-label="Close change log">×</button>
+
+    <div class="changelog-header">
+      <div class="changelog-kicker">DGSL SITE REGISTER</div>
+      <h2 id="changelogTitle">Change Log</h2>
+      <p>A simple overview of the main improvements made to the site.</p>
+    </div>
+
+    <div class="changelog-list">
+      <section class="changelog-entry current">
+        <div class="changelog-version">1.2.0 <span>Current</span></div>
+        <ul>
+          <li>Improved handover copying, including a clear red marking for copied handovers until they are edited and saved.</li>
+          <li>Handovers are listed by Handover Date, newest first.</li>
+          <li>Added photo viewing with an in-page viewer and photo zoom without opening a new tab.</li>
+          <li>Improved the PDF viewer, signatures, site photos and Take Back details.</li>
+          <li>Improved status handling, including Open, Closed and On Hold with matching colours.</li>
+          <li>Added dashboard totals and weekly changes.</li>
+          <li>Improved mobile and tablet usability, including safer signature pads and clearer date fields.</li>
+        </ul>
+      </section>
+
+      <section class="changelog-entry">
+        <div class="changelog-version">Earlier development</div>
+        <ul>
+          <li>Built the DGSL Site Register around Supabase for storing handovers and site photos.</li>
+          <li>Added secure login and restricted editing, creating and deleting to authorised users.</li>
+          <li>Added search, status filters, PDF generation, PDF download and data export/import.</li>
+          <li>Added Handover and Take Back information, housekeeping, notes and signatures.</li>
+          <li>Added site-photo upload, removal and PDF photo inclusion.</li>
+          <li>Added copy, edit and view actions for individual handovers.</li>
+          <li>Continued improving the layout and behaviour across computer, tablet and phone.</li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="changelog-footer">Version 1.2.0</div>
+  </div>
+</dialog>
 
 </body>
 </html>
