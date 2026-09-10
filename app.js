@@ -11,7 +11,7 @@ const SUPABASE_KEY =
   'sb_publishable_XWLtSyttiEMQA86unKN37A_ZC9OY19j';
 
 const PHOTO_BUCKET =
-  'handover-photos';
+  'handover-photos-test';
 
 const LOGO_FILE =
   'dgsl-logo.png';
@@ -21,6 +21,20 @@ let records = [];
 let editing = null;
 let filter = 'All';
 
+const SITE_VERSION = '1.2.2';
+const NOTIFICATIONS_TABLE = 'site_notifications_test';
+const NOTIFICATIONS_SEEN_KEY = 'dgsl_site_register_test_notifications_seen_v1';
+
+// Single source of truth for the website version.
+function applySiteVersion() {
+  document.querySelectorAll('[data-site-version]').forEach(element => {
+    element.textContent = SITE_VERSION;
+  });
+}
+
+applySiteVersion();
+document.addEventListener('DOMContentLoaded', applySiteVersion);
+
 const $ = s => document.querySelector(s);
 
 const rows = $('#rows');
@@ -29,6 +43,7 @@ const form = $('#handoverForm');
 
 let currentUser = null;
 let authDialog = null;
+let notificationPollTimer = null;
 
 const today = () => {
   const d = new Date();
@@ -155,12 +170,79 @@ function openSettingsDialog() {
   if (!dialog.open) dialog.showModal();
 }
 
-function openNotificationsDialog() {
+function getSeenNotificationIds() {
+  try {
+    const value = localStorage.getItem(NOTIFICATIONS_SEEN_KEY);
+    const parsed = value ? JSON.parse(value) : [];
+    return Array.isArray(parsed) ? parsed : [];
+  } catch (_) {
+    return [];
+  }
+}
+
+function setSeenNotificationIds(ids) {
+  try {
+    localStorage.setItem(
+      NOTIFICATIONS_SEEN_KEY,
+      JSON.stringify(Array.from(new Set(ids)).slice(-100))
+    );
+  } catch (_) {}
+}
+
+function markNotificationsSeen(notifications) {
+  const seen = getSeenNotificationIds();
+  const ids = notifications.map(n => String(n.id));
+  setSeenNotificationIds([...seen, ...ids]);
+  updateNotificationBadge(0);
+}
+
+function notificationMessageHtml(notification) {
+  const version = String(notification.version || '').replace(/[<>&"']/g, '');
+  const title = String(notification.title || 'Website updated').replace(/[<>&"']/g, '');
+  const message = String(notification.message || '').replace(/[<>&"']/g, '');
+  return `
+    <article class="site-notification-card">
+      <div class="site-notification-title">${title}</div>
+      ${version ? `<div class="site-notification-version">Version ${version}</div>` : ''}
+      <div class="site-notification-message">${message}</div>
+      <button type="button" class="primary site-notification-refresh">Refresh Website</button>
+    </article>
+  `;
+}
+
+async function loadSiteNotifications() {
+  if (!supabaseClient || !currentUser) {
+    updateNotificationBadge(0);
+    return [];
+  }
+
+  try {
+    const { data, error } = await supabaseClient
+      .from(NOTIFICATIONS_TABLE)
+      .select('id,version,title,message,created_at')
+      .order('created_at', { ascending: false })
+      .limit(25);
+
+    if (error) throw error;
+
+    const notifications = Array.isArray(data) ? data : [];
+    const seen = new Set(getSeenNotificationIds());
+    const unseen = notifications.filter(n => !seen.has(String(n.id)));
+    updateNotificationBadge(unseen.length);
+    return unseen;
+  } catch (error) {
+    console.warn('Notifications could not be loaded:', error);
+    updateNotificationBadge(0);
+    return [];
+  }
+}
+
+async function openNotificationsDialog() {
   let dialog = document.getElementById('dgslNotificationsDialog');
   if (!dialog) {
     dialog = document.createElement('dialog');
     dialog.id = 'dgslNotificationsDialog';
-    dialog.className = 'header-settings-dialog';
+    dialog.className = 'header-settings-dialog notifications-dialog';
     dialog.innerHTML = `
       <div class="header-dialog-inner">
         <div class="header-dialog-head">
@@ -170,13 +252,37 @@ function openNotificationsDialog() {
           </div>
           <button type="button" class="icon" id="closeNotifications" aria-label="Close">×</button>
         </div>
-        <div class="notifications-empty">No new notifications.</div>
+        <div id="notificationsContent" class="notifications-content">
+          <div class="notifications-empty">Loading notifications...</div>
+        </div>
       </div>
     `;
     document.body.appendChild(dialog);
     dialog.querySelector('#closeNotifications').onclick = () => dialog.close();
   }
+
+  const content = dialog.querySelector('#notificationsContent');
+  content.innerHTML = '<div class="notifications-empty">Loading notifications...</div>';
   if (!dialog.open) dialog.showModal();
+
+  const notifications = await loadSiteNotifications();
+
+  if (!notifications.length) {
+    content.innerHTML = '<div class="notifications-empty">No new notifications.</div>';
+    return;
+  }
+
+  content.innerHTML = notifications.map(notificationMessageHtml).join('');
+  content.querySelectorAll('.site-notification-refresh').forEach(button => {
+    button.addEventListener('click', () => {
+      markNotificationsSeen(notifications);
+      dialog.close();
+      const url = new URL(window.location.href);
+      url.searchParams.set('refresh', String(Date.now()));
+      window.location.replace(url.toString());
+    });
+  });
+
 }
 
 function updateNotificationBadge(count = 0) {
@@ -185,6 +291,27 @@ function updateNotificationBadge(count = 0) {
   const safeCount = Math.max(0, Number(count) || 0);
   badge.textContent = safeCount > 99 ? '99+' : String(safeCount);
   badge.hidden = safeCount === 0;
+}
+
+async function refreshNotificationState() {
+  if (!currentUser) {
+    updateNotificationBadge(0);
+    if (notificationPollTimer) {
+      clearInterval(notificationPollTimer);
+      notificationPollTimer = null;
+    }
+    return;
+  }
+
+  await loadSiteNotifications();
+
+  if (!notificationPollTimer) {
+    notificationPollTimer = setInterval(() => {
+      if (currentUser && document.visibilityState === 'visible') {
+        refreshNotificationState();
+      }
+    }, 60000);
+  }
 }
 
 function openChangeLogDialog() {
@@ -649,7 +776,7 @@ async function loadRecords() {
       error
     } =
       await supabaseClient
-        .from('handovers')
+        .from('handovers_test')
         .select('*');
 
     if (error) {
@@ -685,13 +812,13 @@ async function loadRecords() {
 function setupRealtime() {
 
   supabaseClient
-    .channel('handovers-live')
+    .channel('handovers-test-live')
     .on(
       'postgres_changes',
       {
         event: '*',
         schema: 'public',
-        table: 'handovers'
+        table: 'handovers_test'
       },
       async () => {
 
@@ -2303,7 +2430,7 @@ for (
           error
         } =
           await supabaseClient
-            .from('handovers')
+            .from('handovers_test')
             .update(
               databaseRecord
             )
@@ -2323,7 +2450,7 @@ for (
           error
         } =
           await supabaseClient
-            .from('handovers')
+            .from('handovers_test')
             .insert(
               databaseRecord
             );
@@ -2552,7 +2679,7 @@ async function copyHandover(record) {
 
     const { error } =
       await supabaseClient
-        .from('handovers')
+        .from('handovers_test')
         .insert(databaseRecord);
 
     if (error) {
@@ -2871,7 +2998,7 @@ $('#delete').onclick =
         error
       } =
         await supabaseClient
-          .from('handovers')
+          .from('handovers_test')
           .delete()
           .eq(
             'id',
@@ -3476,7 +3603,7 @@ $('#import').onchange =
               error
             } =
               await supabaseClient
-                .from('handovers')
+                .from('handovers_test')
                 .upsert(
                   databaseRecord
                 );
@@ -4861,12 +4988,14 @@ async function startApp() {
 
         updateAuthUi();
         render();
+        refreshNotificationState();
       }
     );
 
     await loadRecords();
 
     setupRealtime();
+    await refreshNotificationState();
 
   } catch (error) {
 
