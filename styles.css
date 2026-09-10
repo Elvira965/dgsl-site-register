@@ -1392,91 +1392,282 @@ html, body {
   -ms-touch-action: pan-x pan-y;
 }
 
-/* ============================================================
-   HEADER ACTIONS / LOGGED-IN TOOLS
-   ============================================================ */
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  margin-left: auto;
-}
-
-.header-utility-buttons {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.header-icon-button {
-  width: 42px;
-  height: 42px;
+/* Change Log */
+#changeLogDialog {
+  width: min(620px, 92vw) !important;
+  max-width: 620px !important;
+  max-height: 82vh !important;
   padding: 0 !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 21px;
-  line-height: 1;
+  border: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  margin: auto !important;
 }
 
-.login-button {
-  background: #008e39;
-  color: #fff;
-  border-color: #008e39;
-  margin-left: 0;
+#changeLogDialog::backdrop {
+  background: rgba(15, 23, 42, 0.55);
 }
 
-.utility-dialog-inner {
+.change-log-inner {
+  max-height: 82vh;
+  display: flex;
+  flex-direction: column;
   background: #fff;
-  min-width: 280px;
 }
 
-.utility-dialog-head {
+.change-log-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 15px;
   padding: 20px 25px;
   border-bottom: 1px solid #e0e5e9;
+  flex: 0 0 auto;
 }
 
-.utility-dialog-head h2 {
+.change-log-head h2 { color: #1f4e78; }
+
+.change-log-content {
+  padding: 22px 25px;
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+}
+
+.change-log-content section + section {
+  margin-top: 24px;
+  padding-top: 18px;
+  border-top: 1px solid #e0e5e9;
+}
+
+.change-log-content h3 {
+  color: #1f4e78;
+  margin: 0 0 4px;
+}
+
+.change-log-current {
+  margin: 0 0 10px;
+  color: #3b8f5a;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.change-log-content li { margin: 7px 0; }
+
+html.change-log-open, body.change-log-open {
+  overflow: hidden !important;
+  overscroll-behavior: none !important;
+}
+
+
+/* ============================================================
+   HEADER ACTIONS — logged-in controls
+   ============================================================ */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-left: auto;
+}
+
+.header-icon-button {
+  position: relative;
+  width: 46px;
+  height: 46px;
+  padding: 7px !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #111 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.header-icon-button:hover {
+  background: #f1f5f8 !important;
+}
+
+.header-svg-icon {
+  width: 28px;
+  height: 28px;
+  fill: none;
+  stroke: #111;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.header-icon-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.notification-badge {
+  position: absolute;
+  top: -5px;
+  right: -7px;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 4px;
+  border-radius: 999px;
+  background: #2f80ed;
+  color: #fff;
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 17px;
+  text-align: center;
+  border: 1px solid #fff;
+  box-sizing: border-box;
+}
+
+.auth-button {
+  background: #008e39 !important;
+  color: #fff !important;
+  border-color: #008e39 !important;
+}
+
+.header-settings-dialog {
+  width: min(380px, calc(100vw - 32px)) !important;
+  max-width: 380px !important;
+  padding: 0 !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+}
+
+.header-dialog-inner {
+  padding: 22px;
+}
+
+.header-dialog-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 15px;
+  padding-bottom: 15px;
+  border-bottom: 1px solid #e0e5e9;
+}
+
+.header-dialog-head h2 {
   color: #1f4e78;
 }
 
-.utility-dialog-content {
-  padding: 22px 25px;
+.settings-options {
+  display: grid;
+  gap: 10px;
+  padding-top: 18px;
+}
+
+.settings-option {
+  width: 100%;
+  text-align: left;
+  padding: 12px 14px;
+  background: #fff;
 }
 
 .settings-logout {
-  width: 100%;
+  color: #b42318;
 }
 
 .notifications-empty {
-  margin: 0;
+  padding: 22px 4px 5px;
   color: #68737d;
 }
 
-/* Keep the mobile header controls on one line:
-   New Handover on the left, Settings/Notifications on the far right. */
+/* The version bar is informational only; the Change Log now lives in Settings. */
+.version-bar {
+  cursor: default !important;
+}
+
 @media (max-width: 800px) {
   header {
+    flex-direction: row;
     align-items: center;
+    padding: 15px;
+    gap: 10px;
+  }
+
+  .site-title {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .site-logo {
+    width: 120px;
+    max-width: 34vw;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .header-actions {
+    flex: 0 0 auto;
+    gap: 2px;
+  }
+
+  .header-actions #newZone {
+    margin-right: 2px;
+  }
+
+  .header-icon-button {
+    width: 40px;
+    height: 40px;
+    padding: 5px !important;
+  }
+
+  .header-svg-icon {
+    width: 25px;
+    height: 25px;
+  }
+}
+
+@media (max-width: 500px) {
+  .site-logo {
+    width: 100px;
+  }
+
+  h1 {
+    font-size: 22px;
+  }
+
+  .header-actions {
+    gap: 0;
+  }
+
+  .header-actions #newZone {
+    padding: 9px 12px;
+  }
+}
+
+/* Final header positioning: title on top on phones, action row below. */
+.header-actions .header-icon-button:first-of-type {
+  margin-left: auto;
+}
+
+@media (max-width: 800px) {
+  header {
+    flex-direction: column !important;
+    align-items: stretch !important;
+  }
+
+  .site-title {
+    width: 100%;
+    flex: 0 0 auto;
   }
 
   .header-actions {
     width: 100%;
-    justify-content: space-between;
-    gap: 10px;
+    justify-content: flex-start;
+    flex: 0 0 auto;
   }
 
-  .header-utility-buttons {
+  .header-actions .header-icon-button:first-of-type {
     margin-left: auto;
   }
 
-  .header-icon-button {
-    width: 42px;
-    height: 42px;
+  .header-actions .auth-button {
+    margin-left: auto;
   }
 }

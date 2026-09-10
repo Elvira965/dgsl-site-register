@@ -43,78 +43,53 @@ const today = () => {
 // ============================================================
 
 function ensureAuthUi() {
-  const utilityHost = document.getElementById('headerUtilityButtons');
+  const headerActions = document.getElementById('headerActions');
+  if (!headerActions) return;
 
-  if (!document.getElementById('dgslAuthButton')) {
-    const button = document.createElement('button');
+  let button = document.getElementById('dgslAuthButton');
+  if (!button) {
+    button = document.createElement('button');
     button.id = 'dgslAuthButton';
     button.type = 'button';
     button.textContent = 'Login';
-    button.className = 'login-button';
-
-    button.onclick = () => {
-      showAuthDialog();
+    button.className = 'auth-button';
+    button.onclick = async () => {
+      if (currentUser) {
+        openSettingsDialog();
+      } else {
+        showAuthDialog();
+      }
     };
-
-    (utilityHost || document.body).appendChild(button);
+    headerActions.appendChild(button);
   }
 
-  if (!document.getElementById('dgslNotificationsButton')) {
-    const button = document.createElement('button');
-    button.id = 'dgslNotificationsButton';
-    button.type = 'button';
-    button.className = 'header-icon-button';
-    button.setAttribute('aria-label', 'Notifications');
-    button.setAttribute('title', 'Notifications');
-    button.innerHTML = '<span aria-hidden="true">🔔</span>';
+  const notificationsButton = document.getElementById('notificationsButton');
+  const settingsButton = document.getElementById('settingsButton');
 
-    button.onclick = () => {
-      showNotificationsDialog();
-    };
-
-    (utilityHost || document.body).appendChild(button);
+  if (notificationsButton) {
+    notificationsButton.onclick = () => openNotificationsDialog();
+  }
+  if (settingsButton) {
+    settingsButton.onclick = () => openSettingsDialog();
   }
 
-  if (!document.getElementById('dgslSettingsButton')) {
-    const button = document.createElement('button');
-    button.id = 'dgslSettingsButton';
-    button.type = 'button';
-    button.className = 'header-icon-button';
-    button.setAttribute('aria-label', 'Settings');
-    button.setAttribute('title', 'Settings');
-    button.innerHTML = '<span aria-hidden="true">⚙</span>';
-
-    button.onclick = () => {
-      showSettingsDialog();
-    };
-
-    (utilityHost || document.body).appendChild(button);
-  }
-
-  ensureSettingsDialog();
-  ensureNotificationsDialog();
   updateAuthUi();
 }
 
 function updateAuthUi() {
-  const loginButton = document.getElementById('dgslAuthButton');
-  if (loginButton) {
-    loginButton.textContent = 'Login';
-    loginButton.style.display = currentUser ? 'none' : '';
-  }
-
-  const notificationsButton = document.getElementById('dgslNotificationsButton');
-  if (notificationsButton) {
-    notificationsButton.style.display = currentUser ? '' : 'none';
-  }
-
-  const settingsButton = document.getElementById('dgslSettingsButton');
-  if (settingsButton) {
-    settingsButton.style.display = currentUser ? '' : 'none';
-  }
-
+  const button = document.getElementById('dgslAuthButton');
   const newButton = document.getElementById('newZone');
+  const notificationsButton = document.getElementById('notificationsButton');
+  const settingsButton = document.getElementById('settingsButton');
+
+  if (button) {
+    button.textContent = currentUser ? 'Login' : 'Login';
+    button.style.display = currentUser ? 'none' : '';
+  }
+
   if (newButton) newButton.style.display = currentUser ? '' : 'none';
+  if (notificationsButton) notificationsButton.style.display = currentUser ? '' : 'none';
+  if (settingsButton) settingsButton.style.display = currentUser ? '' : 'none';
 
   const editHeader = document.getElementById('editHeader');
   if (editHeader) editHeader.style.display = currentUser ? '' : 'none';
@@ -144,82 +119,92 @@ function updateAuthUi() {
   });
 }
 
-function ensureSettingsDialog() {
-  if (document.getElementById('dgslSettingsDialog')) return;
-
-  const dialog = document.createElement('dialog');
-  dialog.id = 'dgslSettingsDialog';
-  dialog.innerHTML = `
-    <div class="utility-dialog-inner">
-      <div class="utility-dialog-head">
-        <div>
-          <p class="eyebrow">DGSL SITE REGISTER</p>
-          <h2>Settings</h2>
+function openSettingsDialog() {
+  let dialog = document.getElementById('dgslSettingsDialog');
+  if (!dialog) {
+    dialog = document.createElement('dialog');
+    dialog.id = 'dgslSettingsDialog';
+    dialog.className = 'header-settings-dialog';
+    dialog.innerHTML = `
+      <div class="header-dialog-inner">
+        <div class="header-dialog-head">
+          <div>
+            <p class="eyebrow">DGSL SITE REGISTER</p>
+            <h2>Settings</h2>
+          </div>
+          <button type="button" class="icon" id="closeSettings" aria-label="Close">×</button>
         </div>
-        <button type="button" class="icon" id="closeSettingsDialog" aria-label="Close">×</button>
+        <div class="settings-options">
+          <button type="button" id="settingsChangeLog" class="settings-option">Change Log</button>
+          <button type="button" id="settingsLogout" class="settings-option settings-logout">Log out</button>
+        </div>
       </div>
-      <div class="utility-dialog-content">
-        <button type="button" id="settingsLogoutButton" class="primary settings-logout">
-          Logout
-        </button>
+    `;
+    document.body.appendChild(dialog);
+
+    dialog.querySelector('#closeSettings').onclick = () => dialog.close();
+    dialog.querySelector('#settingsChangeLog').onclick = () => {
+      dialog.close();
+      openChangeLogDialog();
+    };
+    dialog.querySelector('#settingsLogout').onclick = () => {
+      dialog.close();
+      showLogoutConfirmDialog();
+    };
+  }
+  if (!dialog.open) dialog.showModal();
+}
+
+function openNotificationsDialog() {
+  let dialog = document.getElementById('dgslNotificationsDialog');
+  if (!dialog) {
+    dialog = document.createElement('dialog');
+    dialog.id = 'dgslNotificationsDialog';
+    dialog.className = 'header-settings-dialog';
+    dialog.innerHTML = `
+      <div class="header-dialog-inner">
+        <div class="header-dialog-head">
+          <div>
+            <p class="eyebrow">DGSL SITE REGISTER</p>
+            <h2>Notifications</h2>
+          </div>
+          <button type="button" class="icon" id="closeNotifications" aria-label="Close">×</button>
+        </div>
+        <div class="notifications-empty">No new notifications.</div>
       </div>
-    </div>
-  `;
+    `;
+    document.body.appendChild(dialog);
+    dialog.querySelector('#closeNotifications').onclick = () => dialog.close();
+  }
+  if (!dialog.open) dialog.showModal();
+}
 
-  document.body.appendChild(dialog);
+function updateNotificationBadge(count = 0) {
+  const badge = document.getElementById('notificationBadge');
+  if (!badge) return;
+  const safeCount = Math.max(0, Number(count) || 0);
+  badge.textContent = safeCount > 99 ? '99+' : String(safeCount);
+  badge.hidden = safeCount === 0;
+}
 
-  dialog.querySelector('#closeSettingsDialog').onclick = () => dialog.close();
-
-  dialog.querySelector('#settingsLogoutButton').onclick = () => {
-    dialog.close();
-    showLogoutConfirmDialog();
+function openChangeLogDialog() {
+  const dialog = document.getElementById('changeLogDialog');
+  const close = document.getElementById('closeChangeLog');
+  if (!dialog) return;
+  const shut = () => {
+    if (dialog.open) dialog.close();
+    document.documentElement.classList.remove('change-log-open');
+    document.body.classList.remove('change-log-open');
   };
-
-  dialog.addEventListener('cancel', () => dialog.close());
-}
-
-function showSettingsDialog() {
-  if (!currentUser) return;
-
-  const dialog = document.getElementById('dgslSettingsDialog');
-  if (!dialog) return;
-
-  if (!dialog.open) dialog.showModal();
-}
-
-function ensureNotificationsDialog() {
-  if (document.getElementById('dgslNotificationsDialog')) return;
-
-  const dialog = document.createElement('dialog');
-  dialog.id = 'dgslNotificationsDialog';
-  dialog.innerHTML = `
-    <div class="utility-dialog-inner">
-      <div class="utility-dialog-head">
-        <div>
-          <p class="eyebrow">DGSL SITE REGISTER</p>
-          <h2>Notifications</h2>
-        </div>
-        <button type="button" class="icon" id="closeNotificationsDialog" aria-label="Close">×</button>
-      </div>
-      <div class="utility-dialog-content">
-        <p class="notifications-empty">No new notifications.</p>
-      </div>
-    </div>
-  `;
-
-  document.body.appendChild(dialog);
-
-  dialog.querySelector('#closeNotificationsDialog').onclick = () => dialog.close();
-  dialog.addEventListener('cancel', () => dialog.close());
-}
-
-function showNotificationsDialog() {
-  if (!currentUser) return;
-
-  const dialog = document.getElementById('dgslNotificationsDialog');
-  if (!dialog) return;
-
-  if (!dialog.open) dialog.showModal();
+  if (close && !close.dataset.bound) {
+    close.dataset.bound = '1';
+    close.addEventListener('click', shut);
+  }
+  if (!dialog.open) {
+    document.documentElement.classList.add('change-log-open');
+    document.body.classList.add('change-log-open');
+    dialog.showModal();
+  }
 }
 
 function showLogoutConfirmDialog() {
