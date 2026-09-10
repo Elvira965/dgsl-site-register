@@ -1065,22 +1065,36 @@ canvas.signature-active {
    ============================================================ */
 
 .version-bar {
-  position: static !important;
-  width: 100%;
-  height: 28px;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  z-index: 2147483647 !important;
+  width: 100vw !important;
+  height: 28px !important;
+  min-height: 28px !important;
+  max-height: 28px !important;
   display: flex;
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
   padding: 0 12px;
-  margin-top: 20px;
+  margin: 0 !important;
   background: #1f4e78;
   color: #fff;
   font-size: 12px;
   line-height: 1;
   letter-spacing: .2px;
+  transform: none !important;
+  -webkit-transform: none !important;
+  will-change: auto !important;
+  contain: layout paint style;
 }
 
+body {
+  padding-bottom: 28px;
+}
 
 /* ============================================================
    ROW ACTION POPUP — COMPACT ON ALL DEVICES
@@ -1210,13 +1224,79 @@ body.pdf-dialog-open {
   overscroll-behavior: none !important;
 }
 
-/* Keep the version bar at the bottom of the document.
-   It is not fixed to the phone viewport, so it is only visible
-   after scrolling to the bottom of the website. */
+/* Keep the fixed version bar attached to the viewport on desktop/tablet too. */
 .version-bar {
-  position: static !important;
+  position: fixed !important;
+  left: 0 !important;
+  right: 0 !important;
+  bottom: 0 !important;
+  top: auto !important;
+  width: 100vw !important;
   transform: none !important;
   -webkit-transform: none !important;
   will-change: auto !important;
-  contain: layout paint style;
 }
+
+/* ============================================================
+   SITE PHOTO VIEWER
+   ============================================================ */
+
+#photoViewerDialog {
+  width: min(900px, calc(100vw - 32px)) !important;
+  max-width: calc(100vw - 32px) !important;
+  height: min(88vh, calc(100vh - 32px)) !important;
+  max-height: calc(100vh - 32px) !important;
+  min-width: 0 !important;
+  min-height: 0 !important;
+  margin: 0 !important;
+  padding: 12px !important;
+  border: 0 !important;
+  border-radius: 12px !important;
+  box-sizing: border-box !important;
+  background: #111 !important;
+  overflow: hidden !important;
+}
+
+#photoViewerDialog::backdrop {
+  background: rgba(0,0,0,.75) !important;
+}
+
+.photo-viewer-inner {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  min-width: 0;
+  min-height: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+}
+
+.photo-viewer-image {
+  display: block;
+  width: auto !important;
+  height: auto !important;
+  max-width: 100% !important;
+  max-height: 100% !important;
+  object-fit: contain !important;
+  border-radius: 6px;
+}
+
+.photo-viewer-close {
+  position: absolute;
+  top: 6px;
+  right: 6px;
+  z-index: 2;
+  width: 36px;
+  height: 36px;
+  padding: 0 !important;
+  border-radius: 50%;
+  font-size: 25px;
+  line-height: 32px;
+  background: #d32f2f;
+  color: #fff;
+  border: 2px solid #fff;
+  cursor: pointer;
+}
+

@@ -733,6 +733,15 @@ function render() {
 
       )
       .sort((a, b) => {
+        // Newest handover date first. Take-back date is deliberately ignored.
+        const aTime = a.handoverDate ? Date.parse(`${a.handoverDate}T00:00:00`) : -Infinity;
+        const bTime = b.handoverDate ? Date.parse(`${b.handoverDate}T00:00:00`) : -Infinity;
+
+        if (bTime !== aTime) {
+          return bTime - aTime;
+        }
+
+        // Keep the existing COPY marker as a stable tie-breaker only.
         const aCopy = a.handover === 'COPY' ? 1 : 0;
         const bCopy = b.handover === 'COPY' ? 1 : 0;
         return aCopy - bCopy;
