@@ -494,6 +494,10 @@ textarea {
 
   overflow-x: auto;
 
+  -webkit-overflow-scrolling: touch;
+
+  touch-action: pan-x pan-y;
+
 }
 
 
@@ -1366,7 +1370,7 @@ body.photo-viewer-open {
 html, body {
   width: 100%;
   max-width: 100%;
-  overflow-x: hidden;
+  overflow-x: auto;
 }
 
 @media (max-width: 800px) {
@@ -1386,10 +1390,10 @@ html, body {
   }
 }
 
-/* Prevent pinch/page zoom. Photo zoom remains handled only inside the photo viewer. */
+/* Allow normal tablet page scrolling/zooming. Photo zoom remains handled only inside the photo viewer. */
 html, body {
-  touch-action: pan-x pan-y;
-  -ms-touch-action: pan-x pan-y;
+  touch-action: auto;
+  -ms-touch-action: auto;
 }
 
 /* ============================================================\n   HEADER SETTINGS + NOTIFICATIONS — final positioning\n   ============================================================ */\n.header-actions { display:flex; align-items:center; gap:12px; margin-left:auto; }\n.header-icon-group { display:flex; align-items:center; gap:4px; margin-left:28px; }\n.header-icon-button { position:relative; width:42px; height:42px; padding:6px !important; border:0 !important; background:transparent !important; color:#111 !important; display:inline-flex; align-items:center; justify-content:center; }\n.header-icon-button:hover { background:#f1f5f8 !important; }\n.header-svg-icon { width:27px; height:27px; fill:none; stroke:#111; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }\n.header-icon-wrap { position:relative; display:inline-flex; }\n.notification-badge { position:absolute; top:-6px; right:-8px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:#2f80ed; color:#fff; font-size:10px; font-weight:700; line-height:17px; text-align:center; border:1px solid #fff; }\n.auth-button { background:#008e39 !important; color:#fff !important; border-color:#008e39 !important; }\n.header-settings-dialog { width:min(380px, calc(100vw - 32px)) !important; max-width:380px !important; padding:0 !important; border:0 !important; border-radius:12px !important; overflow:hidden !important; }\n.header-dialog-inner { padding:22px; }\n.header-dialog-head { display:flex; align-items:center; justify-content:space-between; gap:15px; padding-bottom:15px; border-bottom:1px solid #e0e5e9; }\n.header-dialog-head h2 { color:#1f4e78; }\n.settings-options { display:grid; gap:10px; padding-top:18px; }\n.settings-option { width:100%; text-align:left; padding:12px 14px; background:#fff; }\n.settings-logout { color:#b42318; }\n.notifications-empty { padding:22px 4px 5px; color:#68737d; }\n.version-bar { cursor:default !important; }\n@media (max-width:800px) {\n  header { flex-direction:column !important; align-items:stretch !important; }\n  .header-actions { width:100%; margin-left:0; justify-content:flex-start; }\n  .header-icon-group { margin-left:auto; }\n  .header-icon-button { width:40px; height:40px; }\n  .header-svg-icon { width:25px; height:25px; }\n}\n
