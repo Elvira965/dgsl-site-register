@@ -43,38 +43,75 @@ const today = () => {
 // ============================================================
 
 function ensureAuthUi() {
-  if (document.getElementById('dgslAuthButton')) return;
+  const utilityHost = document.getElementById('headerUtilityButtons');
 
-  const button = document.createElement('button');
-  button.id = 'dgslAuthButton';
-  button.type = 'button';
-  button.textContent = 'Login';
-  button.style.marginLeft = '8px';
-  button.style.background = '#008e39';
-  button.style.color = '#fff';
-  button.style.borderColor = '#008e39';
+  if (!document.getElementById('dgslAuthButton')) {
+    const button = document.createElement('button');
+    button.id = 'dgslAuthButton';
+    button.type = 'button';
+    button.textContent = 'Login';
+    button.className = 'login-button';
 
-  button.onclick = async () => {
-    if (currentUser) {
-      showLogoutConfirmDialog();
-    } else {
+    button.onclick = () => {
       showAuthDialog();
-    }
-  };
+    };
 
-  const newButton = document.getElementById('newZone');
-  if (newButton && newButton.parentNode) {
-    newButton.parentNode.insertBefore(button, newButton.nextSibling);
-  } else {
-    document.body.appendChild(button);
+    (utilityHost || document.body).appendChild(button);
   }
 
+  if (!document.getElementById('dgslNotificationsButton')) {
+    const button = document.createElement('button');
+    button.id = 'dgslNotificationsButton';
+    button.type = 'button';
+    button.className = 'header-icon-button';
+    button.setAttribute('aria-label', 'Notifications');
+    button.setAttribute('title', 'Notifications');
+    button.innerHTML = '<span aria-hidden="true">🔔</span>';
+
+    button.onclick = () => {
+      showNotificationsDialog();
+    };
+
+    (utilityHost || document.body).appendChild(button);
+  }
+
+  if (!document.getElementById('dgslSettingsButton')) {
+    const button = document.createElement('button');
+    button.id = 'dgslSettingsButton';
+    button.type = 'button';
+    button.className = 'header-icon-button';
+    button.setAttribute('aria-label', 'Settings');
+    button.setAttribute('title', 'Settings');
+    button.innerHTML = '<span aria-hidden="true">⚙</span>';
+
+    button.onclick = () => {
+      showSettingsDialog();
+    };
+
+    (utilityHost || document.body).appendChild(button);
+  }
+
+  ensureSettingsDialog();
+  ensureNotificationsDialog();
   updateAuthUi();
 }
 
 function updateAuthUi() {
-  const button = document.getElementById('dgslAuthButton');
-  if (button) button.textContent = currentUser ? 'Logout' : 'Login';
+  const loginButton = document.getElementById('dgslAuthButton');
+  if (loginButton) {
+    loginButton.textContent = 'Login';
+    loginButton.style.display = currentUser ? 'none' : '';
+  }
+
+  const notificationsButton = document.getElementById('dgslNotificationsButton');
+  if (notificationsButton) {
+    notificationsButton.style.display = currentUser ? '' : 'none';
+  }
+
+  const settingsButton = document.getElementById('dgslSettingsButton');
+  if (settingsButton) {
+    settingsButton.style.display = currentUser ? '' : 'none';
+  }
 
   const newButton = document.getElementById('newZone');
   if (newButton) newButton.style.display = currentUser ? '' : 'none';
@@ -105,6 +142,84 @@ function updateAuthUi() {
   document.querySelectorAll('.week-change').forEach(element => {
     element.style.display = currentUser ? '' : 'none';
   });
+}
+
+function ensureSettingsDialog() {
+  if (document.getElementById('dgslSettingsDialog')) return;
+
+  const dialog = document.createElement('dialog');
+  dialog.id = 'dgslSettingsDialog';
+  dialog.innerHTML = `
+    <div class="utility-dialog-inner">
+      <div class="utility-dialog-head">
+        <div>
+          <p class="eyebrow">DGSL SITE REGISTER</p>
+          <h2>Settings</h2>
+        </div>
+        <button type="button" class="icon" id="closeSettingsDialog" aria-label="Close">×</button>
+      </div>
+      <div class="utility-dialog-content">
+        <button type="button" id="settingsLogoutButton" class="primary settings-logout">
+          Logout
+        </button>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(dialog);
+
+  dialog.querySelector('#closeSettingsDialog').onclick = () => dialog.close();
+
+  dialog.querySelector('#settingsLogoutButton').onclick = () => {
+    dialog.close();
+    showLogoutConfirmDialog();
+  };
+
+  dialog.addEventListener('cancel', () => dialog.close());
+}
+
+function showSettingsDialog() {
+  if (!currentUser) return;
+
+  const dialog = document.getElementById('dgslSettingsDialog');
+  if (!dialog) return;
+
+  if (!dialog.open) dialog.showModal();
+}
+
+function ensureNotificationsDialog() {
+  if (document.getElementById('dgslNotificationsDialog')) return;
+
+  const dialog = document.createElement('dialog');
+  dialog.id = 'dgslNotificationsDialog';
+  dialog.innerHTML = `
+    <div class="utility-dialog-inner">
+      <div class="utility-dialog-head">
+        <div>
+          <p class="eyebrow">DGSL SITE REGISTER</p>
+          <h2>Notifications</h2>
+        </div>
+        <button type="button" class="icon" id="closeNotificationsDialog" aria-label="Close">×</button>
+      </div>
+      <div class="utility-dialog-content">
+        <p class="notifications-empty">No new notifications.</p>
+      </div>
+    </div>
+  `;
+
+  document.body.appendChild(dialog);
+
+  dialog.querySelector('#closeNotificationsDialog').onclick = () => dialog.close();
+  dialog.addEventListener('cancel', () => dialog.close());
+}
+
+function showNotificationsDialog() {
+  if (!currentUser) return;
+
+  const dialog = document.getElementById('dgslNotificationsDialog');
+  if (!dialog) return;
+
+  if (!dialog.open) dialog.showModal();
 }
 
 function showLogoutConfirmDialog() {
@@ -4823,41 +4938,3 @@ $('#closePdf').onclick =
     $('#pdfViewer').innerHTML = '';
 
   };
-// ============================================================
-// CHANGE LOG
-// ============================================================
-(function setupChangeLog() {
-  const bar = document.querySelector('.version-bar');
-  const dialog = document.getElementById('changeLogDialog');
-  const close = document.getElementById('closeChangeLog');
-  if (!bar || !dialog) return;
-
-  bar.style.cursor = 'pointer';
-  bar.setAttribute('role', 'button');
-  bar.setAttribute('tabindex', '0');
-  bar.setAttribute('title', 'View change log');
-
-  const open = () => {
-    if (!dialog.open) {
-      document.documentElement.classList.add('change-log-open');
-      document.body.classList.add('change-log-open');
-      dialog.showModal();
-    }
-  };
-  const shut = () => {
-    if (dialog.open) dialog.close();
-    document.documentElement.classList.remove('change-log-open');
-    document.body.classList.remove('change-log-open');
-  };
-
-  bar.addEventListener('click', open);
-  bar.addEventListener('keydown', e => {
-    if (e.key === 'Enter' || e.key === ' ') {
-      e.preventDefault();
-      open();
-    }
-  });
-  close?.addEventListener('click', shut);
-  dialog.addEventListener('cancel', shut);
-  dialog.addEventListener('close', shut);
-})();

@@ -27,9 +27,15 @@
 
   </div>
 
-  <button id="newZone" class="primary">
-    + New handover
-  </button>
+  <div class="header-actions">
+
+    <button id="newZone" class="primary">
+      + New handover
+    </button>
+
+    <div id="headerUtilityButtons" class="header-utility-buttons"></div>
+
+  </div>
 
 </header>
 
@@ -156,37 +162,7 @@
 </main>
 
 
-<dialog id="changeLogDialog" aria-labelledby="changeLogTitle">
-  <div class="change-log-inner">
-    <div class="change-log-head">
-      <div>
-        <p class="eyebrow">DGSL SITE REGISTER</p>
-        <h2 id="changeLogTitle">Change Log</h2>
-      </div>
-      <button type="button" class="icon" id="closeChangeLog" aria-label="Close">×</button>
-    </div>
-    <div class="change-log-content">
-      <section>
-        <h3>Version 1.2.1</h3>
-        <p class="change-log-current">Current version</p>
-        <ul>
-          <li>Improved mobile and tablet layout.</li>
-          <li>Photo viewer with photo-only zoom and page background lock.</li>
-          <li>Handover list sorted newest first by Handover Date.</li>
-          <li>Copied handovers remain clearly marked until edited and saved.</li>
-          <li>Added secure login and authenticated editing controls.</li>
-          <li>Added PDF generation, viewing, downloading, signatures and site photos.</li>
-          <li>Added work permit status colours, dashboard totals and weekly changes.</li>
-          <li>Added search, filters, copy handover, export and import tools.</li>
-        </ul>
-      </section>
-      <section>
-        <h3>Earlier development</h3>
-        <p>The DGSL Site Register has been progressively improved with usability, security, PDF, photo, signature and mobile/tablet updates.</p>
-      </section>
-    </div>
-  </div>
-</dialog>
+
 
 <dialog id="pdfDialog">
 
@@ -1002,8 +978,7 @@
 
 
 <div class="version-bar" aria-label="Website version">
-  DGSL Site Register · Version 1.2.1
-</div>
+  DGSL Site Register · Version 1.2.1</div>
 
 </body>
 </html>

@@ -1392,68 +1392,91 @@ html, body {
   -ms-touch-action: pan-x pan-y;
 }
 
-/* Change Log */
-#changeLogDialog {
-  width: min(620px, 92vw) !important;
-  max-width: 620px !important;
-  max-height: 82vh !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 12px !important;
-  overflow: hidden !important;
-  margin: auto !important;
-}
+/* ============================================================
+   HEADER ACTIONS / LOGGED-IN TOOLS
+   ============================================================ */
 
-#changeLogDialog::backdrop {
-  background: rgba(15, 23, 42, 0.55);
-}
-
-.change-log-inner {
-  max-height: 82vh;
+.header-actions {
   display: flex;
-  flex-direction: column;
-  background: #fff;
+  align-items: center;
+  gap: 12px;
+  margin-left: auto;
 }
 
-.change-log-head {
+.header-utility-buttons {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.header-icon-button {
+  width: 42px;
+  height: 42px;
+  padding: 0 !important;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 21px;
+  line-height: 1;
+}
+
+.login-button {
+  background: #008e39;
+  color: #fff;
+  border-color: #008e39;
+  margin-left: 0;
+}
+
+.utility-dialog-inner {
+  background: #fff;
+  min-width: 280px;
+}
+
+.utility-dialog-head {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 15px;
   padding: 20px 25px;
   border-bottom: 1px solid #e0e5e9;
-  flex: 0 0 auto;
 }
 
-.change-log-head h2 { color: #1f4e78; }
-
-.change-log-content {
-  padding: 22px 25px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.change-log-content section + section {
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid #e0e5e9;
-}
-
-.change-log-content h3 {
+.utility-dialog-head h2 {
   color: #1f4e78;
-  margin: 0 0 4px;
 }
 
-.change-log-current {
-  margin: 0 0 10px;
-  color: #3b8f5a;
-  font-size: 13px;
-  font-weight: 600;
+.utility-dialog-content {
+  padding: 22px 25px;
 }
 
-.change-log-content li { margin: 7px 0; }
+.settings-logout {
+  width: 100%;
+}
 
-html.change-log-open, body.change-log-open {
-  overflow: hidden !important;
-  overscroll-behavior: none !important;
+.notifications-empty {
+  margin: 0;
+  color: #68737d;
+}
+
+/* Keep the mobile header controls on one line:
+   New Handover on the left, Settings/Notifications on the far right. */
+@media (max-width: 800px) {
+  header {
+    align-items: center;
+  }
+
+  .header-actions {
+    width: 100%;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .header-utility-buttons {
+    margin-left: auto;
+  }
+
+  .header-icon-button {
+    width: 42px;
+    height: 42px;
+  }
 }
