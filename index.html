@@ -12,12 +12,12 @@
 
 <header>
 
-  <div class="site-title">
+  <div style="display:flex;align-items:center;gap:15px;min-width:0;">
 
     <img
       src="dgsl-logo.png"
       alt="DGSL Logo"
-      class="site-logo"
+      style="display:block;width:220px;max-width:35vw;height:auto;object-fit:contain;"
     >
 
     <div>
@@ -28,24 +28,25 @@
   </div>
 
   <div class="header-actions" id="headerActions">
-    <button id="newZone" class="primary">
-      + New handover
-    </button>
-    <button id="notificationsButton" class="header-icon-button" type="button" aria-label="Notifications" title="Notifications" style="display:none;">
-      <span class="header-icon-wrap">
-        <svg class="header-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
-          <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
-          <path d="M10 21h4"></path>
+    <button id="newZone" class="primary">+ New handover</button>
+
+    <div class="header-icon-group">
+      <button id="notificationsButton" class="header-icon-button" type="button" aria-label="Notifications" title="Notifications" style="display:none;">
+        <span class="header-icon-wrap">
+          <svg class="header-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M18 8a6 6 0 0 0-12 0c0 7-3 7-3 9h18c0-2-3-2-3-9"></path>
+            <path d="M10 21h4"></path>
+          </svg>
+          <span id="notificationBadge" class="notification-badge" hidden>0</span>
+        </span>
+      </button>
+      <button id="settingsButton" class="header-icon-button" type="button" aria-label="Settings" title="Settings" style="display:none;">
+        <svg class="header-svg-icon header-settings-icon" viewBox="0 0 24 24" aria-hidden="true">
+          <path fill="#111" stroke="none" d="M19.43 12.98c.04-.32.07-.65.07-.98s-.02-.66-.07-.98l2.11-1.65-2-3.46-2.49 1a7.8 7.8 0 0 0-1.69-.98L15 3h-4l-.38 2.93c-.6.25-1.17.58-1.69.98l-2.49-1-2 3.46 2.11 1.65c-.04.32-.08.65-.08.98s.03.66.08.98l-2.11 1.65 2 3.46 2.49-1c.52.4 1.09.73 1.69.98L11 21h4l.38-2.93c.6-.25 1.17-.58 1.69-.98l2.49 1 2-3.46-2.13-1.65Z"/>
+          <circle cx="13" cy="12" r="3.2" fill="#fff"/>
         </svg>
-        <span id="notificationBadge" class="notification-badge" hidden>0</span>
-      </span>
-    </button>
-    <button id="settingsButton" class="header-icon-button" type="button" aria-label="Settings" title="Settings" style="display:none;">
-      <svg class="header-svg-icon" viewBox="0 0 24 24" aria-hidden="true">
-        <path d="M12 15.5a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7Z"></path>
-        <path d="m19.4 15 .1.1-1.8 3.1-.2-.1a2 2 0 0 0-2.1.1l-.2.1a2 2 0 0 0-1 1.8v.2H9.8v-.2a2 2 0 0 0-1-1.8l-.2-.1a2 2 0 0 0-2.1-.1l-.2.1-1.8-3.1.1-.1a2 2 0 0 0 .9-1.7v-.3a2 2 0 0 0-.9-1.7l-.1-.1 1.8-3.1.2.1a2 2 0 0 0 2.1-.1l.2-.1a2 2 0 0 0 1-1.8V5h3.6v.2a2 2 0 0 0 1 1.8l.2.1a2 2 0 0 0 2.1.1l.2-.1 1.8 3.1-.1.1a2 2 0 0 0-.9 1.7v.3a2 2 0 0 0 .9 1.7Z"></path>
-      </svg>
-    </button>
+      </button>
+    </div>
   </div>
 
 </header>
@@ -174,34 +175,40 @@
 
 
 <dialog id="changeLogDialog" aria-labelledby="changeLogTitle">
-  <div class="change-log-inner">
-    <div class="change-log-head">
-      <div>
-        <p class="eyebrow">DGSL SITE REGISTER</p>
-        <h2 id="changeLogTitle">Change Log</h2>
-      </div>
-      <button type="button" class="icon" id="closeChangeLog" aria-label="Close">×</button>
+  <div class="changelog-inner">
+    <button type="button" class="changelog-close" id="closeChangeLog" aria-label="Close change log">×</button>
+    <div class="changelog-header">
+      <div class="changelog-kicker">DGSL SITE REGISTER</div>
+      <h2 id="changeLogTitle">Change Log</h2>
+      <p>A simple overview of the main improvements made to the site.</p>
     </div>
-    <div class="change-log-content">
-      <section>
-        <h3>Version 1.2.1</h3>
-        <p class="change-log-current">Current version</p>
+    <div class="changelog-list">
+      <section class="changelog-entry current">
+        <div class="changelog-version">1.2.1 <span>Current</span></div>
         <ul>
-          <li>Improved mobile and tablet layout.</li>
-          <li>Photo viewer with photo-only zoom and page background lock.</li>
-          <li>Handover list sorted newest first by Handover Date.</li>
-          <li>Copied handovers remain clearly marked until edited and saved.</li>
-          <li>Added secure login and authenticated editing controls.</li>
-          <li>Added PDF generation, viewing, downloading, signatures and site photos.</li>
-          <li>Added work permit status colours, dashboard totals and weekly changes.</li>
-          <li>Added search, filters, copy handover, export and import tools.</li>
+          <li>Improved handover copying, including a clear red marking for copied handovers until they are edited and saved.</li>
+          <li>Handovers are listed by Handover Date, newest first.</li>
+          <li>Added photo viewing with an in-page viewer and photo zoom without opening a new tab.</li>
+          <li>Improved the PDF viewer, signatures, site photos and Take Back details.</li>
+          <li>Improved status handling, including Open, Closed and On Hold with matching colours.</li>
+          <li>Added dashboard totals and weekly changes.</li>
+          <li>Improved mobile and tablet usability, including safer signature pads and clearer date fields.</li>
         </ul>
       </section>
-      <section>
-        <h3>Earlier development</h3>
-        <p>The DGSL Site Register has been progressively improved with usability, security, PDF, photo, signature and mobile/tablet updates.</p>
+      <section class="changelog-entry">
+        <div class="changelog-version">Earlier development</div>
+        <ul>
+          <li>Built the DGSL Site Register around Supabase for storing handovers and site photos.</li>
+          <li>Added secure login and restricted editing, creating and deleting to authorised users.</li>
+          <li>Added search, status filters, PDF generation, PDF download and data export/import.</li>
+          <li>Added Handover and Take Back information, housekeeping, notes and signatures.</li>
+          <li>Added site-photo upload, removal and PDF photo inclusion.</li>
+          <li>Added copy, edit and view actions for individual handovers.</li>
+          <li>Continued improving the layout and behaviour across computer, tablet and phone.</li>
+        </ul>
       </section>
     </div>
+    <div class="changelog-footer">Version 1.2.1</div>
   </div>
 </dialog>
 

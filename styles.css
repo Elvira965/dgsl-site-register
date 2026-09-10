@@ -1392,282 +1392,80 @@ html, body {
   -ms-touch-action: pan-x pan-y;
 }
 
-/* Change Log */
-#changeLogDialog {
-  width: min(620px, 92vw) !important;
-  max-width: 620px !important;
-  max-height: 82vh !important;
-  padding: 0 !important;
-  border: 0 !important;
-  border-radius: 12px !important;
-  overflow: hidden !important;
-  margin: auto !important;
-}
-
-#changeLogDialog::backdrop {
-  background: rgba(15, 23, 42, 0.55);
-}
-
-.change-log-inner {
-  max-height: 82vh;
-  display: flex;
-  flex-direction: column;
-  background: #fff;
-}
-
-.change-log-head {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 15px;
-  padding: 20px 25px;
-  border-bottom: 1px solid #e0e5e9;
-  flex: 0 0 auto;
-}
-
-.change-log-head h2 { color: #1f4e78; }
-
-.change-log-content {
-  padding: 22px 25px;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-}
-
-.change-log-content section + section {
-  margin-top: 24px;
-  padding-top: 18px;
-  border-top: 1px solid #e0e5e9;
-}
-
-.change-log-content h3 {
-  color: #1f4e78;
-  margin: 0 0 4px;
-}
-
-.change-log-current {
-  margin: 0 0 10px;
-  color: #3b8f5a;
-  font-size: 13px;
-  font-weight: 600;
-}
-
-.change-log-content li { margin: 7px 0; }
-
-html.change-log-open, body.change-log-open {
-  overflow: hidden !important;
-  overscroll-behavior: none !important;
-}
-
+/* ============================================================\n   HEADER SETTINGS + NOTIFICATIONS — final positioning\n   ============================================================ */\n.header-actions { display:flex; align-items:center; gap:12px; margin-left:auto; }\n.header-icon-group { display:flex; align-items:center; gap:4px; margin-left:28px; }\n.header-icon-button { position:relative; width:42px; height:42px; padding:6px !important; border:0 !important; background:transparent !important; color:#111 !important; display:inline-flex; align-items:center; justify-content:center; }\n.header-icon-button:hover { background:#f1f5f8 !important; }\n.header-svg-icon { width:27px; height:27px; fill:none; stroke:#111; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round; }\n.header-icon-wrap { position:relative; display:inline-flex; }\n.notification-badge { position:absolute; top:-6px; right:-8px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:#2f80ed; color:#fff; font-size:10px; font-weight:700; line-height:17px; text-align:center; border:1px solid #fff; }\n.auth-button { background:#008e39 !important; color:#fff !important; border-color:#008e39 !important; }\n.header-settings-dialog { width:min(380px, calc(100vw - 32px)) !important; max-width:380px !important; padding:0 !important; border:0 !important; border-radius:12px !important; overflow:hidden !important; }\n.header-dialog-inner { padding:22px; }\n.header-dialog-head { display:flex; align-items:center; justify-content:space-between; gap:15px; padding-bottom:15px; border-bottom:1px solid #e0e5e9; }\n.header-dialog-head h2 { color:#1f4e78; }\n.settings-options { display:grid; gap:10px; padding-top:18px; }\n.settings-option { width:100%; text-align:left; padding:12px 14px; background:#fff; }\n.settings-logout { color:#b42318; }\n.notifications-empty { padding:22px 4px 5px; color:#68737d; }\n.version-bar { cursor:default !important; }\n@media (max-width:800px) {\n  header { flex-direction:column !important; align-items:stretch !important; }\n  .header-actions { width:100%; margin-left:0; justify-content:flex-start; }\n  .header-icon-group { margin-left:auto; }\n  .header-icon-button { width:40px; height:40px; }\n  .header-svg-icon { width:25px; height:25px; }\n}\n
 
 /* ============================================================
-   HEADER ACTIONS — logged-in controls
+   VERSION BAR / CHANGE LOG
    ============================================================ */
-
-.header-actions {
-  display: flex;
-  align-items: center;
-  justify-content: flex-end;
-  gap: 10px;
-  margin-left: auto;
-}
-
-.header-icon-button {
-  position: relative;
-  width: 46px;
-  height: 46px;
-  padding: 7px !important;
+button.version-bar {
+  appearance: none;
+  -webkit-appearance: none;
   border: 0 !important;
-  background: transparent !important;
-  color: #111 !important;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.header-icon-button:hover {
-  background: #f1f5f8 !important;
-}
-
-.header-svg-icon {
-  width: 28px;
-  height: 28px;
-  fill: none;
-  stroke: #111;
-  stroke-width: 1.8;
-  stroke-linecap: round;
-  stroke-linejoin: round;
-}
-
-.header-icon-wrap {
-  position: relative;
-  display: inline-flex;
-}
-
-.notification-badge {
-  position: absolute;
-  top: -5px;
-  right: -7px;
-  min-width: 17px;
-  height: 17px;
-  padding: 0 4px;
-  border-radius: 999px;
-  background: #2f80ed;
-  color: #fff;
-  font-size: 10px;
-  font-weight: 700;
-  line-height: 17px;
+  border-radius: 0 !important;
+  cursor: default;
+  font-family: inherit;
   text-align: center;
-  border: 1px solid #fff;
-  box-sizing: border-box;
 }
-
-.auth-button {
-  background: #008e39 !important;
-  color: #fff !important;
-  border-color: #008e39 !important;
-}
-
-.header-settings-dialog {
-  width: min(380px, calc(100vw - 32px)) !important;
-  max-width: 380px !important;
+#changeLogDialog {
+  width: min(720px, calc(100vw - 32px)) !important;
+  max-width: 720px !important;
+  max-height: min(760px, calc(100vh - 40px)) !important;
+  margin: auto !important;
   padding: 0 !important;
   border: 0 !important;
-  border-radius: 12px !important;
+  border-radius: 16px !important;
   overflow: hidden !important;
+  box-sizing: border-box !important;
+  background: #fff !important;
+  color: #243447;
 }
+#changeLogDialog::backdrop { background: rgba(15,31,45,.62) !important; }
+.changelog-inner { position: relative; max-height: min(760px,calc(100vh - 40px)); overflow-y:auto; box-sizing:border-box; }
+.changelog-header { padding:26px 30px 20px; background:#f5f8fb; border-bottom:1px solid #dbe3ea; }
+.changelog-kicker { font-size:11px; font-weight:700; letter-spacing:1.2px; color:#1f4e78; margin-bottom:5px; }
+.changelog-header h2 { margin:0 0 6px; font-size:28px; color:#162b3d; }
+.changelog-header p { margin:0; font-size:14px; color:#607080; }
+.changelog-close { position:absolute; top:16px; right:18px; z-index:3; width:38px; height:38px; padding:0 !important; border:0 !important; border-radius:50%; background:#e9eef3; color:#34495a; font-size:25px; line-height:36px; cursor:pointer; }
+.changelog-list { padding:22px 30px 8px; }
+.changelog-entry { padding:0 0 20px; margin:0 0 20px; border-bottom:1px solid #e1e7ec; }
+.changelog-entry:last-child { border-bottom:0; margin-bottom:0; }
+.changelog-version { font-size:18px; font-weight:700; color:#1f4e78; margin-bottom:10px; }
+.changelog-version span { display:inline-block; margin-left:7px; padding:3px 8px; border-radius:999px; background:#7acb8a; color:#173a23; font-size:11px; font-weight:700; vertical-align:2px; }
+.changelog-entry ul { margin:0; padding-left:22px; }
+.changelog-entry li { margin:0 0 8px; line-height:1.45; font-size:14px; }
+.changelog-footer { padding:13px 30px 17px; border-top:1px solid #e1e7ec; text-align:center; font-size:12px; color:#71808d; }
 
-.header-dialog-inner {
-  padding: 22px;
+/* Header controls */
+.header-actions { display:flex; align-items:center; gap:12px; margin-left:auto; }
+.header-icon-group { display:flex; align-items:center; gap:4px; margin-left:28px; }
+.header-icon-button { position:relative; width:42px; height:42px; padding:6px !important; border:0 !important; background:transparent !important; color:#111 !important; display:inline-flex; align-items:center; justify-content:center; }
+.header-icon-button:hover { background:#f1f5f8 !important; }
+.header-svg-icon { width:27px; height:27px; fill:none; stroke:#111; stroke-width:2.1; stroke-linecap:round; stroke-linejoin:round; }
+.header-settings-icon { width:29px; height:29px; }
+.header-icon-wrap { position:relative; display:inline-flex; }
+.notification-badge { position:absolute; top:-6px; right:-8px; min-width:17px; height:17px; padding:0 4px; border-radius:999px; background:#2f80ed; color:#fff; font-size:10px; font-weight:700; line-height:17px; text-align:center; border:1px solid #fff; }
+.auth-button { background:#008e39 !important; color:#fff !important; border-color:#008e39 !important; }
+.header-settings-dialog { width:min(380px, calc(100vw - 32px)) !important; max-width:380px !important; padding:0 !important; border:0 !important; border-radius:12px !important; overflow:hidden !important; }
+.header-dialog-inner { padding:22px; }
+.header-dialog-head { display:flex; align-items:center; justify-content:space-between; gap:15px; padding-bottom:15px; border-bottom:1px solid #e0e5e9; }
+.header-dialog-head h2 { color:#1f4e78; }
+.settings-options { display:grid; gap:10px; padding-top:18px; }
+.settings-option { width:100%; text-align:left; padding:12px 14px; background:#fff; }
+.settings-logout { color:#b42318; }
+.notifications-empty { padding:22px 4px 5px; color:#68737d; }
+.version-bar { cursor:default !important; }
+
+@media (max-width:800px) {
+  header { flex-direction:column !important; align-items:stretch !important; }
+  .header-actions { width:100%; margin-left:0; justify-content:flex-start; }
+  .header-icon-group { margin-left:auto; }
+  .header-icon-button { width:40px; height:40px; }
+  .header-svg-icon { width:25px; height:25px; }
+  .header-settings-icon { width:27px; height:27px; }
 }
-
-.header-dialog-head {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 15px;
-  padding-bottom: 15px;
-  border-bottom: 1px solid #e0e5e9;
-}
-
-.header-dialog-head h2 {
-  color: #1f4e78;
-}
-
-.settings-options {
-  display: grid;
-  gap: 10px;
-  padding-top: 18px;
-}
-
-.settings-option {
-  width: 100%;
-  text-align: left;
-  padding: 12px 14px;
-  background: #fff;
-}
-
-.settings-logout {
-  color: #b42318;
-}
-
-.notifications-empty {
-  padding: 22px 4px 5px;
-  color: #68737d;
-}
-
-/* The version bar is informational only; the Change Log now lives in Settings. */
-.version-bar {
-  cursor: default !important;
-}
-
-@media (max-width: 800px) {
-  header {
-    flex-direction: row;
-    align-items: center;
-    padding: 15px;
-    gap: 10px;
-  }
-
-  .site-title {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .site-logo {
-    width: 120px;
-    max-width: 34vw;
-  }
-
-  h1 {
-    font-size: 22px;
-  }
-
-  .header-actions {
-    flex: 0 0 auto;
-    gap: 2px;
-  }
-
-  .header-actions #newZone {
-    margin-right: 2px;
-  }
-
-  .header-icon-button {
-    width: 40px;
-    height: 40px;
-    padding: 5px !important;
-  }
-
-  .header-svg-icon {
-    width: 25px;
-    height: 25px;
-  }
-}
-
-@media (max-width: 500px) {
-  .site-logo {
-    width: 100px;
-  }
-
-  h1 {
-    font-size: 22px;
-  }
-
-  .header-actions {
-    gap: 0;
-  }
-
-  .header-actions #newZone {
-    padding: 9px 12px;
-  }
-}
-
-/* Final header positioning: title on top on phones, action row below. */
-.header-actions .header-icon-button:first-of-type {
-  margin-left: auto;
-}
-
-@media (max-width: 800px) {
-  header {
-    flex-direction: column !important;
-    align-items: stretch !important;
-  }
-
-  .site-title {
-    width: 100%;
-    flex: 0 0 auto;
-  }
-
-  .header-actions {
-    width: 100%;
-    justify-content: flex-start;
-    flex: 0 0 auto;
-  }
-
-  .header-actions .header-icon-button:first-of-type {
-    margin-left: auto;
-  }
-
-  .header-actions .auth-button {
-    margin-left: auto;
-  }
+@media (max-width:700px) {
+  html { -webkit-text-size-adjust:100%; }
+  #changeLogDialog { width:calc(100vw - 20px) !important; max-height:calc(100vh - 24px) !important; }
+  .changelog-inner { max-height:calc(100vh - 24px); }
+  .changelog-header,.changelog-list { padding-left:20px; padding-right:20px; }
 }
